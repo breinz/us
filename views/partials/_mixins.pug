@@ -1,0 +1,18 @@
+mixin formError(field)
+    if (flash && flash.formErrors)
+        for error in flash.formErrors
+            if error.param == field
+                span.error!=__(error.msg)
+                br
+
+mixin inputError(field)
+    -let hasError = false
+    if (flash && flash.formErrors)
+        for error in flash.formErrors
+            if error.param == field
+                -hasError = true
+    if hasError
+        input(class="error")&attributes(attributes)
+    else
+        input()&attributes(attributes)
+    +formError(field)

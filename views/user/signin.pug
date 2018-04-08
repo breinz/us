@@ -1,0 +1,28 @@
+extends ../partials/_layout
+
+block content 
+    .grid-x
+        .cell.auto
+        .cell.medium-6.text-center
+            h1=__("Signin")
+            form(method="POST")
+                .callout
+                    if (flash && flash.formErrors)
+                        .grid-x
+                            .cell
+                                .callout.alert(data-closable="")
+                                    !=__n("flash.%s formError", flash.formErrors.length)
+
+                    
+                    label Login
+                        input(type="text", name="login", value=login)
+                    label Email
+                        input(type="email", name="email", value=email)
+                    label Password
+                        +inputError("password")(type="password", name="password")
+                        //input(type="password", name="password")
+                    label Repeat password
+                        input(type="password", name="password_repeat")
+                .clearfix
+                    input.button.hollow.secondary.float-right(type="submit", value="Signin")
+        .cell.auto

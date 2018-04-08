@@ -1,0 +1,15 @@
+# Dist
+dist
+
+# Dependency directory
+node_modules
+
+# OS metadata
+.DS_Store
+Thumbs.db
+
+# Config
+.env
+
+#Logs
+npm-debug.log
