@@ -2,6 +2,7 @@ import * as mongoose from "mongoose"
 import * as bcrypt from "bcrypt-nodejs"
 
 export type UserModel = mongoose.Document & {
+    login: string,
     email: string,
     password: string,
     admin: Boolean,
@@ -13,6 +14,7 @@ export type UserModel = mongoose.Document & {
 
 // Schema
 const userSchema = new mongoose.Schema({
+    login: { type: String },
     email: {type: String, unique: true},
     password: String,
     admin: { default: false, type: Boolean }

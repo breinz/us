@@ -9,10 +9,6 @@ export default {
      */
     postSignin: (req:Request, res:Response, next:NextFunction) => {
 
-        console.log("--------");
-        console.log(req.body);
-        console.log("--------");
-
         // Form errors
         const formErrors = validationResult(req);
         if (!formErrors.isEmpty()) {
@@ -28,6 +24,7 @@ export default {
 
         // Create a user
         const user = new User({
+            login: req.body.login,
             email: req.body.email,
             password: req.body.password
         });
@@ -35,6 +32,8 @@ export default {
         // Save that user
         user.save((err, u: UserModel) => {
             if (err) return next(err)
+
+            res.send({ok:true})
             
             // Log that user in
             /*req.logIn(user, err => {

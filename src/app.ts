@@ -8,6 +8,7 @@ import * as cookieParser from "cookie-parser"
 import * as bodyParser from "body-parser"
 import * as session from "express-session"
 import * as i18n from "i18n"
+import apiRouter from "./api"
 
 let app = express()
 
@@ -49,6 +50,8 @@ app.use(session({
 }))
 
 app.use(i18n.init)
+
+app.use("/api", apiRouter)
 
 // --------------------------------------------------
 // ROUTES
