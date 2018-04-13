@@ -9,12 +9,18 @@ import * as bodyParser from "body-parser"
 import * as session from "express-session"
 import * as i18n from "i18n"
 import apiRouter from "./api"
+import adminRouter from "./admin"
+import * as passport from "passport"
+import * as passport_config from "./user/passport"
+import * as capitalize from "capitalize"
+
+passport_config.tmp()
 
 let app = express()
 
-// --------------------------------------------------
+// **************************************************
 // CONFIGURE
-// --------------------------------------------------
+// **************************************************
 
 // View engine
 app.set('view engine', 'pug')
@@ -27,9 +33,11 @@ i18n.configure({
     objectNotation: true
 });
 
-// --------------------------------------------------
+app.use(i18n.init)
+
+// **************************************************
 // USE
-// --------------------------------------------------
+// **************************************************
 
 // Static content
 app.use(express.static(path.join(__dirname, "/public")))
@@ -49,26 +57,57 @@ app.use(session({
     secret: "toputinaconfigfile"
 }))
 
-app.use(i18n.init)
+// --------------------------------------------------
+// Passport
+app.use(passport.initialize())
+app.use(passport.session())
 
+// Make the current user available in the response
+app.use((req, res, next) => {
+    res.locals.user = req.user
+    next()
+})
+
+// --------------------------------------------------
+// Capitalize
+app.use((req, res, next) => {
+    res.locals.c__ = function (str:string) {
+        return capitalize(res.__(str))
+    }
+    res.locals.capitalize = capitalize;
+    next()
+})
+
+// Routes
 app.use("/api", apiRouter)
+app.use("/admin", adminRouter)
 
-// --------------------------------------------------
+// **************************************************
 // ROUTES
-// --------------------------------------------------
+// **************************************************
 
 // Routes
 app.get("/", (req, res) => {
     res.render("index")
 })
-app.get("/signin", (req, res) => {
-    res.render("user/signin")
-})
+
+// --------------------------------------------------
+// Signin
+app.get("/signin", userController.getSignin)
 app.post("/signin", userCheck.postSignin, userController.postSignin)
 
 // --------------------------------------------------
-// MONGOOSE
+// Login
+app.get("/login", userController.getLogin)
+app.post("/login", userCheck.postLogin, userController.postLogin)
+
 // --------------------------------------------------
+// Logout
+app.get('/logout', userController.getLogout)
+
+// **************************************************
+// MONGOOSE
+// **************************************************
 
 // Mongoose connect
 mongoose.connect(config.mongoUri)

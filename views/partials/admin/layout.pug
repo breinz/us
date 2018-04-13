@@ -1,0 +1,30 @@
+include ../_mixins
+html
+  head
+    meta(charset='utf-8')
+    meta(http-equiv='X-UA-Compatible', content='IE=edge')
+    meta(name='viewport', content='width=device-width, initial-scale=1.0')
+    link(rel="stylesheet", href="/css/vendor/foundation.min.css")
+    link(rel='stylesheet', href='/css/main.css')
+    //meta(name='theme-color' content='#4DA5F4')
+    //meta(name='csrf-token', content=_csrf)
+    //title #{__(title)} - Game
+    //link(rel='shortcut icon', href='/images/favicon.png')
+  body
+    //include _mixins
+    .grid-container.admin
+      include _header
+      //include _flash
+
+      .breadcrumb
+        if bc
+          a(href="/admin") Admin
+          span.divider
+          for b in bc
+              if (typeof b =='object')
+                  a(href=`/admin${b[1]}`)=b[0]
+                  span.divider
+              else
+                  span=b
+
+      block content

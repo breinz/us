@@ -16,3 +16,22 @@ mixin inputError(field)
     else
         input()&attributes(attributes)
     +formError(field)
+
+mixin delete()
+    a.delete-link(title="Delete" onclick="javascript:return confirm('"+__("admin.confirm")+"')")&attributes(attributes) &times;
+
+mixin edit()
+    a.edit-link(title="Edit")&attributes(attributes) &ofcir;
+
+mixin delete_btn()
+    a.button.hollow.alert(onclick="javascript:return confirm('"+__("admin.confirm")+"')")&attributes(attributes)
+        ="Delete"
+
+
+-function zero(v) {return v < 10 ? '0'+v : v;}
+
+mixin date(d)
+    -date = new Date(d)
+    =[zero(date.getDate()), zero(date.getMonth()+1), date.getFullYear()].join("/")
+    !="&nbsp;"
+    =[zero(date.getHours()), zero(date.getMinutes())].join(":")

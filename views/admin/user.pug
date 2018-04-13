@@ -1,0 +1,27 @@
+extends ../partials/admin/layout
+
+block content
+    .grid-x
+        .cell
+            h1=user.login
+    .grid-x
+        .cell.medium-6
+
+            .callout.small
+                table.unstriped
+                    if (user.admin)
+                        tr.alert
+                            th Admin
+                            td YES
+                    tr
+                        th Email
+                        td=user.email
+                    tr
+                        th Registered
+                        td
+                            +date(user.createdAt)
+                
+    .grid-x
+        .cell
+            a.button.hollow.secondary(href=`/admin/users/${user.id}/edit`) Edit
+            +delete_btn(href=`/admin/users/${user.id}/delete`)

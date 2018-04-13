@@ -3,9 +3,20 @@ import User from "./model"
 
 export default {
 
-    // POST /signin
+    postLogin: [
+        check("email", "check.mandatoryField").not().isEmpty().isEmail()
+            .trim()
+            .normalizeEmail({gmail_remove_dots: false})
+    ],
+
+    /**
+     * POST /signin
+     */
     postSignin: [
-        check("email", "check.invalidEmail").isEmail()
+        check('login', "check.mandatoryField").not().isEmpty(),
+
+        check("email", "check.mandatoryField").not().isEmpty()
+        .isEmail().withMessage("check.invalidEmail")
         .trim()
         .normalizeEmail({gmail_remove_dots: false})
         .custom( value => {

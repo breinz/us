@@ -2,7 +2,13 @@ header
     .header-content
         .header-menu
             ul
-                li
-                    a(href="/login") Login
-                li
-                    a(href="/signin")=__('Signin')
+                if user
+                    li
+                        a(href="/profile")=user.login
+                    li
+                        a(href="/logout")=c__('logout')
+                else
+                    li
+                        a(href="/login")=c__("login")
+                    li
+                        a(href="/signin")=c__('signin')

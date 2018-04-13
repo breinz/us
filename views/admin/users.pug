@@ -1,0 +1,33 @@
+extends ../partials/admin/layout
+
+block content
+
+    .grid-x
+        .cell
+            h1 Users
+
+    .grid-x.grid-margin-x
+        .cell.medium-9
+            .callout.small
+                table.hover
+                    thead
+                        tr
+                            th Login
+                            th Email
+                            th.actions
+                    tbody
+                        for user in users
+                            tr
+                                td
+                                    a(href=`/admin/users/${user.id}`)=user.login
+                                td=user.email
+                                td
+                                    +edit(href=`/admin/user/${user.id}/edit`)
+                                    +delete(href=`/admin/users/${user.id}/delete`)
+        .cell.medium-3
+            .bignum
+                .num=users.length
+                span users
+            //.bignum
+                .num ..16
+                span new this week
