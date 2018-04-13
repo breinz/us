@@ -13,7 +13,7 @@ router.get('/users', (req, res, next) => {
 
         const bc = ["Users"];
 
-        res.render("admin/users", {
+        res.render("admin/users/index", {
             users: users,
             bc: bc
         })
@@ -34,7 +34,7 @@ router.get('/users/:userId', (req, res, next) => {
             user.login
         ]
 
-        res.render("admin/user", {
+        res.render("admin/users/view", {
             user: user,
             bc: bc
         })
@@ -50,12 +50,32 @@ router.get("/users/:userId/edit", (req, res, next) => {
     User.findById(req.params.userId, (err, user:UserModel) => {
         if (err) next(err)
         let bc = [
-            ["Users", "/admin/users"],
-            [user.login, `/admin/users/${user.id}`],
+            ["Users", "/users"],
+            [user.login, `/users/${user.id}`],
             "Edit"
         ]
         res.render("admin/users/edit", {
             bc: bc
+        })
+    })
+})
+
+/**
+ * POST /users/:userId/edit
+ * @param userId User id
+ * Edit a user
+ */
+router.post("/users/:userId/edit", (req, res, next) => {
+    User.findById(req.params.userId, (err, user:UserModel) => {
+        if (err) next(err)
+
+        user.login = req.body.login
+        user.email = req.body.email
+        user.admin = req.body.admin === "on"
+
+        user.save((err, user) => {
+            if (err) next(err)
+            res.redirect(`/admin/users/${user.id}`)
         })
     })
 })

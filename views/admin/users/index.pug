@@ -1,4 +1,4 @@
-extends ../partials/admin/layout
+extends ../../partials/admin/layout
 
 block content
 
@@ -22,7 +22,7 @@ block content
                                     a(href=`/admin/users/${user.id}`)=user.login
                                 td=user.email
                                 td
-                                    +edit(href=`/admin/user/${user.id}/edit`)
+                                    +edit(href=`/admin/users/${user.id}/edit`)
                                     +delete(href=`/admin/users/${user.id}/delete`)
         .cell.medium-3
             .bignum
