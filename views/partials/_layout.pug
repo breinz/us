@@ -4,16 +4,17 @@ html
     meta(charset='utf-8')
     meta(http-equiv='X-UA-Compatible', content='IE=edge')
     meta(name='viewport', content='width=device-width, initial-scale=1.0')
-    link(rel="stylesheet", href="/css/vendor/foundation.min.css")
-    link(rel='stylesheet', href='/css/main.css')
+    
     //meta(name='theme-color' content='#4DA5F4')
     //meta(name='csrf-token', content=_csrf)
     //title #{__(title)} - Game
     //link(rel='shortcut icon', href='/images/favicon.png')
   body
-    //include _mixins
     .grid-container
       include _header
       //include _flash
     
       block content
+
+      link(rel='stylesheet', href='/css/main.css')
+      script(src="/js/main.js")

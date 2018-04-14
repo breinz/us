@@ -8,9 +8,10 @@
     "start": "node dist/server.js",
     "watch-node": "nodemon --ignore spec",
     "watch-ts": "tsc -w",
+    "watch-browser": "watchify dist/game/main.js -o dist/public/js/main.js -v",
     "watch-sass": "node-sass src/public/css/main.scss dist/public/css/main.css -w src/public/css --include-path node_modules/foundation-sites/scss/",
     "mongo": "cd ~/Developer; mongod --dbpath=mongodb",
-    "watch": "concurrently -k -p \"[{name}]\" -n \"TypeScript,Node,Sass\" -c \"yellow.bold,cyan.bold,blue.bold\" \"npm run watch-ts\" \"npm run watch-node\" \"npm run watch-sass\""
+    "watch": "concurrently -k -p \"[{name}]\" -n \"TypeScript,Node,Sass,Browser\" -c \"yellow.bold,cyan.bold,blue.bold,green.bold\" \"npm run watch-ts\" \"npm run watch-node\" \"npm run watch-sass\" \"npm run watch-browser\""
   },
   "author": "Julien Breiner",
   "license": "ISC",
@@ -27,7 +28,9 @@
     "mongoose": "^5.0.13",
     "passport": "^0.4.0",
     "passport-local": "^1.0.0",
-    "pug": "^2.0.3"
+    "pixi.js": "^4.7.3",
+    "pug": "^2.0.3",
+    "watchify": "^3.11.0"
   },
   "devDependencies": {
     "@types/bcrypt-nodejs": "0.0.30",
@@ -39,6 +42,7 @@
     "@types/mongoose": "^5.0.9",
     "@types/passport": "^0.4.4",
     "@types/passport-local": "^1.0.33",
+    "@types/pixi.js": "^4.7.2",
     "node-sass": "^4.8.3"
   }
 }

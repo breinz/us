@@ -1,4 +1,10 @@
 extends partials/_layout
 
 block content
-    div pom
+    if (user)
+        if (user.inGame())
+            span inGame
+        else
+            include partials/game/home_out
+    else
+        span not connected

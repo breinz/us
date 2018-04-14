@@ -38,6 +38,10 @@ passport.use(new LocalStrategy({usernameField: "email"},
     }
 ));
 
+export let initialize = (req:Request, res:Response, next:NextFunction) => {
+    next();
+}
+
 /**
  * @deprecated
  * Require authenticate
@@ -74,8 +78,3 @@ export let isAdmin = (req: Request, res: Response, next: NextFunction) => {
     }
     next()
 }
-
-export let tmp = () => {
-    return 'pom';
-}
-console.log("passport config");

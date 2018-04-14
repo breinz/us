@@ -8,15 +8,15 @@ const router = express.Router()
  */
 router.use((req, res, next) => {
 
-    // logged in
+    // Logged in
     if (!req.isAuthenticated()) {
         return res.redirect("/")
     }
 
-    // admin
-    /*if (req.user.admin !== true) {
+    // Admin
+    if (req.user.admin !== true) {
         return res.redirect("/")
-    }*/
+    }
     next()
 })
 

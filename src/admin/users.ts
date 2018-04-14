@@ -61,6 +61,8 @@ router.get("/users/:userId/edit", (req, res, next) => {
 })
 
 /**
+ * @todo Check email unique
+ * 
  * POST /users/:userId/edit
  * @param userId User id
  * Edit a user

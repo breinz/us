@@ -3,12 +3,10 @@ header
         .header-menu
             ul
                 if user
-                    li
-                        a(href="/profile")=user.login
-                    li
-                        a(href="/logout")=c__('logout')
+                    li: a(href="/profile")=user.login
+                    li: a(href="/logout")=c__('logout')
+                    if user.admin
+                        li: a.float-right(href="/admin"): span.text-alert Admin
                 else
-                    li
-                        a(href="/login")=c__("login")
-                    li
-                        a(href="/signin")=c__('signin')
+                    li: a(href="/login")=c__("login")
+                    li: a(href="/signin")=c__('signin')

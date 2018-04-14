@@ -45,5 +45,13 @@ userSchema.methods.validPassword = function (candidatePassword: string, cb: Func
     });
 }
 
+/**
+ * @todo
+ * Check if the user is in a game
+ */
+userSchema.methods.inGame = function() {
+    return false;
+}
+
 export const User = mongoose.model("User", userSchema)
 export default User

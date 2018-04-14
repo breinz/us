@@ -62,6 +62,10 @@ a {
     }
 }
 
+h1:first-child {
+    margin-top: 0;
+}
+
 .text-alert {
     color: $alert-color;
 }
@@ -71,6 +75,22 @@ tr.alert {
         background-color: $alert-color;
         color: #F6F6F6;
     }
+}
+tr.success {
+    td, th {
+        background-color: $success-color;
+    }
+}
+td.success, th.success {
+    background-color: $success-color;
+}
+
+.text-alert {
+    color: $alert-color;
+}
+
+.text-center {
+    text-align: center;
 }
 
 .button {
@@ -183,4 +203,8 @@ table {
     .edit-link {
         color: $font-color;
     }
+}
+
+#user-lvl {
+    margin-right: 35px;
 }

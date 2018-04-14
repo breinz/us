@@ -13,8 +13,7 @@ import adminRouter from "./admin"
 import * as passport from "passport"
 import * as passport_config from "./user/passport"
 import * as capitalize from "capitalize"
-
-passport_config.tmp()
+import User, { UserModel } from "./user/model"; // tmp
 
 let app = express()
 
@@ -61,6 +60,7 @@ app.use(session({
 // Passport
 app.use(passport.initialize())
 app.use(passport.session())
+app.use(passport_config.initialize)
 
 // Make the current user available in the response
 app.use((req, res, next) => {
@@ -81,6 +81,19 @@ app.use((req, res, next) => {
 // Routes
 app.use("/api", apiRouter)
 app.use("/admin", adminRouter)
+
+// **************************************************
+// TEMP
+// **************************************************
+
+/*app.use((req, res, next) => {
+    User.find({email: "julien.breiner@gmail.com"}, (err, user:UserModel) => {
+        if (err) next(err)
+        req.logIn(user, err => {
+            next(err)
+        })
+    })
+})*/
 
 // **************************************************
 // ROUTES
