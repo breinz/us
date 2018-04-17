@@ -28,7 +28,7 @@ app.set('view engine', 'pug')
 i18n.configure({
     locales: ["en", "fr"],
     directory: path.join(__dirname, "locales"),
-    autoReload: true,
+    autoReload: false,
     objectNotation: true
 });
 
@@ -48,12 +48,18 @@ app.use(cookieParser())
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
+let ms = require("express-mongoose-store")(session, mongoose)
+
 // Session
 app.use(session({
-    resave: true,
-    saveUninitialized: true,
+    resave: false,
+    saveUninitialized: false,
     // TODO
-    secret: "toputinaconfigfile"
+    secret: "toputinaconfigfile",
+    /*cookie: { 
+        maxAge: 1000*60*60*24*30
+    }*/
+    store: new ms({ttl: 1000*60*60*24*30})
 }))
 
 // --------------------------------------------------
@@ -64,7 +70,7 @@ app.use(passport_config.initialize)
 
 // Make the current user available in the response
 app.use((req, res, next) => {
-    res.locals.user = req.user
+    res.locals.me = req.user
     next()
 })
 

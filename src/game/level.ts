@@ -31,7 +31,7 @@ class Lvl {
         let star_element;
         for (let index = 0; index < 5; index++) {
             star_element = new Pixi.Graphics()
-            star_element.beginFill(index <2 ? 0XFFFF00 : 0xDDDDDD)
+            star_element.beginFill(0xFFFF00, index <2 ? 1 : 0.2)
             //star_element.lineStyle(1, 0x707070)
             star_element.drawPolygon([
                 110, 110, 

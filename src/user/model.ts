@@ -7,6 +7,7 @@ export type UserModel = mongoose.Document & {
     password: string,
     admin: Boolean,
     email_was: string,
+    current_level: mongoose.Types.ObjectId,
 
     validPassword: (candidatePassword: string, cb: (err: Error, isMatch: boolean) => void) => boolean,
     comparePasswords: (candidatePassword: string) => void
@@ -17,7 +18,8 @@ const userSchema = new mongoose.Schema({
     login: { type: String },
     email: {type: String, unique: true},
     password: String,
-    admin: { default: false, type: Boolean }
+    admin: { default: false, type: Boolean },
+    current_level: {type: mongoose.Schema.Types.ObjectId, ref: 'Level'}
 }, { timestamps: true })
 
 /**

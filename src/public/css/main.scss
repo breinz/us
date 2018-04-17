@@ -70,6 +70,10 @@ h1:first-child {
     color: $alert-color;
 }
 
+.text-right {
+    text-align: right;
+}
+
 tr.alert {
     td, th {
         background-color: $alert-color;
@@ -83,6 +87,12 @@ tr.success {
 }
 td.success, th.success {
     background-color: $success-color;
+}
+
+tr.light-gray {
+    td, th {
+        background-color: $light-gray;
+    }
 }
 
 .text-alert {
@@ -180,7 +190,8 @@ table {
 }
 
 .admin {
-    .delete-link, .edit-link {
+    .delete-link, .edit-link, .add-link, .placeholder-link {
+        display: inline-block;
         text-decoration: none;
         font-weight: bold;
         font-size: 1.75em;
@@ -202,6 +213,14 @@ table {
 
     .edit-link {
         color: $font-color;
+    }
+
+    .add-link {
+        color: $success-color;
+    }
+
+    .placeholder-link {
+        visibility: hidden;
     }
 }
 

@@ -9,7 +9,7 @@ const LocalStrategy = local.Strategy;
 * Serialize cookie
 */
 passport.serializeUser(function(user: UserModel, done) {
-    done(undefined, user._id);
+    done(null, user.id);
 });
 
 /**

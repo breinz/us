@@ -1,7 +1,11 @@
 import * as express from "express"
 import User from "../user/model"
+import levels from "./levels"
 
 const router = express.Router()
+
+// Levels
+router.use('/levels', levels)
 
 router.get('/', (req, res) => {
     res.send({ data: [] })

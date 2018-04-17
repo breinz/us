@@ -1,5 +1,6 @@
 import * as express from "express";
 import User, { UserModel } from "../user/model";
+import levels from "../levels/model"
 
 var router = express.Router();
 
@@ -47,6 +48,25 @@ router.get('/users/:userId', (req, res, next) => {
  * Edit form
  */
 router.get("/users/:userId/edit", (req, res, next) => {
+
+    // --------------------------------------------------
+    // Levels
+
+    /*let levels:LevelModel[];
+
+    // Find the levels
+    Level.find((err, docs:LevelModel[]) => {
+        levels = docs;
+        render();
+    })*/
+
+    // --------------------------------------------------
+    // User
+
+    //let bc:Array<Object>;
+    //let user:UserModel;
+
+    // Find the user to edit
     User.findById(req.params.userId, (err, user:UserModel) => {
         if (err) next(err)
         let bc = [
@@ -54,7 +74,10 @@ router.get("/users/:userId/edit", (req, res, next) => {
             [user.login, `/users/${user.id}`],
             "Edit"
         ]
+
         res.render("admin/users/edit", {
+            levels: levels,
+            user: user,
             bc: bc
         })
     })
@@ -74,6 +97,9 @@ router.post("/users/:userId/edit", (req, res, next) => {
         user.login = req.body.login
         user.email = req.body.email
         user.admin = req.body.admin === "on"
+        user.current_level = req.body.level;
+
+        console.log(req.body.level);
 
         user.save((err, user) => {
             if (err) next(err)

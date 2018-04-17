@@ -2,10 +2,10 @@ header
     .header-content
         .header-menu
             ul
-                if user
-                    li: a(href="/profile")=user.login
+                if me
+                    li: a(href="/profile")=me.login
                     li: a(href="/logout")=c__('logout')
-                    if user.admin
+                    if me.admin
                         li: a.float-right(href="/admin"): span.text-alert Admin
                 else
                     li: a(href="/login")=c__("login")
