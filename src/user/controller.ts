@@ -10,7 +10,7 @@ export default {
     getIndex: (req:Request, res: Response, next:NextFunction) => {
         Promise.all([
             Goal.find({ level: req.user.current_level }),
-            Level.findById(req.user.current_level)
+            Level.findById(req.user.current_level, "level color innerDist outerDist -_id")
         ]).then(([goals, level]) => {
             res.render("index", {
                 goals: goals,

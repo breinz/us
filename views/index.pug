@@ -3,7 +3,7 @@ extends partials/_layout
 block content
     if me
         if (me.inGame())
-            span inGame
+            include game/in
         else
             include partials/game/home_out
     else

@@ -18,9 +18,9 @@
 .grid-x
     .cell
         a.button.hollow.secondary(href="/") &rtrif; Join the tutorial
-        a.button.hollow.secondary(href="/") &rtrif; Join a game
+        a.button.hollow.secondary(href="/join")=c__("join")
 
 script(type="text/javascript").
-    var l = #{level.level},
+    var l = #{level},
         g = #{goals.length},
         a = #{goals_archieved};

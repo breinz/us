@@ -4,6 +4,7 @@ import config from "./config"
 import * as path from "path"
 import userController from "./user/controller"
 import userCheck from "./user/check"
+import gameController from "./game/controller"
 import * as cookieParser from "cookie-parser"
 import * as bodyParser from "body-parser"
 import * as session from "express-session"
@@ -133,6 +134,10 @@ app.post("/login", userCheck.postLogin, userController.postLogin)
 // --------------------------------------------------
 // Logout
 app.get('/logout', userController.getLogout)
+
+// --------------------------------------------------
+// Game
+app.get('/join', gameController.join)
 
 // **************************************************
 // MONGOOSE

@@ -3,6 +3,7 @@ import * as bcrypt from "bcrypt-nodejs"
 import { Document, Schema, model } from "mongoose"
 import { GoalModel, Goal, goalSchema } from "../goal/model";
 import { Level } from "../level/model";
+import { Game, GameModel } from "../game/model";
 
 export type UserModel = Document & {
     login: string,
@@ -12,6 +13,7 @@ export type UserModel = Document & {
     email_was: string,
     current_level: mongoose.Types.ObjectId,
     goals: GoalModel[] & Document,
+    currentGame: mongoose.Types.ObjectId,
 
     validPassword: (candidatePassword: string, cb: (err: Error, isMatch: boolean) => void) => boolean,
     comparePasswords: (candidatePassword: string) => void,
@@ -25,7 +27,8 @@ const userSchema = new Schema({
     password: String,
     admin: { default: false, type: Boolean },
     current_level: {type: Schema.Types.ObjectId, ref: "Level"},
-    goals: [goalSchema]
+    goals: [goalSchema],
+    currentGame: {type: mongoose.Schema.Types.ObjectId, ref: "Game"}
 }, { timestamps: true })
 
 /**
@@ -107,7 +110,31 @@ userSchema.methods.addGoal = function (goal: string) {
  * Check if the user is in a game
  */
 userSchema.methods.inGame = function() {
-    return false;
+    return this.currentGame !== undefined
+}
+
+/**
+ * Join a game
+ * @return Promise
+ */
+userSchema.methods.joinGame = async function () {
+    const user:UserModel = this;
+
+    let game:GameModel;
+    game = <GameModel>await Game.findOne({count_users: { $lt: 20 } }).exec()
+
+    if (!game) {
+        game = <GameModel>new Game()
+        game = await game.save()
+    }
+
+    user.currentGame = game.id;
+    await user.save()
+
+    game.count_users++
+    await game.save()
+
+    return game
 }
 
 export const User = model("User", userSchema)

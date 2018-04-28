@@ -1,6 +1,7 @@
 /** @see home_out.pug */
+type LevelModel = {color:number, innerDist:number, outerDist:number}
 declare const a:number;
-declare const l:number;
+declare const l:LevelModel;
 declare const g:number;
 
 import * as Pixi from "pixi.js"
@@ -28,17 +29,7 @@ class Lvl {
      * Current level
      * @see l
      */
-    private level:number;
-
-    /**
-     * Outer dist
-     */
-    private outerDist:number;
-
-    /**
-     * Inner dist
-     */
-    private innerDist:number;
+    private level:LevelModel;
 
     /**
      * Star border
@@ -71,6 +62,7 @@ class Lvl {
      * Init
      */
     public init = () => {
+        Pixi.utils.skipHello();
         this.app = new Pixi.Application({
             width:220,
             height: 220,
@@ -82,8 +74,6 @@ class Lvl {
         this.archieved = a;
         this.level = l;
         this.goals = g;
-        this.outerDist = 88;
-        this.innerDist = 28;
 
         this.center = [110, 110]
 
@@ -139,16 +129,16 @@ class Lvl {
 
             e.clear();
             //e.beginFill(Lvl.colors[this.level], index < this.archieved ? 1 : 0)
-            e.beginFill(index < this.archieved ? Lvl.colors[this.level] : 0xEEEEEE)
+            e.beginFill(index < this.archieved ? this.level.color : 0xEEEEEE)
             e.lineStyle(.5, 0x707070, .5)
 
-            dax = this.center[0]+h.cos(angle)    *this.innerDist
-            dbx = this.center[0]+h.cos(angle+a/2)*this.outerDist
-            dcx = this.center[0]+h.cos(angle+a)  *this.innerDist
+            dax = this.center[0]+h.cos(angle)    *this.level.innerDist
+            dbx = this.center[0]+h.cos(angle+a/2)*this.level.outerDist
+            dcx = this.center[0]+h.cos(angle+a)  *this.level.innerDist
 
-            day = this.center[1]+h.sin(angle)    *this.innerDist
-            dby = this.center[1]+h.sin(angle+a/2)*this.outerDist
-            dcy = this.center[1]+h.sin(angle+a)  *this.innerDist  
+            day = this.center[1]+h.sin(angle)    *this.level.innerDist
+            dby = this.center[1]+h.sin(angle+a/2)*this.level.outerDist
+            dcy = this.center[1]+h.sin(angle+a)  *this.level.innerDist  
 
             e.drawPolygon([
                 this.center[0], this.center[1], dax, day, dbx, dby, dcx, dcy])
