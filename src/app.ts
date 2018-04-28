@@ -14,6 +14,7 @@ import * as passport from "passport"
 import * as passport_config from "./user/passport"
 import * as capitalize from "capitalize"
 import User, { UserModel } from "./user/model"; // tmp
+import { Level } from "./level/model";
 
 let app = express()
 
@@ -93,11 +94,17 @@ app.use("/admin", adminRouter)
 // **************************************************
 
 /*app.use((req, res, next) => {
-    User.find({email: "julien.breiner@gmail.com"}, (err, user:UserModel) => {
+    console.log("poooom");
+    User.find((err, users) => {
         if (err) next(err)
-        req.logIn(user, err => {
-            next(err)
-        })
+        users.forEach((user:UserModel) => {
+            user.depopulate("current_level")
+            //user.goals = [];
+            user.save();
+        });
+        setTimeout(() => {
+            next()
+        }, 1000);
     })
 })*/
 
@@ -106,7 +113,10 @@ app.use("/admin", adminRouter)
 // **************************************************
 
 // Routes
-app.get("/", (req, res) => {
+app.get("/", (req, res, next) => {
+    if (req.isAuthenticated()) {
+        return userController.getIndex(req, res, next)
+    }
     res.render("index")
 })
 

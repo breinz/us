@@ -20,6 +20,9 @@ block content
                         th Registered
                         td
                             +date(user.createdAt)
+                    tr
+                        th Current level
+                        td=user.current_level
                 
     .grid-x
         .cell

@@ -1,5 +1,6 @@
 import * as express from "express"
 import user from "./users"
+import goals from "./goals"
 import levels from "./levels"
 
 const router = express.Router()
@@ -22,7 +23,8 @@ router.use((req, res, next) => {
 })
 
 router.use(user);
-router.use("/levels", levels);
+router.use("/goals", goals);
+router.use("/levels", levels)
 
 /**
  * Get /admin

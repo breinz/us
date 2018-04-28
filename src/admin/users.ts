@@ -1,6 +1,5 @@
 import * as express from "express";
 import User, { UserModel } from "../user/model";
-import levels from "../levels/model"
 
 var router = express.Router();
 
@@ -49,37 +48,26 @@ router.get('/users/:userId', (req, res, next) => {
  */
 router.get("/users/:userId/edit", (req, res, next) => {
 
-    // --------------------------------------------------
-    // Levels
+    Promise.all(
+        [
+            User.findById(req.params.userId)
+        ]
+    ).then(values => {
+        let user:UserModel = <UserModel>(values[0]);
 
-    /*let levels:LevelModel[];
-
-    // Find the levels
-    Level.find((err, docs:LevelModel[]) => {
-        levels = docs;
-        render();
-    })*/
-
-    // --------------------------------------------------
-    // User
-
-    //let bc:Array<Object>;
-    //let user:UserModel;
-
-    // Find the user to edit
-    User.findById(req.params.userId, (err, user:UserModel) => {
-        if (err) next(err)
-        let bc = [
+        const bc = [
             ["Users", "/users"],
             [user.login, `/users/${user.id}`],
             "Edit"
         ]
 
         res.render("admin/users/edit", {
-            levels: levels,
             user: user,
             bc: bc
         })
+
+    }).catch(err => {
+        next(err)
     })
 })
 

@@ -23,7 +23,7 @@ mixin add_js()
     a.add-link(onclick=`javascript:var r = prompt('${q}');if (r!=null) window.location.href="${attributes['href']}?value="+r;return false;`)&attributes(attributes) &plus;
 
 mixin edit()
-    a.edit-link(title="Edit")&attributes(attributes) &ofcir;
+    a.edit-link(title="Edit")&attributes(attributes) &swArr;
 
 mixin delete()
     a.delete-link(title="Delete" onclick="javascript:return confirm('"+__("admin.confirm")+"')")&attributes(attributes) &times;

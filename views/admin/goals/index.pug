@@ -1,0 +1,43 @@
+extends ../../partials/admin/layout
+
+block content
+    .grid-x
+        .cell.small-6
+            h1 GOALS
+        .cell.small-6.text-right
+            a.button.hollow.secondary.tiny(href="/admin/goals/new") New goal
+            a.button.hollow.secondary.tiny(href="/admin/levels/new") New level
+        .cell
+            .callout.small
+                table.unstriped.hover
+                    each level in levels
+                        tr.light-gray
+                            td: b=`Level ${level.level}`
+                            td.text-right
+                                +edit(href=`/admin/levels/${level.id}/edit`)
+                                +delete(href=`/admin/levels/${level.id}/delete`)
+                        each goal, index in goals
+                            if (goal.level.equals(level.id))
+                                tr
+                                    td=__(`goals.${goal.phrase}`)
+                                    td.text-right
+                                        +edit(href=`/admin/goals/${goal.id}/edit`)
+                                        +delete(href=`/admin/goals/${goal.id}/delete`)
+                    //
+                        -var current_level = null
+                        each goal in goals 
+                            if (!goal.level.equals(current_level))
+                                -current_level = goal.level
+                                tr.light-gray
+                                    td
+                                        b=`Level ${goal.level.level}`
+                                    td.text-right
+                                        +edit(href=`/admin/levels/${goal.level.id}/edit`)
+                                        +delete(href=`/admin/goals/${goal.level.id}/delete`)
+                            tr
+                                td=goal.phrase
+                                td.text-right
+                                    +edit(href=`/admin/goals/${goal.id}/edit`)
+                                    +delete(href=`/admin/goals/${goal.id}/delete`)
+                        else
+                            tr: td No goals for now

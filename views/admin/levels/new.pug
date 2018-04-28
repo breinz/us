@@ -1,0 +1,18 @@
+extends ../../partials/admin/layout
+
+block content
+    .grid-x
+        .cell
+            h1 New level
+        .cell.medium-6
+            form(method="POST")
+                .callout
+                    label Level
+                        input(type="number" name="level" autofocus)
+                    label Color
+                        input(type="text" name="color")
+                    label Inner dist
+                        input(type="number", name="innerDist" min=0 value=58)
+                    label Outer dist
+                        input(type="number", name="outerDist" min=0 value=58)
+                input.button.hollow.secondary(type="submit", value="Save")

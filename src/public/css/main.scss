@@ -148,6 +148,14 @@ header {
     }   
 }
 
+table.hover tbody tr {
+    transition: background-color .3s ease-out;
+}
+
+table.hover tbody tr.hover {
+    background-color: #CBCBCB;
+}
+
 input.error {
     border: 1px solid $alert-color;
     margin-bottom: 0;

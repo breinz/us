@@ -1,27 +1,26 @@
 .grid-x
-    //.cell.medium-4
     .cell
         #user-lvl.float-left
         .float-left
-            h1 Level 1
+            h1=`Level ${level.level}`
             .callout.small
-                table.unstriped.hover
-                    tr
-                        th Register
-                        th.success.text-center &check;
-                    tr
-                        th: a(href="/") Set a profile picture
-                        th.text-center &times;
-                    tr
-                        th Join the tutorial
-                        th.text-center &times;
-                    tr
-                        th Kill an annemi with a bazooka while wearing a wizard hat
-                        th.text-center &times;
-                    tr
-                        th A fifth one
-                        th.text-center &times;
+                table.unstriped.hover(style="width:100%")
+                    -var goals_archieved = 0
+                    each goal, index in goals
+                        tr(id=`goal${index}`)
+                            th!=__(`goals.${goal.phrase}`)
+                            each archieved in me.goals
+                                if archieved.equals(goal)
+                                    -goals_archieved++
+                                    th.success.text-center &check;
+                                else
+                                    th
 .grid-x
     .cell
         a.button.hollow.secondary(href="/") &rtrif; Join the tutorial
         a.button.hollow.secondary(href="/") &rtrif; Join a game
+
+script(type="text/javascript").
+    var l = #{level.level},
+        g = #{goals.length},
+        a = #{goals_archieved};

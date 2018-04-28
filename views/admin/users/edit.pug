@@ -26,10 +26,9 @@ block content
                         .cell.small-6
                             label Level
                                 br
-                                select(name="level")
+                                input(type="number", name="level" value=user.current_level min=0)
+                                //select(name="level")
                                     each level, index in levels
-                                        option(value=index selected=user.level===index)=index
-                                    //each level in levels
-                                        option(value=level.id selected=user.level===level)=level.level
+                                        option(value=level.id selected=user.current_level.equals(level.id))=level.level
                 .clearfix
                     input.button.hollow.secondary(type="submit", value="Save")

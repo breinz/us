@@ -2,8 +2,32 @@ import { Request, Response, NextFunction } from "express";
 import { validationResult } from "express-validator/check"
 import { User, UserModel } from "./model"
 import * as passport from "passport"
+import { Goal } from "../goal/model";
+import { Level } from "../level/model";
 
 export default {
+
+    getIndex: (req:Request, res: Response, next:NextFunction) => {
+        Promise.all([
+            Goal.find({ level: req.user.current_level }),
+            Level.findById(req.user.current_level)
+        ]).then(([goals, level]) => {
+            res.render("index", {
+                goals: goals,
+                level: level
+            })
+        }).catch(err => {
+            next(err)
+        })
+        /*Goal.find({level: req.user.current_level})
+            .then(goals => {
+                res.render("index", {
+                    goals: goals
+                })
+            }).catch(err => {
+                next(err)
+            })*/
+    },
 
     /**
      * GET /login
@@ -72,7 +96,7 @@ export default {
             return;
         }
 
-        // Create a user
+        
         const user = new User({
             login: req.body.login,
             email: req.body.email,

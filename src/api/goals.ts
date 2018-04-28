@@ -1,13 +1,15 @@
 import * as express from "express"
-import Levels from "../levels/model"
+import { Goal } from "../goal/model"
 
 var router = express.Router()
 
 router.get("/", (req, res, next) => {
-    Levels.find((err, levels) => {
+    Goal.find((err, goals) => {
         if (err) next(err)
-        res.send({levels: levels})
-    })
+        res.send({
+            goals: goals
+        })
+    }).sort("level")
 })
 
 export default router;

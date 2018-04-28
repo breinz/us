@@ -1,0 +1,18 @@
+extends ../../partials/admin/layout
+
+block content
+    .grid-x
+        .cell
+            h1 Edit goal
+        .cell.medium-6
+            form(method="POST")
+                .callout
+                    label Phrase
+                        input(type="text" name="phrase" value=goal.phrase autofocus)
+                    label Level
+                        br
+                        select(name="level")
+                            each level in levels
+                                option(value=level.id selected=goal.level.equals(level.id))=level.level
+                        //input(type="number", name="level" min=0 value=0)
+                input.button.hollow.secondary(type="submit", value="Save")
