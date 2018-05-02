@@ -138,6 +138,7 @@ app.get('/logout', userController.getLogout)
 // --------------------------------------------------
 // Game
 app.get('/join', gameController.join)
+app.get("/tmp_quit", gameController.tmp_quit)
 
 // **************************************************
 // MONGOOSE

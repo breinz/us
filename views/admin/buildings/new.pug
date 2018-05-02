@@ -1,0 +1,12 @@
+extends ../../partials/admin/layout
+
+block content
+    .grid-x
+        .cell
+            h1 New building
+        .cell.medium-6
+            form(method="POST")
+                .callout
+                    label Name
+                        input(type="text" name="name" autofocus)
+                input.button.hollow.secondary(type="submit", value="Create")

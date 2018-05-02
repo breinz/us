@@ -6,6 +6,9 @@ if (document.getElementById("user-lvl")) {
     lvl.init();
 }
 
+export let cell:Cell;
+
 if (document.getElementById("cell")) {
-    let cell = new Cell();
+    cell = new Cell();
 }
+

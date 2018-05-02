@@ -1,0 +1,19 @@
+extends ../../partials/admin/layout
+
+block content
+    .grid-x
+        .cell.small-6
+            h1 BUILDINGS
+        .cell.small-6.text-right
+            a.button.hollow.secondary.tiny(href="/admin/buildings/new") New building
+        .cell
+            .callout.small
+                table.unstriped.hover
+                    each building in buildings
+                        tr.light-gray
+                            td: b=c__(`buildings.${building.name}`)
+                            td.text-right
+                                +edit(href=`/admin/buildings/${building.id}/edit`)
+                                +delete(href=`/admin/buildings/${building.id}/delete`)
+                    else
+                        tr: td.text-center No building for now

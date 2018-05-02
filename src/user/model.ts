@@ -4,6 +4,7 @@ import { Document, Schema, model } from "mongoose"
 import { GoalModel, Goal, goalSchema } from "../goal/model";
 import { Level } from "../level/model";
 import { Game, GameModel } from "../game/model";
+import { CellModel, Cell } from "../cell/model";
 
 export type UserModel = Document & {
     login: string,
@@ -14,10 +15,13 @@ export type UserModel = Document & {
     current_level: mongoose.Types.ObjectId,
     goals: GoalModel[] & Document,
     currentGame: mongoose.Types.ObjectId,
+    currentCell: mongoose.Types.ObjectId,
+    team: number,
 
     validPassword: (candidatePassword: string, cb: (err: Error, isMatch: boolean) => void) => boolean,
     comparePasswords: (candidatePassword: string) => void,
-    addGoal: (goal: string, cb?: Function) => void
+    addGoal: (goal: string, cb?: Function) => void,
+    inGame: () => boolean
 }
 
 // Schema
@@ -28,7 +32,9 @@ const userSchema = new Schema({
     admin: { default: false, type: Boolean },
     current_level: {type: Schema.Types.ObjectId, ref: "Level"},
     goals: [goalSchema],
-    currentGame: {type: mongoose.Schema.Types.ObjectId, ref: "Game"}
+    currentGame: {type: mongoose.Schema.Types.ObjectId, ref: "Game"},
+    currentCell: {type: mongoose.Schema.Types.ObjectId, ref: "Cell"},
+    team: Number
 }, { timestamps: true })
 
 /**
@@ -110,7 +116,7 @@ userSchema.methods.addGoal = function (goal: string) {
  * Check if the user is in a game
  */
 userSchema.methods.inGame = function() {
-    return this.currentGame !== undefined
+    return this.currentGame !== undefined && this.currentGame !== null
 }
 
 /**
@@ -120,19 +126,22 @@ userSchema.methods.inGame = function() {
 userSchema.methods.joinGame = async function () {
     const user:UserModel = this;
 
-    let game:GameModel;
-    game = <GameModel>await Game.findOne({count_users: { $lt: 20 } }).exec()
-
-    if (!game) {
-        game = <GameModel>new Game()
-        game = await game.save()
-    }
+    let game:GameModel = await Game.findToJoin();
+    let cell:CellModel = await Cell.findToJoin(game.id)
 
     user.currentGame = game.id;
-    await user.save()
+    user.currentCell = cell.id;
+    user.team = cell.homeForTeam;
+
+    cell.joined++;
 
     game.count_users++
-    await game.save()
+
+    await Promise.all([
+        user.save(),
+        game.save(),
+        cell.save()
+    ])
 
     return game
 }
