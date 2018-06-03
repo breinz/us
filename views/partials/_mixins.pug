@@ -20,20 +20,31 @@ mixin inputError(field)
 mixin add_js()
     -var q = attributes['question']
     -delete attributes['question']
-    a.add-link(onclick=`javascript:var r = prompt('${q}');if (r!=null) window.location.href="${attributes['href']}?value="+r;return false;`)&attributes(attributes) &plus;
+    a.add-link(onclick=`javascript: var r = prompt('${q}');if (r!=null) window.location.href="${attributes['href']}?value="+r;return false;`)&attributes(attributes) &plus;
 
 mixin edit()
     a.edit-link(title="Edit")&attributes(attributes) &swArr;
 
 mixin delete()
-    a.delete-link(title="Delete" onclick="javascript:return confirm('"+__("admin.confirm")+"')")&attributes(attributes) &times;
+    a.delete-link(title="Delete" onclick="javascript: return confirm('"+__("admin.confirm")+"')")&attributes(attributes) &times;
 
 mixin delete_btn()
-    a.button.hollow.alert(onclick="javascript:return confirm('"+__("admin.confirm")+"')")&attributes(attributes)
+    a.button.hollow.alert(onclick="javascript: return confirm('"+__("admin.confirm")+"')")&attributes(attributes)
         ="Delete"
 
 mixin placeholder
     .placeholder-link &times;
+
+mixin item_img(x, y)
+    i.item_img(class=`bg-x${x} bg-y${y}`)
+
+mixin item_frequency(value)
+    if value===1
+        span: b &nearr;
+    if value===0
+        span="="
+    if value===-1
+        span: b &swarr;
 
 
 -function zero(v) {return v < 10 ? '0'+v : v;}

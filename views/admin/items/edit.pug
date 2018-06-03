@@ -1,0 +1,39 @@
+extends ../../partials/admin/layout
+
+block content
+    .grid-x
+        .cell
+            h1=item.name
+        .cell.medium-6
+            form(method="POST")
+                .callout
+                    label Name
+                        input(type="text" name="name" value=item.name autofocus)
+                    .grid-x.grid-margin-x
+                        .cell.small-6
+                            label x
+                                input(type="number" name="x" min=0 value=item.x)
+                        .cell.small-6
+                            label y
+                                input(type="number" name="y" min=0 value=item.y)
+                    label Weight
+                        div
+                            select(name="weight")
+                                option(value="1" selected=item.weight===1) Normal
+                                option(value="2" selected=item.weight===2) Heavy
+                                option(value="0" selected=item.weight===0) Light
+                    .grid-x.grid-margin-x
+                        .cell.small-4
+                            label Frequency
+                                input(type="number", name="frequency" value=item.frequency max=100)
+                        .cell.small-4
+                            label Frequency change
+                                div
+                                    select(name="frequency_change")
+                                        option(value=-1 selected=item.frequency_change===-1) Down
+                                        option(value=0 selected=item.frequency_change===0) Even
+                                        option(value=1 selected=item.frequency_change===1) Up
+                        .cell.small-4
+                            label Frequency limit
+                                input(type="number", name="frequency_limit" value=item.frequency_limit min=0 max=100)
+                input.button.hollow.secondary(type="submit", value="Save")

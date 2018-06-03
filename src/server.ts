@@ -1,7 +1,17 @@
-import config from './config'
+import config from './back/config'
+import app from './back/app'
+import socket from "./io"
 
-import app from './app'
+let server = require("http").createServer(app);
 
-app.listen(config.port, () => {
+socket.init(server)
+
+
+
+/*io.of('/pom').on("connection", () => {
+    console.log("client connected to 'pom'");
+})*/
+
+server.listen(config.port, () => {
     console.log(`Listening on ${config.port}`)
 })

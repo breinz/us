@@ -1,2 +1,11 @@
-#cell
-a.button.hollow.alert(href="/tmp_quit") Quit
+#cell(style="float: left;margin-right: 1em")
+#game-params(style="min-width: 200px")
+
+//.grid-x
+    .cell.small-6
+        #cell
+    .cell.small-6
+        #game-params
+        span=__("items.bottle")
+    .cell
+        a.button.hollow.alert(href="/tmp_quit") Quit

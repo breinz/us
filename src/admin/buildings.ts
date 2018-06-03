@@ -1,6 +1,6 @@
 import * as express from "express"
 import * as mongoose from "mongoose";
-import { Building, BuildingModel } from "../building/model";
+import { Building, BuildingModel } from "../back/building/model";
 
 let router = express.Router()
 
@@ -9,7 +9,7 @@ let router = express.Router()
  */
 router.get("/", (req, res, next) => {
     Building.find()
-        .then(buildings => {
+        .then((buildings: BuildingModel[]) => {
             res.render("admin/buildings/index", {
                 buildings: buildings
             })
@@ -73,7 +73,7 @@ router.get("/:buildingId/edit", async (req, res, next) => {
  */
 router.post("/:buildingId/edit", async (req, res, next) => {
     try {
-        let building:BuildingModel = <BuildingModel>await Building.findById(req.params.buildingId)
+        let building: BuildingModel = <BuildingModel>await Building.findById(req.params.buildingId)
 
         building.name = req.body.name
 

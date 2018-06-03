@@ -3,6 +3,7 @@ import user from "./users"
 import goals from "./goals"
 import levels from "./levels"
 import buildings from "./buildings"
+import items from "./items"
 
 const router = express.Router()
 
@@ -27,6 +28,7 @@ router.use(user);
 router.use("/goals", goals);
 router.use("/levels", levels)
 router.use("/buildings", buildings)
+router.use("/items", items)
 
 /**
  * Get /admin

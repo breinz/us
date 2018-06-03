@@ -1,7 +1,7 @@
 import * as express from "express"
-import { Goal, GoalModel } from "../goal/model"
 import * as mongoose from "mongoose";
-import { Level, LevelModel } from "../level/model";
+import { Goal, GoalModel } from "../back/goal/model";
+import { Level, LevelModel } from "../back/level/model";
 
 let router = express.Router()
 

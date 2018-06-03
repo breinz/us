@@ -1,6 +1,9 @@
 # Dist
 dist
 
+# Assets
+assets
+
 # Dependency directory
 node_modules
 

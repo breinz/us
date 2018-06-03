@@ -1,5 +1,5 @@
 import * as express from "express"
-import { Goal } from "../goal/model"
+import { Goal, GoalModel } from "../back/goal/model";
 
 var router = express.Router()
 

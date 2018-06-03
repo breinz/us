@@ -1,0 +1,35 @@
+extends ../../partials/admin/layout
+
+block content
+    .grid-x
+        .cell.small-6
+            h1 ITEMS
+        .cell.small-6.text-right
+            a.button.hollow.secondary.tiny(href="/admin/items/new") New item
+        .cell
+            .callout.small
+                table.unstriped.hover.table-scroll
+                    each item in items
+                        tr.light-gray
+                            td
+                                +item_img(item.x, item.y)
+                                b=c__(`items.${item.name}`)
+                            td
+                                if item.weight === 0
+                                    .label.success.small light
+                                else if item.weight === 2
+                                    .label.alert heavy
+                                else
+                                    .label.secondary normal
+                            td
+                                if item.frequency !== undefined
+                                    .label.secondary
+                                        small
+                                            span=item.frequency
+                                            +item_frequency(item.frequency_change)
+                                            span=item.frequency_limit
+                            td.text-right
+                                +edit(href=`/admin/items/${item.id}/edit`)
+                                +delete(href=`/admin/items/${item.id}/delete`)
+                    else
+                        tr: td.text-center No item for now

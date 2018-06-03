@@ -1,6 +1,7 @@
 import * as express from "express"
 import * as mongoose from "mongoose";
-import { Level } from "../level/model";
+//import { Level } from "../level/model";
+import { Level, LevelModel } from "../back/level/model";
 
 let router = express.Router()
 
@@ -51,7 +52,7 @@ router.get("/:levelId/edit", (req, res, next) => {
     Level.findById(req.params.levelId, (err, level) => {
         if (err) next(err)
         res.render("admin/levels/edit", {
-            level:level
+            level: level
         })
     })
 })

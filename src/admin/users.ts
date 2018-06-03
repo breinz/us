@@ -1,5 +1,5 @@
 import * as express from "express";
-import User, { UserModel } from "../user/model";
+import User, { UserModel } from "../back/user/model";
 
 var router = express.Router();
 
@@ -26,7 +26,7 @@ router.get('/users', (req, res, next) => {
  * One user
  */
 router.get('/users/:userId', (req, res, next) => {
-    User.findById(req.params.userId, (err, user:UserModel) => {
+    User.findById(req.params.userId, (err, user: UserModel) => {
         if (err) next(err)
 
         const bc = [
@@ -53,7 +53,7 @@ router.get("/users/:userId/edit", (req, res, next) => {
             User.findById(req.params.userId)
         ]
     ).then(values => {
-        let user:UserModel = <UserModel>(values[0]);
+        let user: UserModel = <UserModel>(values[0]);
 
         const bc = [
             ["Users", "/users"],
@@ -79,7 +79,7 @@ router.get("/users/:userId/edit", (req, res, next) => {
  * Edit a user
  */
 router.post("/users/:userId/edit", (req, res, next) => {
-    User.findById(req.params.userId, (err, user:UserModel) => {
+    User.findById(req.params.userId, (err, user: UserModel) => {
         if (err) next(err)
 
         user.login = req.body.login
@@ -102,7 +102,7 @@ router.post("/users/:userId/edit", (req, res, next) => {
  * Delete an user
  */
 router.get('/users/:userId/delete', (req, res, next) => {
-    User.findByIdAndRemove(req.params.userId, (err, doc) => {
+    User.findByIdAndRemove(req.params.userId, (err: any, doc: UserModel) => {
         if (err) next(err)
         res.redirect("/admin/users")
     })

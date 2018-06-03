@@ -1,5 +1,6 @@
 import * as express from "express"
-import { User } from "../user/model"
+import { User } from "../back/user/model"
+import { UserModel } from "../back/user/model";
 
 var router = express.Router()
 
@@ -10,7 +11,14 @@ router.get('/', (req, res, next) => {
     User.find((err, users) => {
         if (err) next(err)
         res.send({users: users })  
-    })
+    }).populate("items.item")
+})
+
+router.get("/me", (req, res, next) => {
+    User.findById(req.user.id, (err, user) => {
+        if (err) next(err)
+        res.send({user: user})
+    }).populate("items.item")
 })
 
 /**
