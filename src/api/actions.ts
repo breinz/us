@@ -308,4 +308,20 @@ router.post("/wakeup", async (req, res) => {
     return res.send({ success: true, pa: user.pa })
 })
 
+/**
+ * The user moved
+ * @param req.body.x Position x
+ * @param req.body.y Position y
+ */
+router.post("/move", async (req, res) => {
+    const user = req.user as UserModel;
+
+    user.x = req.body.x;
+    user.y = req.body.y;
+
+    await user.save()
+
+    return res.send({ success: true });
+})
+
 export default router;

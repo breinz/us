@@ -1,5 +1,6 @@
 import User from "./User";
 import { cell } from "../main";
+import Axios from "axios";
 
 export default class Move {
 
@@ -119,6 +120,11 @@ export default class Move {
                     this.callback()
                 }
                 cell.app.ticker.remove(this._move)
+
+                Axios.post("/api/actions/move", {
+                    x: Math.round(this.user.x),
+                    y: Math.round(this.user.y)
+                });
             }
         }
     }

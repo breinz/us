@@ -34,8 +34,8 @@ export default class User extends PIXI.Container {
         s.drawCircle(0, 0, 7)
         this.addChild(s)
 
-        this.x = 400;
-        this.y = 400;
+        this.x = cell.user_data.x;
+        this.y = cell.user_data.y;
 
         this.over = new PIXI.Graphics();
         this.over.beginFill(0, 0)

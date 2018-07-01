@@ -23,6 +23,8 @@ export type UserModel = Document & {
     goals: GoalModel[] & Document,
     currentGame: mongoose.Types.ObjectId,
     currentCell: mongoose.Types.ObjectId,
+    x: number,
+    y: number,
     team: number,
     /** Items owned by the user */
     items?: mongoose.Types.Array<UserItemModel> & Document,
@@ -83,6 +85,8 @@ const userSchema = new Schema({
     goals: [goalSchema], /** @todo shouldn't we use ObjectId instead */
     currentGame: { type: mongoose.Schema.Types.ObjectId, ref: "Game" },
     currentCell: { type: mongoose.Schema.Types.ObjectId, ref: "Cell" },
+    x: { type: Number, default: 400 },
+    y: { type: Number, default: 400 },
     team: Number,
     items: [{
         item: { type: mongoose.Schema.Types.ObjectId, ref: "Item" },
