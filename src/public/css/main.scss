@@ -404,8 +404,15 @@ table {
     }
 }
 
-.label.secondary {
-    a {
-        color: #FFF;
+.label {
+    &.secondary {
+        a {
+            color: #FFF;
+        }
+    }
+    &.alert {
+        a {
+            color: #FFF;
+        }
     }
 }

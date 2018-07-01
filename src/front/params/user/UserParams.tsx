@@ -7,6 +7,7 @@ import { TweenLite, Quint } from "gsap";
 import Item from "../../Item";
 import i18n from "../../i18n";
 import { cell } from "../../main";
+import Mode from "../../mode";
 
 class UserParams extends React.Component {
 
@@ -62,6 +63,9 @@ class UserParams extends React.Component {
             </div>;
         }
 
+        const mode = this.state.mode === 1 ? "fight" : "exploration"
+        const mode_class = this.state.mode === 1 ? "alert" : "secondary";
+
 
         return (
             <div className="box">
@@ -71,8 +75,8 @@ class UserParams extends React.Component {
                             <h3>{this.props.user.login} <span id="pa">{this.state.pa}PA</span></h3>
                         </div>
                         <div className="cell small-6 text-right">
-                            <div className="label secondary">
-                                <a href="#" onClick={this.switchMode.bind(this)}>{i18n.__("actions.exploration_mode")}</a>
+                            <div className={`label ${mode_class}`}>
+                                <a href="#" onClick={this.switchMode.bind(this)}>{i18n.__(`actions.${mode}_mode`)}</a>
                             </div>
                         </div>
                     </div>
@@ -161,12 +165,14 @@ class UserParams extends React.Component {
      * Switch mode
      */
     private switchMode() {
-        let mode = this.state.mode === 0 ? 1 : 0;
+        let mode = this.state.mode === Mode.EXPLORATION ? Mode.FIGHT : Mode.EXPLORATION;
         this.setState({
             mode: mode
         })
 
         Axios.post("/api/actions/switchMode", { mode: mode });
+
+        dispatcher.dispatch(dispatcher.SWITCH_MODE, mode)
     }
 
     private populateItems(weight: number): React.ReactElement<"a">[] {

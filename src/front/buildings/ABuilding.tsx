@@ -2,6 +2,7 @@ import IBuilding from "./IBuilding";
 import { BuildingData } from "./BuildingFactory";
 import dispatcher from "../dispatcher";
 import { cell } from "../main";
+import Mode from "../mode";
 
 class ABuilding implements IBuilding {
 
@@ -20,6 +21,8 @@ class ABuilding implements IBuilding {
      */
     protected container: PIXI.Container
 
+    private onClick_fct: () => void;
+
     /**
      * Params
      */
@@ -28,6 +31,8 @@ class ABuilding implements IBuilding {
     constructor(data: BuildingData, layer: PIXI.Container) {
         this.data = data;
         this.layer = layer;
+
+        this.onClick_fct = this.onClick.bind(this);
 
         this.drawBuilding(null)
     }
@@ -49,12 +54,13 @@ class ABuilding implements IBuilding {
         this.container.x = this.data.x;
         this.container.y = this.data.y;
 
-        this.container.interactive = true;
-        this.container.on("click", this.onClick.bind(this))
-
         this.layer.addChild(this.container)
 
         cell.grid.addObstacle(this.container)
+
+        dispatcher.on(dispatcher.SWITCH_MODE, this.onSwitchMode.bind(this))
+
+        this.onSwitchMode(cell.user_data.mode)
     }
 
     // **************************************************
@@ -65,7 +71,25 @@ class ABuilding implements IBuilding {
      * Click
      */
     private onClick(event: Event): void {
+        // Fight mode, don't select buildings
+        if (cell.user_controller.state.mode === 1) {
+            return
+        }
         dispatcher.dispatch(dispatcher.SELECT_BUILDING, this)
+    }
+
+    /**
+     * Switch mode
+     * @param mode Which mode we're entering 
+     */
+    private onSwitchMode(mode: number) {
+        if (mode === Mode.EXPLORATION) {
+            this.container.interactive = true;
+            this.container.on("click", this.onClick_fct)
+        } else {
+            this.container.interactive = false;
+            this.container.off("click", this.onClick_fct)
+        }
     }
 
 }

@@ -1,5 +1,7 @@
 class Dispatcher {
 
+    public SWITCH_MODE = "switch_mode";
+
     public SELECT_BUILDING = "selectBuilding";
     public SELECT_BACKGROUND = "selectBackground"
 
