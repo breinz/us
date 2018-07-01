@@ -8,7 +8,7 @@ import Map from "../map/Map";
 import * as React from "react"
 import { render } from "react-dom"
 import * as io from "socket.io-client"
-import UserParams from "../params/user/user_params"
+import UserParams from "../params/user/UserParams"
 import GameParams from "../params/game_params"
 import i18n from "../i18n"
 import { cell } from "../main";
