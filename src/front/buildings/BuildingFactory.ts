@@ -4,6 +4,7 @@
  */
 import Home from "./Home";
 import Well from "./Well";
+import ABuilding from "./ABuilding";
 
 export type BuildingData = {
     _id: string,
@@ -17,11 +18,11 @@ export type BuildingData = {
 
 class BuildingFactory {
 
-    private constructor () {
+    private constructor() {
 
     }
 
-    public static create(data: BuildingData, layer: PIXI.Container) {
+    public static create(data: BuildingData, layer: PIXI.Container): ABuilding {
         switch (data.building.name) {
             case "home":
                 return new Home(data, layer);

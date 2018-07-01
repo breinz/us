@@ -8,7 +8,7 @@ import { ItemModel } from "../item/model";
 // --------------------------------------------------
 // Type
 
-export type CellBuildingModel = Document & {
+export type CellBuildingModel = {
     building: mongoose.Types.ObjectId,
     x: number,
     y: number,
@@ -21,11 +21,7 @@ export type CellModel = Document & {
     y: number,
     homeForTeam?: number,
     joined?: number,
-    buildings?: [CellBuildingModel] & Document,
-    items: [{
-        _id: any,
-        item: ItemModel
-    }],
+    buildings?: mongoose.Types.Array<CellBuildingModel> & Document,
 
     isHome: () => boolean,
     findToJoin: (gameId: mongoose.Types.ObjectId) => CellModel
@@ -35,7 +31,7 @@ export type CellModel = Document & {
 // Schema
 
 export const CellBuildingSchema = new Schema({
-    building: {type: mongoose.Schema.Types.ObjectId, ref: "Building"},
+    building: { type: mongoose.Schema.Types.ObjectId, ref: "Building" },
     x: Number,
     y: Number,
     rations: Number
@@ -47,19 +43,18 @@ export const cellSchema = new Schema({
     y: Number,
     joined: Number,
     homeForTeam: Number,
-    buildings: [CellBuildingSchema],
-    items: [{type: mongoose.Schema.Types.ObjectId, ref: "Item" }]
+    buildings: [CellBuildingSchema]
 })
 
 // --------------------------------------------------
 // Methods
 
-cellSchema.pre("save", async function presave (next) {
+cellSchema.pre("save", async function presave(next) {
     let cell = <CellModel>this;
 
     if (cell.isNew) {
         if (cell.isHome()) {
-            let home = <BuildingModel>await Building.findOne({name: "home"})
+            let home = <BuildingModel>await Building.findOne({ name: "home" })
             cell.buildings.push(
                 <CellBuildingModel>{
                     building: home.id,
@@ -68,13 +63,13 @@ cellSchema.pre("save", async function presave (next) {
                 }
             )
 
-            let well = <BuildingModel>await Building.findOne({name: "well"})
+            let well = <BuildingModel>await Building.findOne({ name: "well" })
             cell.buildings.push(
                 <CellBuildingModel>{
                     building: well.id,
                     x: 225,
                     y: 200,
-                    rations: Math.round(Math.random()*25)+50
+                    rations: Math.round(Math.random() * 25) + 50
                 }
             )
 
@@ -100,7 +95,7 @@ cellSchema.methods.isHome = function () {
  * - has to have room for this new player to come
  */
 cellSchema.statics.findToJoin = async function (gameId: mongoose.Types.ObjectId) {
-    let cells = <CellModel[]>await Cell.find({ gameId: gameId, joined: { $lt : 4 } } )
+    let cells = <CellModel[]>await Cell.find({ gameId: gameId, joined: { $lt: 4 } })
     cells = <CellModel[]>shuffle(cells);
     return cells[0]
 }
@@ -108,6 +103,6 @@ cellSchema.statics.findToJoin = async function (gameId: mongoose.Types.ObjectId)
 // --------------------------------------------------
 // Model
 
-export const Cell = <Model<Document> & CellModel>model("Cell", cellSchema)
-export const CellBuilding = <Model<Document> & CellBuildingModel>model("CellBuilding", CellBuildingSchema)
+export const Cell = model("Cell", cellSchema) as Model<Document> & CellModel
+export const CellBuilding = model("CellBuilding", CellBuildingSchema) as Model<Document> & CellBuildingModel
 export default Cell

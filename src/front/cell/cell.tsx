@@ -2,7 +2,9 @@ import * as Pixi from "pixi.js"
 import axios from "axios"
 import BuildingFactory, { BuildingData } from "../buildings/BuildingFactory";
 import background from "./background"
-import dig from "../dig/Dig"
+import Dig from "../dig/Dig"
+import Debug from "./Debug"
+import Map from "../map/Map";
 import * as React from "react"
 import { render } from "react-dom"
 import * as io from "socket.io-client"
@@ -13,8 +15,10 @@ import { cell } from "../main";
 import dispatcher from "../dispatcher";
 import { ItemModel } from "../../back/item/model";
 import { UserModel } from "../../back/user/model";
+import User from "../user/User";
+import Grid from "./Grid";
 
-class Cell {
+export default class Cell {
 
     /**
      * Pixi application
@@ -42,9 +46,18 @@ class Cell {
     public items: ItemModel[]
 
     /**
+     * The user data
+     */
+    public user_data: UserModel
+
+    /**
      * The user
      */
-    public user: UserModel
+    public user: User;
+
+    public user_controller: UserParams;
+
+    public grid: Grid;
 
     constructor() {
         // Open the socket to the server
@@ -52,7 +65,7 @@ class Cell {
 
         Promise.all([
             // Get the translations
-            i18n.init(), 
+            i18n.init(),
             // Get the cell's data
             axios.get("/api/cell"),
             // get all the items
@@ -65,7 +78,7 @@ class Cell {
 
             this.items = items.data.items
 
-            this.user = user.data.user
+            this.user_data = user.data.user
 
             // Connect to the cell's socket
             this.socket.emit("cell_connection", this.data._id)
@@ -73,17 +86,15 @@ class Cell {
 
             this.init();
         })
-
-        dispatcher.on("onDig", this.onDig.bind(this))
     }
 
     /**
      * Initialize the cell
      */
-    private init = () => {
+    private init() {
         // --------------------------------------------------
         // Game
-        
+
         // Initialize the game
         Pixi.utils.skipHello();
         this.app = new Pixi.Application({
@@ -94,10 +105,14 @@ class Cell {
         })
         document.getElementById("cell").appendChild(this.app.view)
 
+        this.app.stage.interactive = true;
+
         // Draw the background
         background.init(this.app);
-        
-        // Draw the buildings
+
+        // --------------------------------------------------
+        // Buildings
+
         var buildings = new Pixi.Container();
         this.app.stage.addChild(buildings);
 
@@ -105,20 +120,49 @@ class Cell {
             BuildingFactory.create(building, buildings)
         });
 
+
+        // --------------------------------------------------
+        // User
+
+        this.user = new User();
+        this.user.init()
+        this.app.stage.addChild(this.user)
+
+        // --------------------------------------------------
+        // Grid
+
+        this.grid = new Grid()
+        this.app.stage.addChild(this.grid);
+
+        // --------------------------------------------------
+        // Dig
+
         // Prepare the dig layer
-        let dig_layer: PIXI.Container = new PIXI.Container();
-        this.app.stage.addChild(dig_layer)
-        dig.init(dig_layer, {width: this.app.view.width, height: this.app.view.height})
+        this.app.stage.addChild(new Dig());
+
+        // --------------------------------------------------
+        // Map
+
+        // Prepare the map layer
+        this.app.stage.addChild(new Map());
 
         // Draw the border around the cell
         this.drawBorder();
 
         // --------------------------------------------------
+        // Debug
+
+        this.app.stage.addChild(new Debug())
+
+        // --------------------------------------------------
         // UI
-        
+
         // Render ui
-        render(<UserParams user={this.user}/>, document.getElementById("user-params"))
-        render(<GameParams/>, document.getElementById("game-params"))
+        this.user_controller = render(
+            <UserParams user={this.user_data} />, document.getElementById("user-params")
+        ) as UserParams
+
+        render(<GameParams />, document.getElementById("game-params"))
     }
 
     /**
@@ -127,17 +171,15 @@ class Cell {
     private drawBorder = () => {
         let border = new PIXI.Graphics();
         border.lineStyle(1, 0xB6B6B6)
-        border.drawRect(0.5, 0.5, this.app.view.width-1, this.app.view.height-1)
+        border.drawRect(0.5, 0.5, this.app.view.width - 1, this.app.view.height - 1)
         this.app.stage.addChild(border)
     }
 
     /**
      * Dig
      */
-    private onDig() {
+    /*private onDig() {
         dig.start();
-    }
+    }*/
 
 }
-
-export default Cell

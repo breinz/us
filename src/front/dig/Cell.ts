@@ -1,7 +1,8 @@
 import { shuffle } from "../../helper";
-import dig from "./Dig";
+import Dig from "./Dig";
+//import dig from "./Dig";
 
-type directions = ("left"|"right"|"top"|"bottom")
+type directions = ("left" | "right" | "top" | "bottom")
 
 class Cell extends PIXI.Container {
 
@@ -10,24 +11,27 @@ class Cell extends PIXI.Container {
     private left: PIXI.Graphics;
     private top: PIXI.Graphics;
 
-    private dealed: boolean = false;
-    
+    private dealt: boolean = false;
+
     private maze_start: boolean = false;
     private maze_prev: Cell
 
     public size: number;
 
-    private n: {left: Cell, right: Cell, top: Cell, bottom: Cell} = {
+    private game: Dig;
+
+    private n: { left: Cell, right: Cell, top: Cell, bottom: Cell } = {
         left: null,
         right: null,
         top: null,
         bottom: null,
     }
 
-    constructor(size: number, x: number, y: number) {
+    constructor(size: number, x: number, y: number, game: Dig) {
         super()
 
         this.size = size;
+        this.game = game;
 
         this.right = new PIXI.Graphics();
         this.right.lineStyle(4, 0)
@@ -55,11 +59,11 @@ class Cell extends PIXI.Container {
     }
 
     public get centerx(): number {
-        return this.x + this.size/2
+        return this.x + this.size / 2
     }
 
     public get centery(): number {
-        return this.y + this.size/2
+        return this.y + this.size / 2
     }
 
     /**
@@ -90,9 +94,29 @@ class Cell extends PIXI.Container {
             return !this.top.visible
         } else if (this.neighbor("bottom") === cell) {
             return !this.bottom.visible
-        } else {
-            return false;
         }
+
+        // Special case : diagonal
+        if (this.neighbor("left") !== cell && this.neighbor("right") !== cell && this.neighbor("top") !== cell && this.neighbor("bottom") !== cell) {
+            if (this.neighbor("left") && this.neighbor("left").neighbor("top") === cell) {
+                console.log("left top");
+                return !this.left.visible && !this.neighbor("left").top.visible
+            }
+            if (this.neighbor("top") && this.neighbor("top").neighbor("right") === cell) {
+                console.log("top right");
+                return !this.top.visible && !this.neighbor("top").right.visible
+            }
+            if (this.neighbor("right") && this.neighbor("right").neighbor("bottom") === cell) {
+                console.log("right bottom");
+                return !this.right.visible && !this.neighbor("right").bottom.visible
+            }
+            if (this.neighbor("bottom") && this.neighbor("bottom").neighbor("left") === cell) {
+                console.log("bottom left");
+                return !this.bottom.visible && !this.neighbor("bottom").left.visible
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -105,7 +129,6 @@ class Cell extends PIXI.Container {
             if (this.neighbor(possible[i]) && this[possible[i]].visible) {
                 this[possible[i]].visible = false;
                 this.neighbor(possible[i])[this.opposite(possible[i])].visible = false;
-                console.log(possible[i]);
 
                 break;
             }
@@ -126,7 +149,7 @@ class Cell extends PIXI.Container {
         let possible: directions[] = shuffle(["left", "right", "top", "bottom"]) as directions[]
 
         for (let i = 0; i < possible.length; i++) {
-            if (this.neighbor(possible[i]) && !this.neighbor(possible[i]).dealed) {
+            if (this.neighbor(possible[i]) && !this.neighbor(possible[i]).dealt) {
                 return possible[i]
             }
         }
@@ -141,8 +164,8 @@ class Cell extends PIXI.Container {
     }
 
     private construct(): void {
-        const was_dealed = this.dealed
-        this.dealed = true;
+        const was_dealt = this.dealt
+        this.dealt = true;
         let next: directions = this.constructNext()
         if (next) {
             if (next === "left") {
@@ -161,8 +184,8 @@ class Cell extends PIXI.Container {
             this.neighbor(next).maze_prev = this;
             this.neighbor(next).construct()
         } else {
-            if (!was_dealed) {
-                dig.registerItemPlaceholder(this)
+            if (!was_dealt) {
+                this.game.registerItemPlaceholder(this)
             }
             if (!this.maze_prev.maze_start) {
                 this.maze_prev.construct();

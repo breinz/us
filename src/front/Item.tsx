@@ -4,7 +4,9 @@ import { ItemModel } from "../back/item/model";
 class Item extends React.Component {
 
     public props: {
-        data: ItemModel
+        item?: ItemModel | { x: number, y: number },
+        user_item?: { _id?: any, ammo?: number, item: ItemModel },
+        active?: boolean
     }
 
     constructor(props: ItemModel) {
@@ -12,10 +14,26 @@ class Item extends React.Component {
     }
 
     public render() {
-        let className = `item_img bg-x${this.props.data.x} bg-y${this.props.data.y}`
+
+        let className = `item_img bg-x${this.position.x} bg-y${this.position.y}`
+
+        if (this.props.active !== false) {
+            className += " active"
+        }
         return (
             <i className={className}></i>
         )
+    }
+
+    /**
+     * Get the position in the big items picture depending if we got an item or a user_item
+     */
+    private get position(): { x: number, y: number } {
+        var src = this.props.item;
+        if (this.props.user_item !== undefined) {
+            src = this.props.user_item.item
+        }
+        return { x: src.x, y: src.y }
     }
 }
 

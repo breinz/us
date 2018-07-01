@@ -11,7 +11,7 @@ class DigParams extends React.Component {
     public state: {
         time: number,
         items: any[],
-        buttons: React.ReactElement<"div">,
+        keepDigging_btn: React.ReactElement<"button">,
         tuto: React.ReactElement<"div">,
         tuto_items: React.ReactElement<"div">,
         tuto_button: React.ReactElement<"div">
@@ -21,27 +21,27 @@ class DigParams extends React.Component {
 
     private tuto: boolean
 
-    private onEndDig_fct: ()=>void
-    private onDigGrab_fct: ()=>void
-    private onDigFollowStart_fct: ()=>void
-    private onHitWall_fct: ()=>void
+    private onEndLevel_fct: () => void
+    private onDigRevealItem_fct: () => void
+    private onDigFollowStart_fct: () => void
+    private onHitWall_fct: () => void
 
     constructor(props: any) {
         super(props)
 
-        this.tuto = cell.user.tuto;
+        this.tuto = cell.user_data.tuto;
 
         this.state = {
             time: 45,
             items: [],
-            buttons: null,
-            tuto: <div className="tuto-box" dangerouslySetInnerHTML={{__html: i18n.__("tuto.dig.eye")}}/>,
+            keepDigging_btn: null,
+            tuto: <div className="tuto-box" dangerouslySetInnerHTML={{ __html: i18n.__("tuto.dig.eye") }} />,
             tuto_items: null,
             tuto_button: null
         }
 
-        this.onEndDig_fct = this.onEndDig.bind(this)
-        this.onDigGrab_fct = this.onDigGrab.bind(this)
+        this.onEndLevel_fct = this.onEndLevel.bind(this)
+        this.onDigRevealItem_fct = this.onDigRevealItem.bind(this)
         this.onDigFollowStart_fct = this.onDigFollowStart.bind(this)
         this.onHitWall_fct = this.onHitWall.bind(this)
     }
@@ -49,22 +49,24 @@ class DigParams extends React.Component {
     public componentDidMount() {
         this.timer = setInterval(this.updateTime.bind(this), 1000)
 
-        dispatcher.on("endDig", this.onEndDig_fct)
-        dispatcher.on("dig_grab", this.onDigGrab_fct)
-        dispatcher.on("dig_onFollowStart", this.onDigFollowStart_fct)
-        dispatcher.on("dig_onHitWall", this.onHitWall_fct)
+        dispatcher.on(dispatcher.DIG_END_LEVEL, this.onEndLevel_fct)
+        dispatcher.on(dispatcher.DIG_UNDIG_ITEM, this.onDigRevealItem_fct)
+        dispatcher.on(dispatcher.DIG_FOLLOW, this.onDigFollowStart_fct)
+        dispatcher.on(dispatcher.DIG_HIT_WALL, this.onHitWall_fct)
     }
 
     public componentWillUnmount() {
-        dispatcher.off("endDig", this.onEndDig_fct)
-        dispatcher.off("dig_grab", this.onDigGrab_fct)
-        dispatcher.off("dig_onFollowStart", this.onDigFollowStart_fct)
-        dispatcher.off("dig_onHitWall", this.onHitWall_fct)
+        clearInterval(this.timer);
+
+        dispatcher.off(dispatcher.DIG_END_LEVEL, this.onEndLevel_fct)
+        dispatcher.off(dispatcher.DIG_UNDIG_ITEM, this.onDigRevealItem_fct)
+        dispatcher.off(dispatcher.DIG_FOLLOW, this.onDigFollowStart_fct)
+        dispatcher.off(dispatcher.DIG_HIT_WALL, this.onHitWall_fct)
     }
 
     public render() {
         let items = this.state.items.map((item, index) => {
-            return <a href="#" onClick={()=>{this.onClickItem(item);return false;}} key={index}><Item data={item}/></a>
+            return <a href="#" onClick={() => { this.onClickItem(item); return false; }} key={index}><Item item={item} /></a>
         })
 
         return (
@@ -74,12 +76,17 @@ class DigParams extends React.Component {
                 {this.tuto ? this.state.tuto_items : null}
                 <div className="itemList">{items}</div>
                 {this.tuto ? this.state.tuto_button : null}
-                {this.state.buttons}
+                <div>
+                    {this.state.keepDigging_btn}
+                    <button className="button secondary hollow small" onClick={this.quitDig.bind(this)}>
+                        {i18n.__("actions.dig.stop")}
+                    </button>
+                </div>
             </div>
         )
     }
 
-    private onDigGrab(item: ItemModel): void {
+    private onDigRevealItem(item: ItemModel): void {
         this.state.items.push(item)
         this.forceUpdate();
     }
@@ -100,7 +107,7 @@ class DigParams extends React.Component {
             from: "dig",
             item: item
         }).then(res => {
-            dispatcher.dispatch("grabItem", item)
+            dispatcher.dispatch(dispatcher.UPDATE_BAG, res.data.bag)
         }).catch(err => {
             console.error("/api/actions/grabItem")
         })
@@ -111,19 +118,10 @@ class DigParams extends React.Component {
     /**
      * Reach the end of a dig
      */
-    private onEndDig(): void {
+    private onEndLevel(): void {
         this.setState({
-            buttons: 
-            <div>
-                    <button className="button success small" onClick={this.keepDigging.bind(this)}>
-                        {i18n.__("actions.dig.keep")}
-                    </button>
-            
-                    <button className="button secondary small" onClick={this.quitDig.bind(this)}>
-                        {i18n.__("actions.dig.stop")}
-                    </button>
-            
-            </div>,
+            keepDigging_btn: <button className="button success small" onClick={this.keepDigging.bind(this)} dangerouslySetInnerHTML={{ __html: i18n.__("actions.dig.keep") }}>
+            </button>,
             tuto: null,
             tuto_items: this.populate_tutoItems(),
             tuto_button: <div className="tuto-box">{i18n.__("tuto.dig.buttons")}</div>
@@ -138,10 +136,10 @@ class DigParams extends React.Component {
     }
 
     private keepDigging() {
-        dispatcher.dispatch("keepDigging")
+        dispatcher.dispatch(dispatcher.DIG_NEXT_LEVEL)
         this.setState({
-            buttons: null,
-            tuto: <div className="tuto-box" dangerouslySetInnerHTML={{__html: i18n.__("tuto.dig.eye")}}/>,
+            keepDigging_btn: null,
+            tuto: <div className="tuto-box" dangerouslySetInnerHTML={{ __html: i18n.__("tuto.dig.eye") }} />,
             tuto_items: null,
             tuto_button: null
         })
@@ -151,10 +149,8 @@ class DigParams extends React.Component {
      * Quit dig
      */
     private quitDig() {
-        axios.post("api/actions/dig/quit", {
-            items: this.state.items
-        })
-        dispatcher.dispatch("quitDig")
+        axios.post("api/actions/dig/quit")
+        dispatcher.dispatch(dispatcher.DIG_END)
     }
 
     /**
@@ -162,7 +158,7 @@ class DigParams extends React.Component {
      */
     private onDigFollowStart() {
         this.setState({
-            tuto: <div className="tuto-box" dangerouslySetInnerHTML={{__html: i18n.__("tuto.dig.game")}}/>
+            tuto: <div className="tuto-box" dangerouslySetInnerHTML={{ __html: i18n.__("tuto.dig.game") }} />
         })
     }
 
@@ -171,7 +167,7 @@ class DigParams extends React.Component {
      */
     private onHitWall() {
         this.setState({
-            tuto: <div className="tuto-box" dangerouslySetInnerHTML={{__html: i18n.__("tuto.dig.hitWall")}}/>
+            tuto: <div className="tuto-box" dangerouslySetInnerHTML={{ __html: i18n.__("tuto.dig.hitWall") }} />
         })
     }
 
@@ -181,17 +177,23 @@ class DigParams extends React.Component {
 
     private updateTime() {
         if (this.state.time === 0) {
-            clearInterval(this.timer)
+            this.quitDig();
+            /*if (cell.user_controller.usePA()) {
+                this.state.time = 46
+            } else {
+                console.log("quit")
+                clearInterval(this.timer)
+            }*/
             return
         }
-        this.setState({time: --this.state.time})
+        this.setState({ time: --this.state.time })
     }
 
     private populateTimer(): React.ReactElement<"div"> {
         if (this.tuto) {
-            return(
+            return (
                 <div className="grid-x">
-                    <div className="cell small-5" style={{paddingTop:"5px"}}>
+                    <div className="cell small-5" style={{ paddingTop: "5px" }}>
                         <div className="bignum">
                             <div className="num">{this.formatTime()}</div>
                         </div>
@@ -211,8 +213,8 @@ class DigParams extends React.Component {
     }
 
     private formatTime(): string {
-        const mn = Math.floor(this.state.time/60)
-        const sc = this.state.time - mn*60
+        const mn = Math.floor(this.state.time / 60)
+        const sc = this.state.time - mn * 60
         return this.zero(mn) + ':' + this.zero(sc)
     }
 
@@ -220,7 +222,7 @@ class DigParams extends React.Component {
         if (value < 10) {
             return "0" + value
         }
-        return ""+value
+        return "" + value
     }
 }
 

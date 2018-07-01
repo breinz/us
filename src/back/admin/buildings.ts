@@ -1,6 +1,6 @@
 import * as express from "express"
 import * as mongoose from "mongoose";
-import { Building, BuildingModel } from "../back/building/model";
+import { Building, BuildingModel } from "../building/model";
 
 let router = express.Router()
 

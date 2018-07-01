@@ -1,7 +1,7 @@
 import * as express from "express"
 import * as mongoose from "mongoose";
 //import { Item, ItemModel } from "../item/model";
-import { Item, ItemModel } from "../back/item/model";
+import { Item, ItemModel } from "../item/model";
 
 let router = express.Router()
 

@@ -7,47 +7,108 @@ import { Game, GameModel } from "../game/model";
 import { CellModel, Cell } from "../cell/model";
 import { ItemModel } from "../item/model";
 
+export type UserItemModel = {
+    _id?: any,
+    ammo?: number,
+    item: ItemModel
+}
+
 export type UserModel = Document & {
     login: string,
     email: string,
     password: string,
-    admin: Boolean,
+    admin: boolean,
     email_was: string,
     current_level: mongoose.Types.ObjectId,
     goals: GoalModel[] & Document,
     currentGame: mongoose.Types.ObjectId,
     currentCell: mongoose.Types.ObjectId,
     team: number,
-    items?: [{
-        _id?: any,
-        item: ItemModel
-    }] /* & Document */,
-    dig_count: number,
+    /** Items owned by the user */
+    items?: mongoose.Types.Array<UserItemModel> & Document,
+    dig: {
+        /** 
+         * How pa are used while digging 
+         * - 1 is normal
+         * - 2 is slower (less pa)
+         */
+        pa: number,
+        /** How many dig sessions started */
+        count: number,
+        /** How many levels done */
+        level_count: number,
+        /** How many walls hit */
+        hitWall_count: number,
+        /** How many items revealed */
+        revealItem_count: number,
+        /** Params for THIS GAME ONLY */
+        current: {
+            /** How many dig sessions started during this game */
+            count: number,
+            /** How many levels done during this game */
+            level_count: number,
+            /** How many walls hit during this game */
+            hitWall_count: number,
+            /** How many items revealed during this game */
+            revealItem_count: number
+        }
+    },
+    rest: {
+        /** At what time (timstamp) did you go to sleep (in ms) */
+        at: number,
+        /** What was your pa when you went to sleep */
+        pa: number,
+        /** Where do you sleep (bed: speed=5, outside: speed=0) */
+        speed: number,
+    }
+    /** Display tutorials or not */
     tuto: boolean,
+    /** Number of Action Points */
+    pa: number,
 
     validPassword: (candidatePassword: string, cb: (err: Error, isMatch: boolean) => void) => boolean,
     comparePasswords: (candidatePassword: string) => void,
     addGoal: (goal: string, cb?: Function) => void,
     inGame: () => boolean,
-    hasItem: (name: ItemModel) => boolean
+    hasItem: (name: ItemModel | String) => mongoose.Types.ObjectId
 }
 
 // Schema
 const userSchema = new Schema({
     login: { type: String },
-    email: {type: String, unique: true},
+    email: { type: String, unique: true },
     password: String,
     admin: { default: false, type: Boolean },
-    current_level: {type: Schema.Types.ObjectId, ref: "Level"},
+    current_level: { type: Schema.Types.ObjectId, ref: "Level" },
     goals: [goalSchema], /** @todo shouldn't we use ObjectId instead */
-    currentGame: {type: mongoose.Schema.Types.ObjectId, ref: "Game"},
-    currentCell: {type: mongoose.Schema.Types.ObjectId, ref: "Cell"},
+    currentGame: { type: mongoose.Schema.Types.ObjectId, ref: "Game" },
+    currentCell: { type: mongoose.Schema.Types.ObjectId, ref: "Cell" },
     team: Number,
     items: [{
-        item: {type: mongoose.Schema.Types.ObjectId, ref: "Item"}
+        item: { type: mongoose.Schema.Types.ObjectId, ref: "Item" },
+        ammo: Number
     }],
-    dig_count: Number,
-    tuto: Boolean
+    //dig_count: Number,
+    dig: {
+        pa: { type: Number, default: 1 },
+        current: {
+            count: { type: Number, default: 0 },
+            level_count: { type: Number, default: 0 },
+            hitWall_count: { type: Number, default: 0 },
+            revealItem_count: { type: Number, default: 0 }
+        },
+        count: { type: Number, default: 0 },
+        level_count: { type: Number, default: 0 },
+        hitWall_count: { type: Number, default: 0 },
+        revealItem_count: { type: Number, default: 0 }
+    },
+    rest: {
+        at: Number,
+        pa: Number,
+        speed: Number,
+    },
+    tuto: Boolean,
+    pa: Number
 }, { timestamps: true })
 
 /**
@@ -72,7 +133,7 @@ userSchema.pre("save", function save(next) {
     // Initialize the user in the game
     if (user.isNew) {
         Promise.all([
-            Level.findOne({level: 0}),
+            Level.findOne({ level: 0 }),
             user.addGoal("register")
         ]).then(([level, u]) => {
             user.current_level = level.id;
@@ -100,7 +161,7 @@ userSchema.methods.validPassword = function (candidatePassword: string, cb: Func
 userSchema.methods.addGoal = function (goal: string, cb: Function) {
     const user: UserModel = <UserModel>this;
 
-    Goal.findOne({phrase: goal}, (err, res: GoalModel) => {
+    Goal.findOne({ phrase: goal }, (err, res: GoalModel) => {
         if (err) cb(err)
         if (res == null) cb(new Error(`Goal '${goal}' doesn't exist`))
         user.goals.push(res)
@@ -111,7 +172,7 @@ userSchema.methods.addGoal = function (goal: string) {
     const user: UserModel = this;
 
     return new Promise(function (resolve, reject) {
-        Goal.findOne({phrase: goal}, (err, res: GoalModel) => {
+        Goal.findOne({ phrase: goal }, (err, res: GoalModel) => {
             if (err) reject(err)
             if (res == null) reject(`Goal '${goal}' doesn't exist`)
             user.goals.push(res)
@@ -124,7 +185,7 @@ userSchema.methods.addGoal = function (goal: string) {
  * @todo
  * Check if the user is in a game
  */
-userSchema.methods.inGame = function() {
+userSchema.methods.inGame = function () {
     return this.currentGame !== undefined && this.currentGame !== null
 }
 
@@ -141,7 +202,6 @@ userSchema.methods.joinGame = async function () {
     user.currentGame = game.id;
     user.currentCell = cell.id;
     user.team = cell.homeForTeam;
-    user.dig_count = 0;
 
     cell.joined++;
 
@@ -160,18 +220,26 @@ userSchema.methods.joinGame = async function () {
  * Does that user have an item
  * @param name Item name
  */
-userSchema.methods.hasItem = function (item: ItemModel) {
+userSchema.methods.hasItem = function (item: ItemModel | String): mongoose.Types.ObjectId {
     const user: UserModel = this;
 
     let has;
     for (let itemId = 0; itemId < user.items.length; itemId++) {
         has = user.items[itemId];
-        if (has.item.equals(item._id)) {
-            return true;
+        if (item.hasOwnProperty("_id")) {
+            if (has.item.equals((item as ItemModel)._id)) {
+                return has._id;
+            }
+        } else {
+            if (has.item.name === item) {
+                return has._id
+            }
         }
     }
 
-    return false;
+
+
+    return null;
 }
 
 export const User = model("User", userSchema) as mongoose.Model<Document> & UserModel

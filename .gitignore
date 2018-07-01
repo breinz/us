@@ -14,5 +14,8 @@ Thumbs.db
 # Config
 .env
 
+#VS
+.vscode
+
 #Logs
 npm-debug.log

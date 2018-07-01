@@ -26,7 +26,7 @@ router.get('/', (req, res) => {
 
 router.get("/game", async (req, res) => {
     const user = <UserModel>req.user;
-    if (!user.inGame()) res.send({error:'notInGame'})
+    if (!user.inGame()) res.send({ error: 'notInGame' })
 
     let game = await Game.findById(user.currentGame)
         .populate({
@@ -35,17 +35,17 @@ router.get("/game", async (req, res) => {
                 path: "buildings.building"
             }
         }
-    )
+        )
 
-    res.send({currentGame: game})
+    res.send({ currentGame: game })
 })
 
 router.get("/cell", async (req, res) => {
     const user = <UserModel>req.user;
-    if (!user.inGame()) res.send({error:'notInGame'})
+    if (!user.inGame()) res.send({ error: 'notInGame' })
 
     let cell = await Cell.findById(user.currentCell)
-        .populate("buildings.building")
+        .populate("buildings.building").populate("items")
 
     res.send(cell)
 })
@@ -65,7 +65,7 @@ router.get('/i18n', (req, res) => {
  */
 router.get('/items', async (req, res) => {
     let items = await Item.find()
-    res.send({items: items})
+    res.send({ items: items })
 })
 
 export default router

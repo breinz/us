@@ -1,10 +1,11 @@
 import Cell from "./Cell";
-import {Dig} from "./Dig";
+import Dig from "./Dig";
 import { TweenLite, TimelineMax, Quint, Linear } from "gsap";
 import { cell } from "../main";
 import { RAD_TO_DEG } from "pixi.js";
 import Item from "./Item";
 import dispatcher from "../dispatcher";
+import Axios from "axios";
 
 class User extends PIXI.Container {
 
@@ -18,25 +19,22 @@ class User extends PIXI.Container {
     private cell: Cell
     private start_cell: Cell
 
-    private mouseOver_fct:()=>void
-    private follow_fct:()=>void
-    private mouseMove_fct:()=>void
-    private checkGrab_fct:()=>void
+    private mouseOver_fct: () => void
+    private follow_fct: () => void
+    private mouseMove_fct: () => void
+    private checkRevealItem_fct: () => void
 
-    private mouse_pos:{x: number, y: number}
+    private mouse_pos: { x: number, y: number }
 
-    constructor(game: Dig, cell: Cell) {
+    constructor(game: Dig) {
         super()
 
         this.game = game;
-        
-        this.cell = cell;
-        this.start_cell = cell;
 
         this.mouseOver_fct = this.onMouseOver.bind(this)
         this.follow_fct = this.follow.bind(this)
         this.mouseMove_fct = this.onMouseMove.bind(this)
-        this.checkGrab_fct = this.checkGrab.bind(this)
+        this.checkRevealItem_fct = this.checkRevealItem.bind(this)
 
         this.init();
     }
@@ -44,14 +42,24 @@ class User extends PIXI.Container {
     private init(): void {
 
         this.drawUser();
-        
-        this.x = this.cell.x + this.cell.size/2;
-        this.y = this.cell.y + this.cell.size/2;
-
-        this.mouse_pos = {x: this.x, y: this.y}
 
         this.interactive = true;
         this.on("mouseover", this.mouseOver_fct)
+    }
+
+    /**
+     * Make the user appear on a cell
+     */
+    public spawn(cell: Cell) {
+        this.cell = cell;
+        this.start_cell = cell;
+
+        this.x = this.cell.x + this.cell.size / 2;
+        this.y = this.cell.y + this.cell.size / 2;
+
+        this.mouse_pos = { x: this.x, y: this.y }
+
+        this.visible = true;
     }
 
     private drawUser() {
@@ -114,12 +122,12 @@ class User extends PIXI.Container {
     /**
      * onMouseOver
      */
-    private onMouseOver():void {
+    private onMouseOver(): void {
         this.following = true;
-        dispatcher.dispatch("dig_onFollowStart")
+        dispatcher.dispatch(dispatcher.DIG_FOLLOW)
     }
 
-    private onMouseMove(e: PIXI.interaction.InteractionEvent):void {
+    private onMouseMove(e: PIXI.interaction.InteractionEvent): void {
         this.mouse_pos = e.data.global;
     }
 
@@ -127,21 +135,20 @@ class User extends PIXI.Container {
         if (value) {
             this.off("mouseover", this.mouseOver_fct)
 
-            cell.app.stage.interactive = true
             cell.app.stage.on("mousemove", this.mouseMove_fct)
 
             cell.app.ticker.add(this.follow_fct)
-            cell.app.ticker.add(this.checkGrab_fct)
+            cell.app.ticker.add(this.checkRevealItem_fct)
         } else {
             // Replace the user in start_cell
-            this.x = this.start_cell.x + this.start_cell.size/2;
-            this.y = this.start_cell.y + this.start_cell.size/2;
+            this.x = this.start_cell.x + this.start_cell.size / 2;
+            this.y = this.start_cell.y + this.start_cell.size / 2;
             this.cell = this.start_cell;
 
             cell.app.stage.off("mousemove", this.mouseMove_fct)
 
             cell.app.ticker.remove(this.follow_fct)
-            cell.app.ticker.remove(this.checkGrab_fct)
+            cell.app.ticker.remove(this.checkRevealItem_fct)
 
             this.on("mouseover", this.mouseOver_fct)
 
@@ -151,49 +158,50 @@ class User extends PIXI.Container {
     }
     private follow(d: number, reinit: boolean = false) {
 
-        let angle = Math.atan2(this.mouse_pos.y - this.y, this.mouse_pos.x-this.x)
-        
+        let angle = Math.atan2(this.mouse_pos.y - this.y, this.mouse_pos.x - this.x)
+
         let dist = Math.abs(this.mouse_pos.y - this.y) + Math.abs(this.mouse_pos.x - this.x)
         if (reinit) {
             dist = 0
         }
 
-        this.pupil.x = Math.cos(angle)*Math.min(dist*13/100, 13)
-        this.pupil.y = Math.sin(angle)*Math.min(dist*13/100, 13)
+        this.pupil.x = Math.cos(angle) * Math.min(dist * 13 / 100, 13)
+        this.pupil.y = Math.sin(angle) * Math.min(dist * 13 / 100, 13)
 
-        this.pupil.scale = new PIXI.Point(1- Math.min(dist*0.3/100, .3), 1)
+        this.pupil.scale = new PIXI.Point(1 - Math.min(dist * 0.3 / 100, .3), 1)
         this.pupil.rotation = angle
 
-        this.shadow.x = Math.cos(angle)*Math.min(dist*14/100, 14)
-        this.shadow.y = Math.sin(angle)*Math.min(dist*14/100, 14)
+        this.shadow.x = Math.cos(angle) * Math.min(dist * 14 / 100, 14)
+        this.shadow.y = Math.sin(angle) * Math.min(dist * 14 / 100, 14)
 
-        this.blood.x = Math.cos(angle)*Math.min(dist*20/300, 20)
-        this.blood.y = Math.sin(angle)*Math.min(dist*20/300, 20)
+        this.blood.x = Math.cos(angle) * Math.min(dist * 20 / 300, 20)
+        this.blood.y = Math.sin(angle) * Math.min(dist * 20 / 300, 20)
 
         let speed = 50;
         /** @todo Special ability */
         // speed = 30
 
-        this.x += (this.mouse_pos.x - this.x)/speed;
-        this.y += (this.mouse_pos.y - this.y)/speed;
+        this.x += (this.mouse_pos.x - this.x) / speed;
+        this.y += (this.mouse_pos.y - this.y) / speed;
 
         if (!reinit) {
             this.checkCollision();
+            dispatcher.dispatch(dispatcher.DIG_USER_MOVED, this.x, this.y)
         }
 
-        dispatcher.dispatch("dig_userMoved", this.x, this.y)
     }
 
-    private checkGrab() {
+    private checkRevealItem() {
         let item: Item
         for (let index = 0; index < this.game.arItems.length; index++) {
             item = this.game.arItems[index];
-            if (Math.abs(this.x-item.x) < 20 && Math.abs(this.y-item.y) < 20) {
-                item.grab()
+            if (Math.abs(this.x - item.x) < 20 && Math.abs(this.y - item.y) < 20) {
+                Axios.post("/api/actions/dig/revealItem")
+                item.reveal()
             }
         }
 
-        if (Math.abs(this.x-this.game.end.x) < 20 && Math.abs(this.y-this.game.end.y) < 20) {
+        if (Math.abs(this.x - this.game.end.x) < 20 && Math.abs(this.y - this.game.end.y) < 20) {
             this.following = false
             this.game.reachEnd()
         }
@@ -213,7 +221,8 @@ class User extends PIXI.Container {
 
     private hitWall() {
         this.following = false;
-        dispatcher.dispatch("dig_onHitWall")
+        dispatcher.dispatch(dispatcher.DIG_HIT_WALL)
+        Axios.post("/api/actions/dig/hitWall")
     }
 
     /**
@@ -225,7 +234,7 @@ class User extends PIXI.Container {
         cell.app.stage.off("mousemove", this.mouseMove_fct)
 
         cell.app.ticker.remove(this.follow_fct)
-        cell.app.ticker.remove(this.checkGrab_fct)
+        cell.app.ticker.remove(this.checkRevealItem_fct)
 
         this.parent.removeChild(this)
     }

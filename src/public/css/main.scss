@@ -255,6 +255,17 @@ table {
     padding: 5px;
 }
 
+.error-box {
+    display: block;
+    margin: 10px 0;
+    font-size: 0.9rem;
+    background-color: rgb(255, 202, 202);
+    border: 1px solid $black;
+    border-left-width: 4px;
+    color: $black;
+    padding: 5px;
+}
+
 #user-lvl {
     margin-right: 35px;
 }
@@ -275,7 +286,7 @@ table {
     /*border: 1px solid #999;
     background-color: #EEE;*/
 
-    &:hover {
+    &.active:hover {
         border: 1px solid #666;
         background-color: #CCC;
     }
@@ -291,6 +302,8 @@ table {
     //margin-right: 5px;
     vertical-align: middle;
     //border: 1px solid transparent;    
+    margin-top: -5px;
+    margin-bottom: -4px;
 }
 
 @for $i from 0 through 10 {
@@ -334,18 +347,33 @@ table {
     margin-left: calc(50% - 560px);
     width: 1120px;
     background-color: red;
-    margin-top: 10px;
+    margin-top: 30px;
 
     .box {
         border: 1px solid #B6B6B6;
         width: 100%;
         height: 100%;
         overflow-y: scroll;
+        position: relative;
         //padding: 10px;
 
-        >div {
+        >div:not(#pa-bar) {
             padding: 10px;
         }
+
+        #pa-bar {
+            position: absolute;
+            bottom: 0;
+            height: 5px;
+            width: 100%;
+            
+            #bar {
+                width: 75%;
+                height: 5px;
+                background-color: #B6B6B6;
+            }
+        }
+
     }
 
     #chat {

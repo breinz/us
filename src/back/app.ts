@@ -10,7 +10,7 @@ import * as bodyParser from "body-parser"
 import * as session from "express-session"
 import * as i18n from "i18n"
 import apiRouter from "../api"
-import adminRouter from "../admin"
+import adminRouter from "../back/admin"
 import * as passport from "passport"
 import * as passport_config from "./user/passport"
 import * as capitalize from "capitalize"
@@ -62,7 +62,7 @@ app.use(session({
     /*cookie: { 
         maxAge: 1000*60*60*24*30
     }*/
-    store: new ms({ttl: 1000*60*60*24*30})
+    store: new ms({ ttl: 1000 * 60 * 60 * 24 * 30 })
 }))
 
 // --------------------------------------------------
@@ -90,25 +90,6 @@ app.use((req, res, next) => {
 // Routes
 app.use("/api", apiRouter)
 app.use("/admin", adminRouter)
-
-// **************************************************
-// TEMP
-// **************************************************
-
-/*app.use((req, res, next) => {
-    console.log("poooom");
-    User.find((err, users) => {
-        if (err) next(err)
-        users.forEach((user: UserModel) => {
-            user.depopulate("current_level")
-            //user.goals = [];
-            user.save();
-        });
-        setTimeout(() => {
-            next()
-        }, 1000);
-    })
-})*/
 
 // **************************************************
 // ROUTES

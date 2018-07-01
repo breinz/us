@@ -30,7 +30,7 @@ class Background {
     }
 
     private onClick(e: Event) {
-        dispatcher.dispatch("selectBackground")
+        dispatcher.dispatch(dispatcher.SELECT_BACKGROUND)
     }
 }
 

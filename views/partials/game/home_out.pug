@@ -5,13 +5,13 @@
             h1=`Level ${level.level}`
             .callout.small
                 table.unstriped.hover(style="width: 100%")
-                    -var goals_archieved = 0
+                    -var goals_achieved = 0
                     each goal, index in goals
                         tr(id=`goal${index}`)
                             th!=__(`goals.${goal.phrase}`)
-                            each archieved in me.goals
-                                if archieved.equals(goal)
-                                    -goals_archieved++
+                            each achieved in me.goals
+                                if achieved.equals(goal)
+                                    -goals_achieved++
                                     th.success.text-center &check;
                                 else
                                     th
@@ -23,4 +23,4 @@
 script(type="text/javascript").
     var l = #{level},
         g = #{goals.length},
-        a = #{goals_archieved};
+        a = #{goals_achieved};

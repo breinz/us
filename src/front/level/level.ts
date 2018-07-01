@@ -20,10 +20,10 @@ class Lvl {
     private goals: number;
 
     /**
-     * Number of archieved goals
+     * Number of achieved goals
      * @see a
      */
-    private archieved: number;
+    private achieved: number;
 
     /**
      * Current level
@@ -71,7 +71,7 @@ class Lvl {
         })
         document.getElementById("user-lvl").appendChild(this.app.view)
 
-        this.archieved = a;
+        this.achieved = a;
         this.level = l;
         this.goals = g;
 
@@ -128,8 +128,8 @@ class Lvl {
             e = this.elements[index];
 
             e.clear();
-            //e.beginFill(Lvl.colors[this.level], index < this.archieved ? 1 : 0)
-            e.beginFill(index < this.archieved ? this.level.color : 0xEEEEEE)
+            //e.beginFill(Lvl.colors[this.level], index < this.achieved ? 1 : 0)
+            e.beginFill(index < this.achieved ? this.level.color : 0xEEEEEE)
             e.lineStyle(.5, 0x707070, .5)
 
             dax = this.center[0]+h.cos(angle)    *this.level.innerDist

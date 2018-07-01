@@ -14,7 +14,12 @@
     "watch": "concurrently -k -p \"[{name}]\" -n \"TypeScript,Node,Sass,Browser\" -c \"yellow.bold,cyan.bold,blue.bold,green.bold\" \"npm run watch-ts\" \"npm run watch-node\" \"npm run watch-sass\" \"npm run watch-browser\""
   },
   "nodemonConfig": {
-    "ignore": ["*.json", "**/*.json", "**/*.map", "dist/public/js/main.js"],
+    "ignore": [
+      "*.json",
+      "**/*.json",
+      "**/*.map",
+      "dist/public/js/main.js"
+    ],
     "verbose": false
   },
   "author": "Julien Breiner",
@@ -35,6 +40,7 @@
     "mongoose": "^5.0.13",
     "passport": "^0.4.0",
     "passport-local": "^1.0.0",
+    "pathfinding": "^0.4.18",
     "pixi.js": "^4.7.3",
     "pug": "^2.0.3",
     "react": "^16.3.2",
@@ -54,6 +60,7 @@
     "@types/mongoose": "^5.0.9",
     "@types/passport": "^0.4.4",
     "@types/passport-local": "^1.0.33",
+    "@types/pathfinding": "0.0.2",
     "@types/pixi.js": "^4.7.2",
     "@types/react": "^16.3.13",
     "@types/react-dom": "^16.0.5",

@@ -44,12 +44,19 @@ class Io {
 
         const io = this.io;
 
+        // --------------------------------------------------
         // Allow connections to that cell
+        // --------------------------------------------------
+
         this.io.of(`/${cellId}`).on("connection", (cellSocket: Socket) => {
             //console.log(`client connected to cell ${cellId}`);
 
             cellSocket.on("getWater", (params) => {
                 io.of(`/${cellId}`).emit("gotWater", params)
+            })
+
+            cellSocket.on("addWater", (params) => {
+                io.of(`/${cellId}`).emit("addedWater", params)
             })
         })
 

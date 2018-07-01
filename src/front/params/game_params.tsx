@@ -1,67 +1,45 @@
 import * as React from "react"
 import dispatcher from "../dispatcher"
-import {capitalize} from "underscore.string"
+import { camelize, capitalize } from "underscore.string"
 import i18n from "../i18n"
-import Zone from "./buildings/Zone"
-import Well from "./buildings/Well"
-import House from "./buildings/House"
+import Zone from "./Zone"
 import { BuildingData } from "../buildings/BuildingFactory";
 import { cell } from "../main"
 import DigParams from "./DigParams";
-
-type StateType = {
-    title: string,
-    component: any
-}
+import Map from "./Map";
+import ABuilding from "../buildings/ABuilding";
+import { ItemModel } from "../../back/item/model";
+import ItemParams from "./ItemParams"
+import { UserItemModel } from "../../back/user/model";
 
 class GameParams extends React.Component {
 
-    state: StateType = {
-        title: "Zone",
-        component: <Zone/>
+    public state: {
+        title: string,
+        component: any
     }
 
-    componentDidMount() {
-        this.state.title = "Zone"
-        dispatcher.on("selectBuilding", this.onSelectBuilding.bind(this))
-        dispatcher.on("selectBackground", this.onSelectBackground.bind(this))
-        dispatcher.on("onDig", this.onDig.bind(this))
-    }
+    constructor(props: {}) {
+        super(props)
 
-    /**
-     * Select building
-     * @param data BuildingData
-     */
-    private onSelectBuilding(data: BuildingData) {
-        this.setState({title: capitalize(i18n.__(`buildings.${data.building.name}`))})
-        switch (data.building.name) {
-            case "home":
-                this.setState({component: <House data={data}/>})
-                break;
-            case "well":
-                this.setState({component: <Well rations={data.rations} id={data._id}/>})
-                break;
+        this.state = {
+            title: "Zone",
+            component: <Zone />
         }
     }
 
-    /**
-     * Select background
-     */
-    private onSelectBackground() {
-        this.setState({title: "Zone"})
-        this.setState({component: <Zone/>})
-    }
-
-    /**
-     * On dig
-     */
-    private onDig() {
-        this.setState({title: i18n.__("actions.dig.title"), data: {action:"dig"}})
-        this.setState({component: <DigParams/>})
+    public componentDidMount() {
+        dispatcher.on(dispatcher.SELECT_BUILDING, this.onSelectBuilding.bind(this))
+        dispatcher.on(dispatcher.SELECT_BACKGROUND, this.onSelectBackground.bind(this))
+        dispatcher.on(dispatcher.DIG, this.onDig.bind(this))
+        dispatcher.on(dispatcher.DIG_END, this.onQuitDig.bind(this))
+        dispatcher.on(dispatcher.SHOW_MAP, this.onShowMap.bind(this))
+        dispatcher.on(dispatcher.HIDE_MAP, this.onHideMap.bind(this))
+        dispatcher.on(dispatcher.SELECT_ITEM, this.onSelectItem.bind(this))
     }
 
     public render() {
-        return(
+        return (
             <div className="box">
                 <div>
                     <h3>{this.state.title}</h3>
@@ -70,7 +48,71 @@ class GameParams extends React.Component {
             </div>
         )
     }
-    
+
+    /**
+     * Select building
+     * @param data BuildingData
+     */
+    private onSelectBuilding(building: ABuilding) {
+
+        this.setState({
+            title: capitalize(i18n.__(`buildings.${building.data.building.name}`)),
+            component: building.params
+        })
+    }
+
+    /**
+     * Select background
+     */
+    private onSelectBackground() {
+        this.setState({ title: "Zone" })
+        this.setState({ component: <Zone /> })
+    }
+
+    /**
+     * On dig
+     */
+    private onDig() {
+        this.setState({ title: i18n.__("actions.dig.title"), data: { action: "dig" } })
+        this.setState({ component: <DigParams /> })
+    }
+
+    /**
+     * Quit dig
+     */
+    private onQuitDig() {
+        this.onSelectBackground();
+    }
+
+    /**
+     * Show map
+     */
+    private onShowMap() {
+        this.setState({
+            title: i18n.__("map.title"),
+            component: <Map />
+        })
+    }
+
+    /**
+     * Hide map
+     */
+    private onHideMap() {
+        this.onSelectBackground()
+    }
+
+    /**
+     * Select an item from user's bag
+     * @param item The item selected
+     */
+    private onSelectItem(item: UserItemModel): void {
+
+        this.setState({
+            title: i18n.__(`items.${item.item.name}`),
+            component: <ItemParams item={item} />
+        })
+    }
+
 }
 
 export default GameParams

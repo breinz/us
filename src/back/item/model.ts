@@ -1,16 +1,16 @@
-import {Document, Schema, model, Model, Types, DocumentQuery } from "mongoose"
+import { Document, Schema, model, Model, Types, DocumentQuery } from "mongoose"
 
 // --------------------------------------------------
 // Types
 // --------------------------------------------------
 export type ItemModel = Document & {
     name: string,
-    x: number,
-    y: number,
+    x: number, y: number,
     weight: number,
-    frequency: number, /** chances to find this object ]100] */
-    frequency_change: number, /** on each dig the frequency doesn't change (0), goes up (1) or down (-1) */
-    frequency_limit: number, /** up to where the frequency can go */
+    frequency: number,
+    frequency_change: number,
+    frequency_limit: number,
+    ammo?: number,
 
     findByName: (name: string) => DocumentQuery<Document, Document>
 }
@@ -21,11 +21,21 @@ export type ItemModel = Document & {
 
 export const itemSchema = new Schema({
     name: String,
+
+    /** Position in the big picture */
     x: Number,
     y: Number,
+
+    /** Item's weight (0 light, 1 normal, 2 heavy) */
     weight: Number,
+
+    /** chances to find this object ]100] */
     frequency: Number,
+
+    /** on each dig the frequency doesn't change (0), goes up (1) or down (-1) */
     frequency_change: Number,
+
+    /** up to where the frequency can go */
     frequency_limit: Number
 })
 

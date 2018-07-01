@@ -1,21 +1,26 @@
 import Cell from "./Cell";
-import dig from "./Dig";
+//import dig from "./Dig";
 import { ItemModel } from "../../back/item/model";
+import Dig from "./Dig";
 
 export default class Item extends PIXI.Sprite {
-    
+
     private __texture = PIXI.Texture.fromImage("img/items.png")
 
     private cell: Cell;
 
     public data: ItemModel
 
-    constructor(cell: Cell) {
+    private game: Dig;
+
+    constructor(cell: Cell, game: Dig) {
         super()
+
+        this.game = game;
 
         this.cell = cell;
 
-        this.data = dig.getRandomItem();
+        this.data = this.game.getRandomItem();
 
         this.texture = this.__texture.clone()
 
@@ -27,20 +32,23 @@ export default class Item extends PIXI.Sprite {
     }
 
     private draw() {
-        this.texture.frame = new PIXI.Rectangle(this.data.x*16, this.data.y*16, 16, 16)
+        this.texture.frame = new PIXI.Rectangle(this.data.x * 16, this.data.y * 16, 16, 16)
 
         this.anchor.set(.5, .5)
-        this.x = this.cell.x + this.cell.size/2
-        this.y = this.cell.y + this.cell.size/2
-        dig.layer.addChild(this)
+        this.x = this.cell.x + this.cell.size / 2
+        this.y = this.cell.y + this.cell.size / 2
+        this.game.container.addChild(this)
     }
 
-    public grab() {
-        dig.grab(this)
+    public reveal() {
+        this.game.reveal(this)
         this.visible = false;
     }
 
+    /**
+     * Make garbage collectable
+     */
     public kill() {
-        dig.layer.removeChild(this)
+        this.game.container.removeChild(this)
     }
 }

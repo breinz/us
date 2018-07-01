@@ -1,51 +1,49 @@
-import User from "./User";
 import dispatcher from "../dispatcher";
 import { TweenLite } from "gsap";
 
-class Trace extends PIXI.Container {
+export default class Trace extends PIXI.Container {
 
-    private onUserMoved_fct:()=>void
+    private onUserMoved_fct: () => void
 
     private oldx: number;
     private oldy: number;
+
+    private texture: PIXI.Texture;
 
     constructor() {
         super()
 
         this.onUserMoved_fct = this.onUserMoved.bind(this)
-        dispatcher.on("dig_userMoved", this.onUserMoved_fct)
+        dispatcher.on(dispatcher.DIG_USER_MOVED, this.onUserMoved_fct)
 
         this.filters = [new PIXI.filters.BlurFilter()]
+
+        var t = new PIXI.Graphics();
+        t.beginFill(0xDDDDEF, 1)
+        t.drawCircle(0, 0, 15)
+        t.cacheAsBitmap = true;
+        this.texture = t.generateCanvasTexture()
     }
 
     private onUserMoved(x: number, y: number) {
-        if (Math.abs(this.oldx-x) < 10 && Math.abs(this.oldy-y) < 10) {
+        if (Math.abs(this.oldx - x) < 10 && Math.abs(this.oldy - y) < 10) {
             return;
         }
 
         this.oldx = x;
         this.oldy = y;
 
-        let t = new PIXI.Graphics();
-        /** @todo Use that for a special power */
-        //t.beginFill(Math.random()*0xFFFFFF, .75)
-        t.beginFill(0xDDDDEF, 1)
-        t.drawCircle(x, y, 15)
-        this.addChild(t);
+        let s = new PIXI.Sprite(this.texture);
+        (s as any)["countInDebug"] = false
+        s.x = x - 15;
+        s.y = y - 15;
+        this.addChild(s)
 
-        /** @todo use that for a weapon */
-        //TweenLite.to(t, Math.random()+1, {alpha: 0, y: String(-Math.random()*30+30), onComplete: () => {
-        //    this.removeChild(t)
-        //}})
-        TweenLite.to(t, 1.5, {alpha: 0, onComplete: () => {
-            this.removeChild(t)
-        }})
-    }
-
-    public kill() {
-        dispatcher.off("dig_userMoved", this.onUserMoved_fct)
-        this.parent.removeChild(this)
+        TweenLite.to(s, 1.5, {
+            alpha: 0, onComplete: () => {
+                s.destroy()
+                this.removeChild(s)
+            }
+        })
     }
 }
-
-export default Trace
