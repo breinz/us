@@ -22,7 +22,8 @@ class UserParams extends React.Component {
     public state: {
         items: UserItemModel[],
         resting: boolean,
-        pa: number
+        pa: number,
+        mode: number
     }
 
     constructor(props: UserModel) {
@@ -31,7 +32,8 @@ class UserParams extends React.Component {
         this.state = {
             items: this.props.user.items,
             resting: this.props.user.rest != null,
-            pa: this.props.user.pa
+            pa: this.props.user.pa,
+            mode: cell.user_data.mode
         }
 
         dispatcher.on(dispatcher.UPDATE_BAG, this.onUpdateBag.bind(this))
@@ -64,7 +66,17 @@ class UserParams extends React.Component {
         return (
             <div className="box">
                 <div>
-                    <h3>{this.props.user.login} <span id="pa">{this.state.pa}PA</span></h3>
+                    <div className="grid-x">
+                        <div className="cell small-6">
+                            <h3>{this.props.user.login} <span id="pa">{this.state.pa}PA</span></h3>
+                        </div>
+                        <div className="cell small-6 text-right">
+                            <div className="label secondary">
+                                <a href="#" onClick={this.switchMode.bind(this)}>{i18n.__("actions.exploration_mode")}</a>
+                            </div>
+                        </div>
+                    </div>
+
                     {content}
                 </div>
                 <div id="pa-bar">
@@ -143,6 +155,18 @@ class UserParams extends React.Component {
 
     public get pa(): number {
         return this.state.pa;
+    }
+
+    /**
+     * Switch mode
+     */
+    private switchMode() {
+        let mode = this.state.mode === 0 ? 1 : 0;
+        this.setState({
+            mode: mode
+        })
+
+        Axios.post("/api/actions/switchMode", { mode: mode });
     }
 
     private populateItems(weight: number): React.ReactElement<"a">[] {

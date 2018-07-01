@@ -324,4 +324,14 @@ router.post("/move", async (req, res) => {
     return res.send({ success: true });
 })
 
+router.post("/switchMode", async (req, res) => {
+    const user = req.user as UserModel;
+
+    user.mode = req.body.mode;
+
+    await user.save()
+
+    return res.send({ success: true });
+})
+
 export default router;

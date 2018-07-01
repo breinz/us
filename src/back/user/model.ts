@@ -25,6 +25,8 @@ export type UserModel = Document & {
     currentCell: mongoose.Types.ObjectId,
     x: number,
     y: number,
+    /** Play mode 0: exploration 1: fight */
+    mode: number,
     team: number,
     /** Items owned by the user */
     items?: mongoose.Types.Array<UserItemModel> & Document,
@@ -87,6 +89,7 @@ const userSchema = new Schema({
     currentCell: { type: mongoose.Schema.Types.ObjectId, ref: "Cell" },
     x: { type: Number, default: 400 },
     y: { type: Number, default: 400 },
+    mode: { type: Number, default: 0 },
     team: Number,
     items: [{
         item: { type: mongoose.Schema.Types.ObjectId, ref: "Item" },
