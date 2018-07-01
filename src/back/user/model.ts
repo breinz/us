@@ -54,7 +54,7 @@ export type UserModel = Document & {
         }
     },
     rest: {
-        /** At what time (timstamp) did you go to sleep (in ms) */
+        /** At what time (timestamp) did you go to sleep (in ms) */
         at: number,
         /** What was your pa when you went to sleep */
         pa: number,

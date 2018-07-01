@@ -128,7 +128,6 @@ class UserParams extends React.Component {
     }
 
     private gainPa(count: number): boolean {
-        return;
         if (this.state.pa >= 1000) {
             return false;
         }

@@ -10,7 +10,7 @@ var router = express.Router()
 router.use("/dig", dig)
 
 // **************************************************
-// Weel
+// Well
 // **************************************************
 
 /*
@@ -26,7 +26,7 @@ remove empty bottle in bag
 */
 /**
  * POST /api/actions/getWater
- * @param weelId The well id
+ * @param wellId The well id
  */
 router.post("/getWater", async (req, res, next) => {
     try {
