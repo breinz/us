@@ -266,6 +266,21 @@ table {
     padding: 5px;
 }
 
+.weapon-box {
+    border: 1px solid #B6B6B6;
+    box-sizing: border-box;
+    margin-right: 5px;
+    height: 50px;
+
+    &.end {
+        margin-right: 0;
+    }
+}
+
+#bag {
+    
+}
+
 #user-lvl {
     margin-right: 35px;
 }

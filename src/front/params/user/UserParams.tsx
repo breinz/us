@@ -46,11 +46,37 @@ class UserParams extends React.Component {
 
     public render() {
 
-        let content;
+        let items;
+        let weapons;
         if (this.state.resting) {
-            content = <button className="button success small" onClick={this.onWakeup.bind(this)}>{i18n.__("actions.wakeup")}</button>
+            items = <button className="button success small" onClick={this.onWakeup.bind(this)}>{i18n.__("actions.wakeup")}</button>
         } else {
-            content = <div>
+            if (this.state.mode === Mode.FIGHT) {
+                weapons =
+                    <div className="grid-x">
+                        <div className="cell small-3">
+                            <div className="weapon-box">
+                                <small>Long range</small>
+                            </div>
+                        </div>
+                        <div className="cell small-3">
+                            <div className="weapon-box">
+                                <small>Short range</small>
+                            </div>
+                        </div>
+                        <div className="cell small-3">
+                            <div className="weapon-box">
+                                <small>Defense</small>
+                            </div>
+                        </div>
+                        <div className="cell small-3">
+                            <div className="weapon-box end">
+                                <small>Spell</small>
+                            </div>
+                        </div>
+                    </div>
+            }
+            items = <div id="bag">
                 <div className="itemList">
                     {this.populateItems(2)}
                 </div>
@@ -80,8 +106,8 @@ class UserParams extends React.Component {
                             </div>
                         </div>
                     </div>
-
-                    {content}
+                    {weapons}
+                    {items}
                 </div>
                 <div id="pa-bar">
                     <div id="bar" style={{ width: `${this.state.pa / 10}%` }}></div>

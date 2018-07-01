@@ -75,17 +75,59 @@ export default class ItemParams extends React.Component {
                     </button>
                 )
             case "pistol":
+                return this.getPistolButtons()
+            case "baseball_bat":
                 return (
-                    <div>
-                        <button className="button success small" onClick={this.assemble.bind(this)}>
-                            {i18n.__("actions.items.equip")}
-                        </button>
-                        <button className="button secondary hollow small" onClick={this.reload.bind(this)} dangerouslySetInnerHTML={{ __html: i18n.__("actions.items.reload") }}></button>
-                    </div>
+                    <button className="button success small" onClick={this.equip.bind(this)}>
+                        {i18n.__("actions.items.equip")}
+                    </button>
                 )
             default:
                 return <div>{i18n.__("actions.items.useless")}</div>
         }
+    }
+
+    private getPistolButtons() {
+        let hidden_actions = 0;
+        const equip =
+            <button className="button success small" onClick={this.equip.bind(this)}>
+                {i18n.__("actions.items.equip")}
+            </button>;
+
+        let reload;
+        if (this.props.item.ammo < 6 && cell.user_controller.hasItem("ammo")) {
+            reload =
+                <button
+                    className="button secondary hollow small"
+                    onClick={this.reload.bind(this)}
+                    dangerouslySetInnerHTML={{ __html: i18n.__("actions.items.reload") }}>
+                </button>;
+        } else {
+            hidden_actions++;
+        }
+
+        let hidden_actions_txt;
+        if (hidden_actions > 0) {
+            hidden_actions_txt =
+                <small>
+                    {i18n._n("actions.%s more", hidden_actions)}
+                </small>;
+        }
+
+        return (
+            <div>
+                <div>
+                    {equip}
+                    {reload}
+                </div>
+                {hidden_actions_txt}
+            </div>
+        )
+    }
+
+    private equip() {
+        throw "Yet to implement";
+
     }
 
     /**
@@ -121,11 +163,12 @@ export default class ItemParams extends React.Component {
             return;
         }
 
+        dispatcher.dispatch(dispatcher.UPDATE_BAG, res.data.bag)
+
         this.setState({ ammo: res.data.ammo })
 
         cell.user_controller.usePA();
 
-        dispatcher.dispatch(dispatcher.UPDATE_BAG, res.data.bag)
     }
 
     /**
