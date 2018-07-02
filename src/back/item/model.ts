@@ -9,8 +9,7 @@ export type ItemModel = Document & {
     weight: number,
     frequency: number,
     frequency_change: number,
-    frequency_limit: number,
-    ammo?: number,
+    frequency_limit: number
 
     findByName: (name: string) => DocumentQuery<Document, Document>
 }
