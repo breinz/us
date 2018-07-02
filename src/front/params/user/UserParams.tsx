@@ -119,12 +119,20 @@ class UserParams extends React.Component {
     /**
      * Check if the user has a specific item in its bag
      * @param item The item name to look for
+     * @return Looking for just one item, this UserItemModel, otherwise just boolean
      */
-    public hasItem(item: String): UserItemModel {
+    public hasItem(item: string, count?: number): UserItemModel | boolean {
+        let how_many = 0;
         for (let i = 0; i < this.state.items.length; i++) {
             if (this.state.items[i].item.name === item) {
-                return this.state.items[i];
+                if (count === undefined) {
+                    return this.state.items[i];
+                }
+                how_many++;
             }
+        }
+        if (count !== undefined) {
+            return how_many >= count
         }
         return null;
     }
