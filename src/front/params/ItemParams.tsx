@@ -61,8 +61,10 @@ export default class ItemParams extends React.Component {
         }
     }
 
-    private getButtons(): React.ReactElement<"div" | "button"> {
+    private getButtons(): React.ReactElement<"div" | "button" | "small"> {
         switch (this.props.item.item.name) {
+            case "string":
+                return this.getStringButtons()
             case "bottle_full":
                 return (
                     <button className="button success small" onClick={this.drink.bind(this)} dangerouslySetInnerHTML={{ __html: i18n.__("actions.items.drink") }
@@ -83,8 +85,40 @@ export default class ItemParams extends React.Component {
                     </button>
                 )
             default:
-                return <div>{i18n.__("actions.items.useless")}</div>
+                return <small>{i18n.__("actions.items.useless")}</small>
         }
+    }
+
+    private getHiddenActions(count: number): React.ReactElement<"div"> {
+        if (count === 0) return null;
+        return (
+            <small>
+                {i18n._n("actions.%s more", count)}
+            </small>
+        )
+    }
+
+    private getStringButtons(): React.ReactElement<"div"> {
+        let hidden_actions = 0;
+        let build;
+        if (cell.user_controller.hasItem("string", 10)) {
+            build =
+                <button className="button success small">
+                    {i18n.__("actions.item.assemble")}
+                </button>
+        } else {
+            hidden_actions++;
+        }
+        console.log("getStringButtons", build);
+
+        return (
+            <div>
+                <div>
+                    {build}
+                </div>
+                {this.getHiddenActions(hidden_actions)}
+            </div>
+        )
     }
 
     private getPistolButtons() {
@@ -106,13 +140,7 @@ export default class ItemParams extends React.Component {
             hidden_actions++;
         }
 
-        let hidden_actions_txt;
-        if (hidden_actions > 0) {
-            hidden_actions_txt =
-                <small>
-                    {i18n._n("actions.%s more", hidden_actions)}
-                </small>;
-        }
+
 
         return (
             <div>
@@ -120,7 +148,7 @@ export default class ItemParams extends React.Component {
                     {equip}
                     {reload}
                 </div>
-                {hidden_actions_txt}
+                {this.getHiddenActions(hidden_actions)}
             </div>
         )
     }
