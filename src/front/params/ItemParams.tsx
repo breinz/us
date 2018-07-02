@@ -168,8 +168,9 @@ export default class ItemParams extends React.Component {
             return;
         }
 
-        // Update bag
+        // Update user infos
         dispatcher.dispatch(dispatcher.UPDATE_BAG, res.data.bag)
+        dispatcher.dispatch(dispatcher.UPDATE_PA, res.data.pa)
 
         // Select empty bottle
         dispatcher.dispatch(dispatcher.SELECT_ITEM,

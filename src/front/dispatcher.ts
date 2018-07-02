@@ -6,6 +6,7 @@ class Dispatcher {
     public SELECT_BACKGROUND = "selectBackground"
 
     public UPDATE_BAG = "update_bag";
+    public UPDATE_PA = "update_pa";
 
     public SHOW_MAP = "show_map"
     public HIDE_MAP = "hide_map"

@@ -38,6 +38,7 @@ class UserParams extends React.Component {
         }
 
         dispatcher.on(dispatcher.UPDATE_BAG, this.onUpdateBag.bind(this))
+        dispatcher.on(dispatcher.UPDATE_PA, this.onUpdatePa.bind(this))
         dispatcher.on(dispatcher.REST, this.onRest.bind(this))
     }
 
@@ -239,6 +240,10 @@ class UserParams extends React.Component {
      */
     private onUpdateBag(bag: UserItemModel[]) {
         this.setState({ items: bag });
+    }
+
+    private onUpdatePa(pa: number) {
+        this.setState({ pa: pa });
     }
 
     private onRest(speed: number) {

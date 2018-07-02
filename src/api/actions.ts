@@ -197,12 +197,12 @@ router.post("/drink", async (req, res) => {
         // Add the empty bottle
         user.items.push({ item: bottle })
 
-        // Get to 6 pa
-        user.pa = Math.max(user.pa, 6);
+        // Get to 200 pa
+        user.pa = Math.max(user.pa, user.pa + 200);
 
         await user.save();
 
-        res.send({ success: true, bag: user.items })
+        res.send({ success: true, bag: user.items, pa: user.pa })
     } catch (err) {
         res.send({ fatal: err.message });
     }
