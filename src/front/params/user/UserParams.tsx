@@ -236,12 +236,17 @@ class UserParams extends React.Component {
     }
 
     /**
-     * The content of the bag changed, retrieve the latest version
+     * The content of the bag changed
+     * @param bag The bag content
      */
     private onUpdateBag(bag: UserItemModel[]) {
         this.setState({ items: bag });
     }
 
+    /**
+     * The pa number changed
+     * @param pa Pa
+     */
     private onUpdatePa(pa: number) {
         this.setState({ pa: pa });
     }

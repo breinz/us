@@ -188,6 +188,11 @@ router.post("/drink", async (req, res) => {
             return res.send({ error: "drink.no_water" })
         }
 
+        // Did the user already drink today
+        if (user.drank_at !== undefined && (new Date(user.drank_at)).getDate() === (new Date()).getDate()) {
+            return res.send({ error: "drink.already_today" })
+        }
+
         // Find the item bottle
         let bottle = await Item.findOne({ name: "bottle" }) as ItemModel
 
@@ -198,7 +203,13 @@ router.post("/drink", async (req, res) => {
         user.items.push({ item: bottle })
 
         // Get to 200 pa
-        user.pa = Math.max(user.pa, user.pa + 200);
+        user.pa = user.pa + 200;
+        if (user.pa > 1000) {
+            user.pa = 1000;
+        }
+
+        // Save when the user drank
+        user.drank_at = Date.now()
 
         await user.save();
 

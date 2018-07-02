@@ -64,7 +64,9 @@ export type UserModel = Document & {
         pa: number,
         /** Where do you sleep (bed: speed=5, outside: speed=0) */
         speed: number,
-    }
+    },
+    /** Last time the user drank */
+    drank_at: number,
     /** Display tutorials or not */
     tuto: boolean,
     /** Number of Action Points */
@@ -114,6 +116,7 @@ const userSchema = new Schema({
         pa: Number,
         speed: Number,
     },
+    drank_at: Number,
     tuto: Boolean,
     pa: Number
 }, { timestamps: true })
@@ -150,6 +153,9 @@ userSchema.pre("save", function save(next) {
             next(err)
         })
     }
+
+    // Max 1000 pa
+    if (user.pa > 1000) user.pa = 1000;
 });
 
 /**
