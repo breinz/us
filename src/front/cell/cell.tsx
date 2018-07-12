@@ -10,6 +10,7 @@ import { render } from "react-dom"
 import * as io from "socket.io-client"
 import UserParams from "../params/user/UserParams"
 import GameParams from "../params/game_params"
+import Dev from "../dev/Dev"
 import i18n from "../i18n"
 import { cell } from "../main";
 import dispatcher from "../dispatcher";
@@ -146,6 +147,9 @@ export default class Cell {
         // Prepare the map layer
         this.app.stage.addChild(new Map());
 
+        // --------------------------------------------------
+        // Border
+
         // Draw the border around the cell
         this.drawBorder();
 
@@ -163,6 +167,8 @@ export default class Cell {
         ) as UserParams
 
         render(<GameParams />, document.getElementById("game-params"))
+
+        render(<Dev />, document.getElementById("dev"));
     }
 
     /**
