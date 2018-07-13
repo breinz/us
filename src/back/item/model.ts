@@ -26,7 +26,7 @@ export const itemSchema = new Schema({
     y: Number,
 
     /** Item's weight (0 light, 1 normal, 2 heavy) */
-    weight: Number,
+    weight: { type: Number, default: 1 },
 
     /** chances to find this object ]100] */
     frequency: Number,

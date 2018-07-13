@@ -168,6 +168,10 @@ export default class Cell {
 
         render(<GameParams />, document.getElementById("game-params"))
 
+        // --------------------------------------------------
+        // DEV
+        // --------------------------------------------------
+
         render(<Dev />, document.getElementById("dev"));
     }
 

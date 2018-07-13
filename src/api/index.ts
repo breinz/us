@@ -3,6 +3,7 @@ import User, { UserModel } from "../back/user/model"
 import goals from './goals'
 import users from "./users"
 import actions from "./actions"
+import dev from "./dev"
 import { Game } from "../back/game/model";
 import { Cell } from "../back/cell/model";
 import * as i18n from "i18n"
@@ -19,6 +20,7 @@ router.use((req, res, next) => {
 router.use("/goals", goals)
 router.use("/users", users)
 router.use("/actions", actions)
+router.use("/dev", dev);
 
 router.get('/', (req, res) => {
     res.send({ data: [] })
