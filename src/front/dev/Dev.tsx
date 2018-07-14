@@ -34,6 +34,9 @@ export default class Dev extends React.Component {
                     <button className="button small hollow secondary" onClick={this.clearBag.bind(this)}>
                         Clear bag
                     </button>
+                    <button className="button small hollow secondary" onClick={this.fillAP.bind(this)}>
+                        Fill AP
+                    </button>
                 </div>
             </div>
         )
@@ -54,5 +57,11 @@ export default class Dev extends React.Component {
         let res = await Axios.post("/api/dev/clearBag")
 
         dispatcher.dispatch(dispatcher.UPDATE_BAG, res.data.bag)
+    }
+
+    private async fillAP() {
+        let res = await Axios.post("/api/dev/fillAP")
+
+        dispatcher.dispatch(dispatcher.UPDATE_PA, res.data.pa);
     }
 }

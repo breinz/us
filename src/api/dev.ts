@@ -18,5 +18,12 @@ router.post("/clearBag", async (req, res) => {
     res.send({ success: true, bag: [] })
 })
 
+router.post("/fillAP", async (req, res) => {
+    const user = req.user as UserModel;
+    user.pa = 1000;
+    await user.save();
+    res.send({ success: true, pa: 1000 });
+})
+
 
 export default router;
