@@ -10,6 +10,7 @@ import { ItemModel } from "../item/model";
 export type UserItemModel = {
     _id?: any,
     ammo?: number,
+    poisoned?: boolean,
     item: ItemModel
 }
 
@@ -95,7 +96,8 @@ const userSchema = new Schema({
     team: Number,
     items: [{
         item: { type: mongoose.Schema.Types.ObjectId, ref: "Item" },
-        ammo: Number
+        ammo: Number,
+        poisoned: Boolean
     }],
     //dig_count: Number,
     dig: {

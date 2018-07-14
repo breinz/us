@@ -57,6 +57,15 @@ router.post("/getWater", async (req, res, next) => {
         // Check if the well has enough water left
         if (well.rations <= 0) return res.send({ error: "well_empty" })
 
+        // Check if the well has been poisoned
+        let poison = false;
+        if (well.poison && well.poison > 0) {
+            if (Math.random() > .5) {
+                well.poison--;
+                poison = true;
+            }
+        }
+
         // Remove one ration from the well
         well.rations--
         await cell.save()
@@ -66,7 +75,7 @@ router.post("/getWater", async (req, res, next) => {
 
         // Add the bottle_full to the user
         let bottle_full: ItemModel = await Item.findOne({ name: "bottle_full" }) as ItemModel;
-        user.items.push({ item: bottle_full })
+        user.items.push({ item: bottle_full, poisoned: poison })
 
         await user.save()
 
@@ -75,6 +84,7 @@ router.post("/getWater", async (req, res, next) => {
             success: true,
             wellId: req.body.wellId,
             rations: well.rations,
+            poison: well.poison,
             bag: user.items
         })
     } catch (err) {

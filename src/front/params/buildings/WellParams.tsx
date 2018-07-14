@@ -41,6 +41,7 @@ class WellParams extends React.Component {
 
     componentDidMount() {
         cell.cell_socket.on("gotWater", this.updateRations_fct)
+        cell.cell_socket.on("gotWater", this.updatePoison_fct)
         cell.cell_socket.on("addedWater", this.updateRations_fct)
         cell.cell_socket.on("well.poisoned", this.updatePoison_fct)
 
@@ -49,6 +50,7 @@ class WellParams extends React.Component {
 
     componentWillUnmount() {
         cell.cell_socket.off("gotWater", this.updateRations_fct)
+        cell.cell_socket.off("gotWater", this.updatePoison_fct)
         cell.cell_socket.off("addedWater", this.updateRations_fct)
         cell.cell_socket.off("well.poisoned", this.updatePoison_fct)
 
