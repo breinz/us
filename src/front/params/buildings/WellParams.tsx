@@ -148,7 +148,7 @@ class WellParams extends React.Component {
         let res;
 
         try {
-            res = await Axios.post("/api/actions/getWater", {
+            res = await Axios.post("/api/actions//well/getWater", {
                 wellId: this.props.building.data._id
             })
         } catch (error) {
@@ -203,7 +203,7 @@ class WellParams extends React.Component {
     }
 
     private async doAddWater() {
-        let res = await Axios.post("/api/actions/addWater", {
+        let res = await Axios.post("/api/actions/well/addWater", {
             wellId: this.props.building.data._id
         })
 
