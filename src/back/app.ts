@@ -103,6 +103,10 @@ app.get("/", (req, res, next) => {
     res.render("index")
 })
 
+app.get("/dead", (req, res, next) => {
+    res.render("game/dead")
+})
+
 // --------------------------------------------------
 // Signin
 app.get("/signin", userController.getSignin)

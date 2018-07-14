@@ -93,7 +93,7 @@ class WellParams extends React.Component {
         if (!asleep && cell.user_controller.hasItem("poison")) {
             poison_btn =
                 <button
-                    onClick={this.poison.bind(this)}
+                    onClick={() => { this.poison() }}
                     className="button secondary hollow small"
                     dangerouslySetInnerHTML={{ __html: i18n.__("actions.poison") }}>
                 </button>;
@@ -231,7 +231,18 @@ class WellParams extends React.Component {
 
     }
 
-    private async poison() {
+    private async poison(isClose: boolean = false) {
+        this.setState({ error: null })
+
+        console.log("isClose", isClose);
+        // Move to the well
+        if (!isClose) {
+            console.log("moveTo");
+
+            cell.user.moveTo(this.props.building.entry, () => { this.poison(true) })
+            return;
+        }
+
         let res = await Axios.post("/api/actions/well/poison", {
             wellId: this.props.building.data._id
         })

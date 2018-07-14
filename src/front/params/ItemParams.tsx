@@ -207,6 +207,11 @@ export default class ItemParams extends React.Component {
      * @return boolean Did an error occurred
      */
     private handleError(data: any): boolean {
+        if (data.dead === true) {
+            window.location.href = "/dead"
+            return true;
+        }
+
         if (data.fatal) {
             console.error(data.error);
             this.displayError("fatal")

@@ -39,7 +39,7 @@ router.post("/getWater", async (req, res, next) => {
         // Check if the well has been poisoned
         let poison = false;
         if (well.poison && well.poison > 0) {
-            if (Math.random() > .5) {
+            if (Math.random() > .2) {
                 well.poison--;
                 poison = true;
             }
@@ -147,7 +147,7 @@ router.post("/poison", async (req, res) => {
         let cell = <CellModel>await Cell.findById(user.currentCell)
         let well = <CellBuildingModel>await cell.buildings.id(req.body.wellId)
 
-        well.poison++
+        well.poison++;
         await cell.save()
 
         // Remove the poison from the user

@@ -5,6 +5,7 @@ import { UserModel, UserItemModel, User } from "../back/user/model";
 import { Item, ItemModel } from "../back/item/model";
 import dig from "./dig"
 import well from "./well"
+import die from "./die";
 
 var router = express.Router()
 
@@ -69,6 +70,13 @@ router.post("/drink", async (req, res) => {
         // Did the user already drink today
         if (user.drank_at !== undefined && (new Date(user.drank_at)).getDate() === (new Date()).getDate()) {
             return res.send({ error: "drink.already_today" })
+        }
+
+        // Is the water poisoned
+        if (item.poisoned === true) {
+            die(req, "poison");
+            res.send({ dead: true });
+            return;
         }
 
         // Find the item bottle
