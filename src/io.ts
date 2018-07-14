@@ -58,6 +58,10 @@ class Io {
             cellSocket.on("addWater", (params) => {
                 io.of(`/${cellId}`).emit("addedWater", params)
             })
+
+            cellSocket.on("well.poison", (params) => {
+                io.of(`/${cellId}`).emit("well.poisoned", params)
+            })
         })
 
         this.cells.push(cellId)

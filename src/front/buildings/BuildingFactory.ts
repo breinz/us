@@ -11,6 +11,7 @@ export type BuildingData = {
     x: number,
     y: number,
     rations?: number,
+    poison?: number,
     building: {
         name: string
     }

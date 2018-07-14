@@ -1,5 +1,5 @@
 import * as React from "react"
-import axios from "axios"
+import Axios from "axios"
 import { BuildingData } from "../../buildings/BuildingFactory";
 import i18n from "../../i18n"
 import { cell } from "../../main";
@@ -17,27 +17,32 @@ class WellParams extends React.Component {
 
     public state: {
         rations: number,
+        poison: number,
         error?: React.ReactElement<"div">,
     }
 
     private updateRations_fct: () => void
+    private updatePoison_fct: () => void
     private onSleep_fct: () => void;
 
     constructor(props: PropsType) {
         super(props)
 
         this.state = {
-            rations: this.props.building.data.rations
+            rations: this.props.building.data.rations,
+            poison: this.props.building.data.poison
         }
 
         this.updateRations_fct = this.updateRations.bind(this)
         this.onSleep_fct = this.onSleep.bind(this)
+        this.updatePoison_fct = this.updatePoison.bind(this);
 
     }
 
     componentDidMount() {
         cell.cell_socket.on("gotWater", this.updateRations_fct)
         cell.cell_socket.on("addedWater", this.updateRations_fct)
+        cell.cell_socket.on("well.poisoned", this.updatePoison_fct)
 
         dispatcher.on(dispatcher.SLEEP, this.onSleep_fct)
     }
@@ -45,6 +50,7 @@ class WellParams extends React.Component {
     componentWillUnmount() {
         cell.cell_socket.off("gotWater", this.updateRations_fct)
         cell.cell_socket.off("addedWater", this.updateRations_fct)
+        cell.cell_socket.off("well.poisoned", this.updatePoison_fct)
 
         dispatcher.off(dispatcher.SLEEP, this.onSleep_fct)
     }
@@ -110,6 +116,10 @@ class WellParams extends React.Component {
                     <div className="num">{this.state.rations}</div>
                     rations
                 </div>
+                <div className="bignum">
+                    <div className="num">{this.state.poison}</div>
+                    poison
+                </div>
                 {this.state.error}
                 <div>
                     {getWater_btn}
@@ -136,7 +146,7 @@ class WellParams extends React.Component {
         let res;
 
         try {
-            res = await axios.post("/api/actions/getWater", {
+            res = await Axios.post("/api/actions/getWater", {
                 wellId: this.props.building.data._id
             })
         } catch (error) {
@@ -176,6 +186,14 @@ class WellParams extends React.Component {
         this.setState({ rations: data.rations })
     }
 
+    /**
+     * The well was poisoned
+     * @param data Data
+     */
+    private updatePoison(data: { poison: number }) {
+        this.setState({ poison: data.poison })
+    }
+
     private addWater() {
         this.setState({ error: null })
         // Move to the well
@@ -183,7 +201,7 @@ class WellParams extends React.Component {
     }
 
     private async doAddWater() {
-        let res = await axios.post("/api/actions/addWater", {
+        let res = await Axios.post("/api/actions/addWater", {
             wellId: this.props.building.data._id
         })
 
@@ -211,9 +229,44 @@ class WellParams extends React.Component {
 
     }
 
-    private poison() {
-        throw "Method yet to implement";
+    private async poison() {
+        let res = await Axios.post("/api/actions/well/poison", {
+            wellId: this.props.building.data._id
+        })
 
+        if (this.manageError(res.data)) return;
+
+        // Inform all users that this well is poisoned
+        cell.cell_socket.emit("well.poison", res.data)
+
+        // Update the user's bag
+        dispatcher.dispatch(dispatcher.UPDATE_BAG, res.data.bag)
+    }
+
+    /**
+     * Manage Axios error
+     * @param data The return data from Axios
+     * @return Boolean An error occurred or not
+     */
+    private manageError(data: any) {
+        // Unexpected Error
+        if (data.fatal) {
+            console.error(data.fatal);
+            this.setState({
+                error: <div className="error-box">Unexpected Error</div>
+            })
+            return true
+        }
+
+        // Error (cannot add water)
+        if (data.error) {
+            this.setState({
+                error: <div className="error-box">{i18n.__(`errors.${data.error}`)}</div>
+            })
+            return true;
+        }
+
+        return false;
     }
 }
 

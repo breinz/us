@@ -4,10 +4,12 @@ import { Cell, CellModel, CellBuildingModel } from "../back/cell/model";
 import { UserModel, UserItemModel, User } from "../back/user/model";
 import { Item, ItemModel } from "../back/item/model";
 import dig from "./dig"
+import well from "./well"
 
 var router = express.Router()
 
 router.use("/dig", dig)
+router.use("/well", well)
 
 // **************************************************
 // Well

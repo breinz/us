@@ -14,6 +14,7 @@ class Well extends ABuilding {
 
         cell.cell_socket.on("gotWater", this.updateRations.bind(this))
         cell.cell_socket.on("addedWater", this.updateRations.bind(this))
+        cell.cell_socket.on("well.poisoned", this.updatePoison.bind(this))
     }
 
     /**
@@ -39,6 +40,14 @@ class Well extends ABuilding {
      */
     private updateRations(data: { rations: number }) {
         this.data.rations = data.rations;
+    }
+
+    /**
+     * Someone poisoned the well
+     * @param data Data
+     */
+    private updatePoison(data: { poison: number }) {
+        this.data.poison = data.poison;
     }
 }
 
