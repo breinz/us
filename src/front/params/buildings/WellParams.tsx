@@ -67,7 +67,7 @@ class WellParams extends React.Component {
         if (!asleep && cell.user_controller.hasItem("bottle")) {
             getWater_btn =
                 <button
-                    onClick={this.getWater.bind(this)}
+                    onClick={() => { this.getWater(true) }}
                     className="button success small"
                     dangerouslySetInnerHTML={{ __html: i18n.__("actions.getWater") }}>
                 </button>;
@@ -80,7 +80,7 @@ class WellParams extends React.Component {
         if (!asleep && cell.user_controller.hasItem("bottle_full")) {
             addWater_btn =
                 <button
-                    onClick={this.addWater.bind(this)}
+                    onClick={() => { this.addWater(true) }}
                     className="button secondary hollow small"
                     dangerouslySetInnerHTML={{ __html: i18n.__("actions.addWater") }}>
                 </button>
@@ -137,38 +137,25 @@ class WellParams extends React.Component {
         this.forceUpdate()
     }
 
-    private getWater() {
+    /**
+     * Get water from the well
+     * @param moveTo If we make the user move close to the well
+     */
+    private async getWater(moveTo: boolean = false) {
         this.setState({ error: null })
+        if (moveTo) {
+            // Move to the well
+            cell.user.moveTo(this.props.building.entry, this.getWater.bind(this))
+            return;
+        }
 
-        // Move to the well
-        cell.user.moveTo(this.props.building.entry, this.doGetWater.bind(this))
-    }
-
-    private async doGetWater() {
         let res;
 
-        try {
-            res = await Axios.post("/api/actions//well/getWater", {
-                wellId: this.props.building.data._id
-            })
-        } catch (error) {
-            return this.setState({
-                error: <div className="error-box">Unexpected Error</div>
-            })
-        }
+        res = await Axios.post("/api/actions//well/getWater", {
+            wellId: this.props.building.data._id
+        })
 
-        // Unexpected Error
-        if (res.data.fatal) {
-            return this.setState({
-                error: <div className="error-box">Unexpected Error</div>
-            })
-        }
-
-        // Error (cannot take water)
-        if (res.data.error) {
-            this.setState({
-                error: <div className="error-box">{i18n.__(`errors.${res.data.error}`)}</div>
-            })
+        if (this.handleError(res.data)) {
             return;
         }
 
@@ -196,30 +183,19 @@ class WellParams extends React.Component {
         this.setState({ poison: data.poison })
     }
 
-    private addWater() {
+    private async addWater(moveTo: boolean = false) {
         this.setState({ error: null })
-        // Move to the well
-        cell.user.moveTo(this.props.building.entry, this.doAddWater.bind(this))
-    }
+        if (moveTo) {
+            // Move to the well
+            cell.user.moveTo(this.props.building.entry, this.addWater.bind(this))
+            return;
+        }
 
-    private async doAddWater() {
         let res = await Axios.post("/api/actions/well/addWater", {
             wellId: this.props.building.data._id
         })
 
-        // Unexpected Error
-        if (res.data.fatal) {
-            console.error(res.data.fatal);
-            return this.setState({
-                error: <div className="error-box">Unexpected Error</div>
-            })
-        }
-
-        // Error (cannot add water)
-        if (res.data.error) {
-            this.setState({
-                error: <div className="error-box">{i18n.__(`errors.${res.data.error}`)}</div>
-            })
+        if (this.handleError(res.data)) {
             return;
         }
 
@@ -247,7 +223,7 @@ class WellParams extends React.Component {
             wellId: this.props.building.data._id
         })
 
-        if (this.manageError(res.data)) return;
+        if (this.handleError(res.data)) return;
 
         // Inform all users that this well is poisoned
         cell.cell_socket.emit("well.poison", res.data)
@@ -261,7 +237,7 @@ class WellParams extends React.Component {
      * @param data The return data from Axios
      * @return Boolean An error occurred or not
      */
-    private manageError(data: any) {
+    private handleError(data: any) {
         // Unexpected Error
         if (data.fatal) {
             console.error(data.fatal);
