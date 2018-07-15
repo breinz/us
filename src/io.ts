@@ -1,5 +1,7 @@
 import { Server, Socket } from "socket.io";
 import { Http2Server } from "http2";
+import message from "./SocketMessages"
+
 
 class Io {
 
@@ -51,8 +53,8 @@ class Io {
         this.io.of(`/${cellId}`).on("connection", (cellSocket: Socket) => {
             //console.log(`client connected to cell ${cellId}`);
 
-            cellSocket.on("getWater", (params) => {
-                io.of(`/${cellId}`).emit("gotWater", params)
+            cellSocket.on(message.WELL.GET_WATER.UP, (params) => {
+                io.of(`/${cellId}`).emit(message.WELL.GET_WATER.DOWN, params)
             })
 
             cellSocket.on("addWater", (params) => {

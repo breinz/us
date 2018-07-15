@@ -5,6 +5,7 @@ import i18n from "../../i18n"
 import { cell } from "../../main";
 import ABuilding from "../../buildings/ABuilding";
 import dispatcher from "../../dispatcher";
+import message from "../../../SocketMessages"
 
 type PropsType = {
     building: ABuilding
@@ -40,8 +41,8 @@ class WellParams extends React.Component {
     }
 
     componentDidMount() {
-        cell.cell_socket.on("gotWater", this.updateRations_fct)
-        cell.cell_socket.on("gotWater", this.updatePoison_fct)
+        cell.cell_socket.on(message.WELL.GET_WATER.DOWN, this.updateRations_fct)
+        cell.cell_socket.on(message.WELL.GET_WATER.DOWN, this.updatePoison_fct)
         cell.cell_socket.on("addedWater", this.updateRations_fct)
         cell.cell_socket.on("well.poisoned", this.updatePoison_fct)
 
@@ -49,8 +50,8 @@ class WellParams extends React.Component {
     }
 
     componentWillUnmount() {
-        cell.cell_socket.off("gotWater", this.updateRations_fct)
-        cell.cell_socket.off("gotWater", this.updatePoison_fct)
+        cell.cell_socket.off(message.WELL.GET_WATER.DOWN, this.updateRations_fct)
+        cell.cell_socket.off(message.WELL.GET_WATER.DOWN, this.updatePoison_fct)
         cell.cell_socket.off("addedWater", this.updateRations_fct)
         cell.cell_socket.off("well.poisoned", this.updatePoison_fct)
 
@@ -93,7 +94,7 @@ class WellParams extends React.Component {
         if (!asleep && cell.user_controller.hasItem("poison")) {
             poison_btn =
                 <button
-                    onClick={() => { this.poison() }}
+                    onClick={() => { this.poison(true) }}
                     className="button secondary hollow small"
                     dangerouslySetInnerHTML={{ __html: i18n.__("actions.poison") }}>
                 </button>;
@@ -109,8 +110,6 @@ class WellParams extends React.Component {
                     {i18n._n("actions.%s more", hidden_actions)}
                 </small>;
         }
-
-
 
         return (
             <div>
@@ -133,9 +132,17 @@ class WellParams extends React.Component {
         )
     }
 
+    /**
+     * The user goes to sleep or wakes up
+     * @param sleep If the user goes to sleep or wakes up
+     */
     private onSleep(sleep: boolean) {
         this.forceUpdate()
     }
+
+    // --------------------------------------------------
+    // Rations
+    // --------------------------------------------------
 
     /**
      * Get water from the well
@@ -160,29 +167,16 @@ class WellParams extends React.Component {
         }
 
         // Inform all users in that cell about the new rations number
-        cell.cell_socket.emit("getWater", res.data)
+        cell.cell_socket.emit(message.WELL.GET_WATER.UP, res.data)
 
         // Update the user's bag
         dispatcher.dispatch(dispatcher.UPDATE_BAG, res.data.bag)
     }
 
-
     /**
-     * Someone took water from that well
-     * @param data Data
+     * Add water to the well
+     * @param moveTo Is the user has to move close to the well
      */
-    private updateRations(data: { rations: number }) {
-        this.setState({ rations: data.rations })
-    }
-
-    /**
-     * The well was poisoned
-     * @param data Data
-     */
-    private updatePoison(data: { poison: number }) {
-        this.setState({ poison: data.poison })
-    }
-
     private async addWater(moveTo: boolean = false) {
         this.setState({ error: null })
         if (moveTo) {
@@ -207,15 +201,28 @@ class WellParams extends React.Component {
 
     }
 
-    private async poison(isClose: boolean = false) {
+    /**
+     * Someone took water from that well
+     * @param data Data
+     */
+    private updateRations(data: { rations: number }) {
+        this.setState({ rations: data.rations })
+    }
+
+    // --------------------------------------------------
+    // Poison
+    // --------------------------------------------------
+
+    /**
+     * Poison the well
+     * @param moveTo If the user has to move close to the well
+     */
+    private async poison(moveTo: boolean = false) {
         this.setState({ error: null })
 
-        console.log("isClose", isClose);
         // Move to the well
-        if (!isClose) {
-            console.log("moveTo");
-
-            cell.user.moveTo(this.props.building.entry, () => { this.poison(true) })
+        if (moveTo) {
+            cell.user.moveTo(this.props.building.entry, this.poison.bind(this))
             return;
         }
 
@@ -223,13 +230,23 @@ class WellParams extends React.Component {
             wellId: this.props.building.data._id
         })
 
-        if (this.handleError(res.data)) return;
+        if (this.handleError(res.data)) {
+            return;
+        }
 
         // Inform all users that this well is poisoned
         cell.cell_socket.emit("well.poison", res.data)
 
         // Update the user's bag
         dispatcher.dispatch(dispatcher.UPDATE_BAG, res.data.bag)
+    }
+
+    /**
+     * The well was poisoned
+     * @param data Data
+     */
+    private updatePoison(data: { poison: number }) {
+        this.setState({ poison: data.poison })
     }
 
     /**
