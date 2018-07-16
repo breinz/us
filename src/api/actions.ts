@@ -6,11 +6,13 @@ import { Item, ItemModel } from "../back/item/model";
 import dig from "./dig"
 import well from "./well"
 import die from "./die";
+import items from "./items"
 
 var router = express.Router()
 
 router.use("/dig", dig)
 router.use("/well", well)
+router.use("/items", items)
 
 
 // **************************************************

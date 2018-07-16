@@ -70,12 +70,6 @@ export default class ItemParams extends React.Component {
                     <button className="button success small" onClick={this.drink.bind(this)} dangerouslySetInnerHTML={{ __html: i18n.__("actions.items.drink") }
                     }></button>
                 )
-            case "string":
-                return (
-                    <button className="button success small" onClick={this.assemble.bind(this)}>
-                        <Item item={{ x: 1, y: 0 }} active={false} />{i18n.__("actions.items.assemble")}
-                    </button>
-                )
             case "pistol":
                 return this.getPistolButtons()
             case "baseball_bat":
@@ -100,21 +94,21 @@ export default class ItemParams extends React.Component {
 
     private getStringButtons(): React.ReactElement<"div"> {
         let hidden_actions = 0;
-        let build;
-        if (cell.user_controller.hasItem("string", 10)) {
-            build =
-                <button className="button success small">
-                    {i18n.__("actions.item.assemble")}
+        let assemble;
+        if (cell.user_controller.hasItem("string", 5)) {
+            assemble =
+                <button className="button success small" onClick={this.assemble_string.bind(this)}>
+                    <Item item={{ x: 1, y: 0 }} active={false} still={true} />
+                    {i18n.__("actions.items.assemble")}
                 </button>
         } else {
             hidden_actions++;
         }
-        console.log("getStringButtons", build);
 
         return (
             <div>
                 <div>
-                    {build}
+                    {assemble}
                 </div>
                 {this.getHiddenActions(hidden_actions)}
             </div>
@@ -178,8 +172,19 @@ export default class ItemParams extends React.Component {
         )
     }
 
-    private assemble() {
-        console.log("assemble");
+    private async assemble_string() {
+        let res = await Axios.post("/api/actions/items/string/assemble")
+
+        if (this.handleError(res.data)) {
+            return;
+        }
+
+        dispatcher.dispatch(dispatcher.UPDATE_BAG, res.data.bag)
+
+        // Select empty bottle
+        dispatcher.dispatch(dispatcher.SELECT_ITEM,
+            cell.user_data.items.find(item => { return item.item.name === "rope" })
+        )
     }
 
     /**

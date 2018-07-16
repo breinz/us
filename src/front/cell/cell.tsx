@@ -15,7 +15,7 @@ import i18n from "../i18n"
 import { cell } from "../main";
 import dispatcher from "../dispatcher";
 import { ItemModel } from "../../back/item/model";
-import { UserModel } from "../../back/user/model";
+import { UserModel, UserItemModel } from "../../back/user/model";
 import User from "../user/User";
 import Grid from "./Grid";
 
@@ -87,6 +87,12 @@ export default class Cell {
 
             this.init();
         })
+
+        dispatcher.on(dispatcher.UPDATE_BAG, this.onUpdateBag.bind(this))
+    }
+
+    private onUpdateBag(items: any) {
+        this.user_data.items = items;
     }
 
     /**

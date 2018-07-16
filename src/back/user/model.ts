@@ -77,7 +77,7 @@ export type UserModel = Document & {
     comparePasswords: (candidatePassword: string) => void,
     addGoal: (goal: string, cb?: Function) => void,
     inGame: () => boolean,
-    hasItem: (name: ItemModel | String) => mongoose.Types.ObjectId
+    hasItem: (name: ItemModel | string, count?: number) => mongoose.Types.ObjectId
 }
 
 // Schema
@@ -245,24 +245,36 @@ userSchema.methods.joinGame = async function () {
  * Does that user have an item
  * @param name Item name
  */
-userSchema.methods.hasItem = function (item: ItemModel | String): mongoose.Types.ObjectId {
+userSchema.methods.hasItem = function (item: ItemModel | string, count?: number): mongoose.Types.ObjectId | boolean {
     const user: UserModel = this;
 
     let has;
+    let howMany = 0;
     for (let itemId = 0; itemId < user.items.length; itemId++) {
         has = user.items[itemId];
         if (item.hasOwnProperty("_id")) {
             if (has.item.equals((item as ItemModel)._id)) {
-                return has._id;
+                if (count === undefined) {
+                    return has._id;
+                } else {
+                    howMany++
+                }
             }
         } else {
             if (has.item.name === item) {
-                return has._id
+                if (count == undefined) {
+                    return has._id
+                } else {
+                    howMany++;
+                }
             }
         }
+
     }
 
-
+    if (count !== undefined) {
+        return howMany >= count;
+    }
 
     return null;
 }

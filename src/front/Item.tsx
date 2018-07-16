@@ -6,7 +6,8 @@ class Item extends React.Component {
     public props: {
         item?: ItemModel | { x: number, y: number },
         user_item?: { _id?: any, ammo?: number, item: ItemModel },
-        active?: boolean
+        active?: boolean,
+        still?: boolean
     }
 
     constructor(props: ItemModel) {
@@ -15,11 +16,18 @@ class Item extends React.Component {
 
     public render() {
 
-        let className = `item_img bg-x${this.position.x} bg-y${this.position.y}`
+        let className = `bg-x${this.position.x} bg-y${this.position.y} `
 
         if (this.props.active !== false) {
-            className += " active"
+            className += "active "
         }
+
+        if (this.props.still === true) {
+            className += "item_img-still"
+        } else {
+            className += "item_img"
+        }
+
         return (
             <i className={className}></i>
         )

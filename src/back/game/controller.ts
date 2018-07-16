@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import * as passport from "passport"
-import {GameModel, Game} from "./model"
+import { GameModel, Game } from "./model"
 import { UserModel } from "../user/model";
 import { Cell } from "../cell/model";
 
@@ -29,10 +29,10 @@ export default {
         let user = <UserModel>req.user;
         user.currentGame = null;
         let ar: Array<Object> = [];
-        
+
         ar.push(user.save())
-        ar.push( Game.deleteMany({}) )
-        ar.push( Cell.deleteMany({}) )
+        ar.push(Game.deleteMany({}))
+        ar.push(Cell.deleteMany({}))
 
         await Promise.all(ar)
 
