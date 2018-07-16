@@ -57,11 +57,26 @@ export default class Grid extends PIXI.Container {
      * Add an obstacle in the grid
      * @param obj The object to set non walkable
      */
-    public addObstacle(obj: PIXI.Container) {
+    public addObstacle(obj: PIXI.Container, offset?: { top: number, right: number, left: number, bottom: number }) {
 
-        let start = this.findSquare({ x: obj.x - obj.width / 2, y: obj.y - obj.height / 2 })
+        if (offset === undefined) {
+            offset = {
+                top: 0,
+                right: 0,
+                left: 0,
+                bottom: 0
+            }
+        }
 
-        let end = this.findSquare({ x: obj.x + obj.width / 2, y: obj.y + obj.height / 2 })
+        let start = this.findSquare({
+            x: obj.x - obj.width / 2 + offset.left,
+            y: obj.y - obj.height / 2 + offset.top
+        })
+
+        let end = this.findSquare({
+            x: obj.x + obj.width / 2 - offset.right,
+            y: obj.y + obj.height / 2 - offset.bottom
+        })
 
         for (let x = start.x; x <= end.x; x++) {
             for (let y = start.y; y <= end.y; y++) {

@@ -13,7 +13,13 @@ export type BuildingData = {
     rations?: number,
     poison?: number,
     building: {
-        name: string
+        name: string,
+        offset: {
+            top: number,
+            right: number,
+            bottom: number,
+            left: number
+        }
     }
 }
 

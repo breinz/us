@@ -22,7 +22,7 @@ class Well extends ABuilding {
      */
     protected drawBuilding(): void {
 
-        let i = PIXI.Sprite.fromImage("img/buildings/well.png")
+        let i = PIXI.Sprite.fromImage("img/buildings/well2.png")
         i.anchor.set(.5, .5)
 
         if (!i.texture.baseTexture.hasLoaded) {

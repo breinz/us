@@ -56,7 +56,7 @@ class ABuilding implements IBuilding {
 
         this.layer.addChild(this.container)
 
-        cell.grid.addObstacle(this.container)
+        cell.grid.addObstacle(this.container, this.data.building.offset)
 
         dispatcher.on(dispatcher.SWITCH_MODE, this.onSwitchMode.bind(this))
 

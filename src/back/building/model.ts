@@ -7,7 +7,13 @@ import { Document, Schema, model } from "mongoose"
 export type BuildingModel = Document & {
     name: string,
     x: number,
-    y: number
+    y: number,
+    offset: {
+        left: number,
+        right: number,
+        top: number,
+        bottom: number
+    }
 }
 
 // --------------------------------------------------
@@ -16,7 +22,13 @@ export type BuildingModel = Document & {
 export const buildingSchema = new Schema({
     name: String,
     x: Number,
-    y: Number
+    y: Number,
+    offset: {
+        left: Number,
+        right: Number,
+        top: Number,
+        bottom: Number
+    }
 })
 
 // --------------------------------------------------

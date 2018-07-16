@@ -38,7 +38,7 @@ router.post("/new", async (req, res, next) => {
 
     try {
         await building.save();
-    } catch(err) {
+    } catch (err) {
         next(err)
     }
 
@@ -54,7 +54,7 @@ router.get("/:buildingId/edit", async (req, res, next) => {
     let building;
     try {
         building = await Building.findById(req.params.buildingId)
-    } catch(err) {
+    } catch (err) {
         next(err)
     }
 
@@ -76,6 +76,12 @@ router.post("/:buildingId/edit", async (req, res, next) => {
         let building: BuildingModel = <BuildingModel>await Building.findById(req.params.buildingId)
 
         building.name = req.body.name
+        building.offset = {
+            top: req.body.offset_t,
+            left: req.body.offset_l,
+            right: req.body.offset_r,
+            bottom: req.body.offset_b
+        }
 
         await building.save()
     } catch (err) {

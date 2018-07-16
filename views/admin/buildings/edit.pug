@@ -9,4 +9,18 @@ block content
                 .callout
                     label Name
                         input(type="text" name="name" value=building.name autofocus)
+                    label Offset
+                        .grid-x.grid-margin-x
+                            .cell.small-3
+                                label Top
+                                    input(type="number" name="offset_t" value=building.offset.top)
+                            .cell.small-3
+                                label Left
+                                    input(type="number" name="offset_l" value=building.offset.left)
+                            .cell.small-3
+                                label Right
+                                    input(type="number" name="offset_r" value=building.offset.right)
+                            .cell.small-3
+                                label Bottom
+                                    input(type="number" name="offset_b" value=building.offset.bottom)
                 input.button.hollow.secondary(type="submit", value="Save")
