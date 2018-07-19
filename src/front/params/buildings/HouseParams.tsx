@@ -24,13 +24,6 @@ class HouseParams extends ABuildingParams {
         super(props)
     }
 
-    public componentWillMount() {
-    }
-
-    public componentWillUnmount() {
-    }
-
-
     public render() {
         let hidden_actions = 0;
 
@@ -38,7 +31,7 @@ class HouseParams extends ABuildingParams {
         let rest_btn
         if (!cell.user_controller.state.resting) {
             rest_btn =
-                <button onClick={this.rest.bind(this)} className="button success small">
+                <button onClick={() => { this.rest(true) }} className="button success small">
                     {i18n.__("actions.rest5")}
                 </button>;
         } else {
@@ -57,15 +50,18 @@ class HouseParams extends ABuildingParams {
     // Rest
     // --------------------------------------------------
 
-    private rest() {
-
-        cell.user.moveTo(this.props.building.entry, this.doRest.bind(this))
-
-    }
-
-    private doRest() {
+    /**
+     * Rest in this place
+     * @param moveTo If we need to move the user to that place
+     */
+    private rest(moveTo: boolean) {
+        if (moveTo) {
+            cell.user.moveTo(this.props.building.entry, this.rest.bind(this))
+            return;
+        }
         dispatcher.dispatch(dispatcher.REST, 5)
     }
+
 }
 
 export default HouseParams

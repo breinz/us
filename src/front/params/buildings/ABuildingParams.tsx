@@ -1,6 +1,7 @@
 import * as React from "react"
 import dispatcher from "../../dispatcher";
 import i18n from "../../i18n";
+import { cell } from "../../main";
 
 class ABuildingParams extends React.Component {
 
@@ -18,6 +19,10 @@ class ABuildingParams extends React.Component {
 
     public componentWillUnmount() {
         dispatcher.off(dispatcher.SLEEP, this.onSleep_fct)
+    }
+
+    protected get asleep() {
+        return cell.user_controller.state.resting;
     }
 
     /**

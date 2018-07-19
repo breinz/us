@@ -44,6 +44,8 @@ class WellParams extends ABuildingParams {
         cell.cell_socket.on(message.WELL.GET_WATER.DOWN, this.updatePoison_fct)
         cell.cell_socket.on("addedWater", this.updateRations_fct)
         cell.cell_socket.on("well.poisoned", this.updatePoison_fct)
+
+        super.componentDidMount()
     }
 
     componentWillUnmount() {
@@ -51,6 +53,8 @@ class WellParams extends ABuildingParams {
         cell.cell_socket.off(message.WELL.GET_WATER.DOWN, this.updatePoison_fct)
         cell.cell_socket.off("addedWater", this.updateRations_fct)
         cell.cell_socket.off("well.poisoned", this.updatePoison_fct)
+
+        super.componentWillUnmount()
     }
 
     public render() {

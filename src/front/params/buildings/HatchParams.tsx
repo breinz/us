@@ -29,18 +29,18 @@ class HatchParams extends ABuildingParams {
     }
 
     componentDidMount() {
+        super.componentDidMount()
     }
 
     componentWillUnmount() {
+        super.componentWillUnmount()
     }
 
     public render() {
         let hidden_actions = 0;
 
-        const asleep = cell.user_controller.state.resting
-
         let dig_btn;
-        if (!asleep) {
+        if (!this.asleep) {
             dig_btn =
                 <button
                     onClick={() => { this.onDig(true) }}
