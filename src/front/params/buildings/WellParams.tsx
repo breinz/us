@@ -6,12 +6,13 @@ import { cell } from "../../main";
 import ABuilding from "../../buildings/ABuilding";
 import dispatcher from "../../dispatcher";
 import message from "../../../SocketMessages"
+import ABuildingParams from "./ABuildingParams";
 
 type PropsType = {
     building: ABuilding
 }
 
-class WellParams extends React.Component {
+class WellParams extends ABuildingParams {
 
 
     public props: PropsType;
@@ -24,7 +25,6 @@ class WellParams extends React.Component {
 
     private updateRations_fct: () => void
     private updatePoison_fct: () => void
-    private onSleep_fct: () => void;
 
     constructor(props: PropsType) {
         super(props)
@@ -35,7 +35,6 @@ class WellParams extends React.Component {
         }
 
         this.updateRations_fct = this.updateRations.bind(this)
-        this.onSleep_fct = this.onSleep.bind(this)
         this.updatePoison_fct = this.updatePoison.bind(this);
 
     }
@@ -45,8 +44,6 @@ class WellParams extends React.Component {
         cell.cell_socket.on(message.WELL.GET_WATER.DOWN, this.updatePoison_fct)
         cell.cell_socket.on("addedWater", this.updateRations_fct)
         cell.cell_socket.on("well.poisoned", this.updatePoison_fct)
-
-        dispatcher.on(dispatcher.SLEEP, this.onSleep_fct)
     }
 
     componentWillUnmount() {
@@ -54,8 +51,6 @@ class WellParams extends React.Component {
         cell.cell_socket.off(message.WELL.GET_WATER.DOWN, this.updatePoison_fct)
         cell.cell_socket.off("addedWater", this.updateRations_fct)
         cell.cell_socket.off("well.poisoned", this.updatePoison_fct)
-
-        dispatcher.off(dispatcher.SLEEP, this.onSleep_fct)
     }
 
     public render() {
@@ -102,15 +97,6 @@ class WellParams extends React.Component {
             hidden_actions++
         }
 
-        // Hidden actions
-        let hidden_actions_txt
-        if (hidden_actions > 0) {
-            hidden_actions_txt =
-                <small>
-                    {i18n._n("actions.%s more", hidden_actions)}
-                </small>;
-        }
-
         return (
             <div>
                 <div className="bignum">
@@ -127,17 +113,9 @@ class WellParams extends React.Component {
                     {addWater_btn}
                     {poison_btn}
                 </div>
-                {hidden_actions_txt}
+                {this.getHiddenActions(hidden_actions)}
             </div>
         )
-    }
-
-    /**
-     * The user goes to sleep or wakes up
-     * @param sleep If the user goes to sleep or wakes up
-     */
-    private onSleep(sleep: boolean) {
-        this.forceUpdate()
     }
 
     // --------------------------------------------------

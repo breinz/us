@@ -4,6 +4,7 @@ import i18n from "../../i18n"
 import ABuilding from "../../buildings/ABuilding";
 import { cell } from "../../main";
 import dispatcher from "../../dispatcher";
+import ABuildingParams from "./ABuildingParams";
 
 type PropsType = {
     data: {
@@ -15,24 +16,18 @@ type PropsType = {
     building: ABuilding
 }
 
-class HouseParams extends React.Component {
+class HouseParams extends ABuildingParams {
 
     public props: PropsType;
 
-    private onSleep_fct: () => void;
-
     constructor(props: BuildingData) {
         super(props)
-
-        this.onSleep_fct = this.onSleep.bind(this)
     }
 
     public componentWillMount() {
-        dispatcher.on(dispatcher.SLEEP, this.onSleep_fct)
     }
 
     public componentWillUnmount() {
-        dispatcher.off(dispatcher.SLEEP, this.onSleep_fct)
     }
 
 
@@ -50,16 +45,10 @@ class HouseParams extends React.Component {
             hidden_actions++;
         }
 
-        // Hidden actions
-        let hidden_actions_txt
-        if (hidden_actions > 0) {
-            hidden_actions_txt = <small>{i18n._n("actions.%s more", hidden_actions)}</small>
-        }
-
         return (
             <div>
                 {rest_btn}
-                {hidden_actions_txt}
+                {this.getHiddenActions(hidden_actions)}
             </div>
         )
     }
@@ -76,14 +65,6 @@ class HouseParams extends React.Component {
 
     private doRest() {
         dispatcher.dispatch(dispatcher.REST, 5)
-    }
-
-    // --------------------------------------------------
-    // Events
-    // --------------------------------------------------
-
-    private onSleep(sleep: boolean) {
-        this.forceUpdate();
     }
 }
 

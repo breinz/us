@@ -5,6 +5,7 @@
 import Home from "./Home";
 import Well from "./Well";
 import ABuilding from "./ABuilding";
+import Hatch from "./Hatch";
 
 export type BuildingData = {
     _id: string,
@@ -35,6 +36,8 @@ class BuildingFactory {
                 return new Home(data, layer);
             case "well":
                 return new Well(data, layer);
+            case "hatch":
+                return new Hatch(data, layer)
         }
     }
 }
