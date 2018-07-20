@@ -13,6 +13,12 @@ export type BuildingModel = Document & {
         right: number,
         top: number,
         bottom: number
+    },
+    hitArea: {
+        x: number,
+        y: number,
+        width: number,
+        height: number
     }
 }
 
@@ -28,6 +34,12 @@ export const buildingSchema = new Schema({
         right: Number,
         top: Number,
         bottom: Number
+    },
+    hitArea: {
+        x: Number,
+        y: Number,
+        width: Number,
+        height: Number
     }
 })
 

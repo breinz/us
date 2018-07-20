@@ -23,4 +23,18 @@ block content
                             .cell.small-3
                                 label Bottom
                                     input(type="number" name="offset_b" value=building.offset.bottom)
+                    label Hit area
+                        .grid-x.grid-margin-x
+                            .cell.small-3
+                                label X
+                                    input(type="number" name="hitArea_x" value=building.hitArea.x)
+                            .cell.small-3
+                                label Y
+                                    input(type="number" name="hitArea_y" value=building.hitArea.y)
+                            .cell.small-3
+                                label Width
+                                    input(type="number" name="hitArea_w" value=building.hitArea.width)
+                            .cell.small-3
+                                label Height
+                                    input(type="number" name="hitArea_h" value=building.hitArea.height)
                 input.button.hollow.secondary(type="submit", value="Save")

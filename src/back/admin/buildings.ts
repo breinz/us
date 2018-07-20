@@ -82,6 +82,12 @@ router.post("/:buildingId/edit", async (req, res, next) => {
             right: req.body.offset_r,
             bottom: req.body.offset_b
         }
+        building.hitArea = {
+            x: req.body.hitArea_x,
+            y: req.body.hitArea_y,
+            width: req.body.hitArea_w,
+            height: req.body.hitArea_h,
+        }
 
         await building.save()
     } catch (err) {
