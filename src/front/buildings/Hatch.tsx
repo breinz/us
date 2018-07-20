@@ -12,6 +12,8 @@ class Hatch extends ABuilding {
 
         this.params = <HatchParams building={this} />;//<WellParams building={this} />
 
+        this.offset = { x: -10, y: 0 };
+
         //cell.cell_socket.on("gotWater", this.updateRations.bind(this))
     }
 
@@ -21,7 +23,7 @@ class Hatch extends ABuilding {
     protected drawBuilding(): void {
 
         let i = PIXI.Sprite.fromImage("img/buildings/hatch.png")
-        i.anchor.set(.5, .5)
+        //i.anchor.set(.5, .5)
 
         if (!i.texture.baseTexture.hasLoaded) {
             i.texture.baseTexture.once("loaded", () => {

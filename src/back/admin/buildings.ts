@@ -76,18 +76,22 @@ router.post("/:buildingId/edit", async (req, res, next) => {
         let building: BuildingModel = <BuildingModel>await Building.findById(req.params.buildingId)
 
         building.name = req.body.name
+
         building.offset = {
             top: req.body.offset_t,
             left: req.body.offset_l,
             right: req.body.offset_r,
             bottom: req.body.offset_b
-        }
-        building.hitArea = {
-            x: req.body.hitArea_x,
-            y: req.body.hitArea_y,
-            width: req.body.hitArea_w,
-            height: req.body.hitArea_h,
-        }
+        };
+
+        building.hitArea = req.body.hitArea;
+
+        building.obstacle = {
+            x: req.body.obstacle_x,
+            y: req.body.obstacle_y,
+            width: req.body.obstacle_w,
+            height: req.body.obstacle_h,
+        };
 
         await building.save()
     } catch (err) {

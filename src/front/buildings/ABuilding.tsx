@@ -6,6 +6,8 @@ import Mode from "../mode";
 
 class ABuilding implements IBuilding {
 
+    private showHitArea = false;
+
     /**
      * The layer where to draw the building
      */
@@ -21,7 +23,12 @@ class ABuilding implements IBuilding {
      */
     protected container: PIXI.Container
 
+    private hitArea: PIXI.Polygon;
+
     private onClick_fct: () => void;
+
+
+    protected offset: { x: number, y: number };
 
     /**
      * Params
@@ -33,6 +40,8 @@ class ABuilding implements IBuilding {
         this.layer = layer;
 
         this.onClick_fct = this.onClick.bind(this);
+
+        this.offset = { x: 0, y: 0 };
 
         this.drawBuilding(null)
     }
@@ -51,12 +60,34 @@ class ABuilding implements IBuilding {
         this.container = new PIXI.Container();
         this.container.addChild(building);
 
-        this.container.x = this.data.x;
-        this.container.y = this.data.y;
+        this.container.x = this.data.x + this.offset.x;
+        this.container.y = this.data.y + this.offset.y;
 
         this.layer.addChild(this.container)
 
-        cell.grid.addObstacle(this.container, this.data.building.offset)
+        let points: PIXI.Point[] = [];
+        let tmpPoints: PIXI.Point[] = []
+        let arHit = this.data.building.hitArea.split(",")
+        for (let i = 0; i < arHit.length; i += 2) {
+            points.push(new PIXI.Point(parseInt(arHit[i]), parseInt(arHit[i + 1])));
+            tmpPoints.push(new PIXI.Point(
+                this.container.x + parseInt(arHit[i]),
+                this.container.y + parseInt(arHit[i + 1])));
+        }
+
+        this.hitArea = new PIXI.Polygon(points)
+
+        if (this.showHitArea) {
+            let ha = new PIXI.Graphics();
+            ha.beginFill(0xFF00FF, .5)
+            ha.drawPolygon(tmpPoints)
+
+            this.layer.addChild(ha)
+        }
+
+        this.container.hitArea = this.hitArea;
+
+        cell.grid.addObstacle(this.container, this.offset, this.data.building.obstacle)
 
         dispatcher.on(dispatcher.SWITCH_MODE, this.onSwitchMode.bind(this))
 

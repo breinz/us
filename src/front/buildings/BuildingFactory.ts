@@ -21,6 +21,13 @@ export type BuildingData = {
             right: number,
             bottom: number,
             left: number
+        },
+        hitArea: string,
+        obstacle: {
+            x: number,
+            y: number,
+            width: number,
+            height: number
         }
     }
 }

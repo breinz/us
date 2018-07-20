@@ -15,6 +15,11 @@ class Well extends ABuilding {
         cell.cell_socket.on("gotWater", this.updateRations.bind(this))
         cell.cell_socket.on("addedWater", this.updateRations.bind(this))
         cell.cell_socket.on("well.poisoned", this.updatePoison.bind(this))
+
+        this.offset = {
+            x: 5,
+            y: -3
+        };
     }
 
     /**
@@ -23,7 +28,7 @@ class Well extends ABuilding {
     protected drawBuilding(): void {
 
         let i = PIXI.Sprite.fromImage("img/buildings/well2.png")
-        i.anchor.set(.5, .5)
+        //i.anchor.set(.5, .5)
 
         if (!i.texture.baseTexture.hasLoaded) {
             i.texture.baseTexture.once("loaded", () => {

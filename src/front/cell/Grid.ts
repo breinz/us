@@ -26,7 +26,7 @@ export default class Grid extends PIXI.Container {
             cell.app.view.height / Grid.CELL_SIZE
         );
 
-        this.finder = new Path.BestFirstFinder({ diagonalMovement: 1 })
+        this.finder = new Path.BestFirstFinder({ diagonalMovement: 4 })
 
         // --------------------------------------------------
         if (this.SHOW_GRID) {
@@ -57,25 +57,25 @@ export default class Grid extends PIXI.Container {
      * Add an obstacle in the grid
      * @param obj The object to set non walkable
      */
-    public addObstacle(obj: PIXI.Container, offset?: { top: number, right: number, left: number, bottom: number }) {
+    public addObstacle(obj: PIXI.Container, offset: { x: number, y: number }, obstacle?: { x: number, y: number, width: number, height: number }) {
 
-        if (offset === undefined) {
-            offset = {
-                top: 0,
-                right: 0,
-                left: 0,
-                bottom: 0
+        if (obstacle === undefined) {
+            obstacle = {
+                x: 0,
+                y: 0,
+                width: 20,
+                height: 20
             }
         }
 
         let start = this.findSquare({
-            x: obj.x - obj.width / 2 + offset.left,
-            y: obj.y - obj.height / 2 + offset.top
+            x: obj.x - offset.x + obstacle.x + 1,
+            y: obj.y - offset.y + obstacle.y + 1
         })
 
         let end = this.findSquare({
-            x: obj.x + obj.width / 2 - offset.right,
-            y: obj.y + obj.height / 2 - offset.bottom
+            x: obj.x - offset.x + obstacle.x + obstacle.width - 2,
+            y: obj.y - offset.y + obstacle.y + obstacle.height - 2
         })
 
         for (let x = start.x; x <= end.x; x++) {
@@ -89,7 +89,7 @@ export default class Grid extends PIXI.Container {
             for (let i = start.x; i <= end.x; i++) {
                 for (let j = start.y; j <= end.y; j++) {
                     let s = this.arCells[j][i]
-                    s.beginFill(0, .3)
+                    s.beginFill(0, .5)
                     s.drawRect(0, 0, Grid.CELL_SIZE, Grid.CELL_SIZE)
                 }
             }
@@ -193,7 +193,8 @@ export default class Grid extends PIXI.Container {
         // --------------------------------------------------
 
         // Smoothen path
-        cells = Path.Util.smoothenPath(this.grid.clone(), cells)
+        //cells = Path.Util.smoothenPath(this.grid.clone(), cells)
+        cells = Path.Util.compressPath(cells)
 
         // --------------------------------------------------
         if (this.SHOW_GRID) {

@@ -25,7 +25,7 @@ class Home extends ABuilding {
     protected drawBuilding(): void {
 
         let i = PIXI.Sprite.fromImage("img/buildings/house2.png")
-        i.anchor.set(.5, .5)
+        //i.anchor.set(.5, .5)
 
         if (!i.texture.baseTexture.hasLoaded) {
             i.texture.baseTexture.once("loaded", () => {

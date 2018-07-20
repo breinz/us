@@ -7,10 +7,16 @@ import HatchParams from "../params/buildings/HatchParams";
 class Church extends ABuilding {
 
 
+
     constructor(data: BuildingData, layer: PIXI.Container) {
         super(data, layer)
 
         this.params = null;//<HatchParams building={this} />;
+
+        this.offset = {
+            x: 0,
+            y: -13
+        }
 
         //cell.cell_socket.on("gotWater", this.updateRations.bind(this))
     }
@@ -21,7 +27,7 @@ class Church extends ABuilding {
     protected drawBuilding(): void {
 
         let i = PIXI.Sprite.fromImage("img/buildings/church.png")
-        i.anchor.set(.5, .5)
+        //i.anchor.set(.5, .5)
 
         if (!i.texture.baseTexture.hasLoaded) {
             i.texture.baseTexture.once("loaded", () => {

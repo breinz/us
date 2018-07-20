@@ -14,7 +14,8 @@ export type BuildingModel = Document & {
         top: number,
         bottom: number
     },
-    hitArea: {
+    hitArea: string,
+    obstacle: {
         x: number,
         y: number,
         width: number,
@@ -35,7 +36,8 @@ export const buildingSchema = new Schema({
         top: Number,
         bottom: Number
     },
-    hitArea: {
+    hitArea: String,
+    obstacle: {
         x: Number,
         y: Number,
         width: Number,

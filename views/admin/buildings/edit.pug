@@ -9,7 +9,9 @@ block content
                 .callout
                     label Name
                         input(type="text" name="name" value=building.name autofocus)
-                    label Offset
+                    label 
+                        span Offset 
+                            small: i //deprecated
                         .grid-x.grid-margin-x
                             .cell.small-3
                                 label Top
@@ -24,17 +26,19 @@ block content
                                 label Bottom
                                     input(type="number" name="offset_b" value=building.offset.bottom)
                     label Hit area
+                        input(type="text" name="hitArea" value=building.hitArea)
+                    label Obstacle
                         .grid-x.grid-margin-x
                             .cell.small-3
                                 label X
-                                    input(type="number" name="hitArea_x" value=building.hitArea.x)
+                                    input(type="number" name="obstacle_x" value=building.obstacle.x)
                             .cell.small-3
                                 label Y
-                                    input(type="number" name="hitArea_y" value=building.hitArea.y)
+                                    input(type="number" name="obstacle_y" value=building.obstacle.y)
                             .cell.small-3
                                 label Width
-                                    input(type="number" name="hitArea_w" value=building.hitArea.width)
+                                    input(type="number" name="obstacle_w" value=building.obstacle.width)
                             .cell.small-3
                                 label Height
-                                    input(type="number" name="hitArea_h" value=building.hitArea.height)
+                                    input(type="number" name="obstacle_h" value=building.obstacle.height)
                 input.button.hollow.secondary(type="submit", value="Save")
