@@ -37,6 +37,9 @@ export default class Dev extends React.Component {
                     <button className="button small hollow secondary" onClick={this.fillAP.bind(this)}>
                         Fill AP
                     </button>
+                    <button className="button small hollow secondary" onClick={() => { dispatcher.dispatch(dispatcher.DEV_SHOW_HIT_AREA) }}>
+                        Show hit area
+                    </button>
                 </div>
             </div>
         )

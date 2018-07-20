@@ -1,5 +1,7 @@
 class Dispatcher {
 
+    public DEV_SHOW_HIT_AREA = "dev_showHitArea";
+
     public SWITCH_MODE = "switch_mode";
 
     public SELECT_BUILDING = "selectBuilding";

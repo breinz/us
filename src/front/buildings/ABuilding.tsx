@@ -6,7 +6,8 @@ import Mode from "../mode";
 
 class ABuilding implements IBuilding {
 
-    private showHitArea = false;
+    /** DEV */
+    private dev_hitArea: PIXI.Graphics[] = []
 
     /**
      * The layer where to draw the building
@@ -44,6 +45,15 @@ class ABuilding implements IBuilding {
         this.offset = { x: 0, y: 0 };
 
         this.drawBuilding(null)
+
+        dispatcher.on(dispatcher.DEV_SHOW_HIT_AREA, this.onShowHitArea.bind(this));
+    }
+
+    private onShowHitArea() {
+        for (let i = 0; i < this.dev_hitArea.length; i++) {
+            this.dev_hitArea[i].visible = !this.dev_hitArea[i].visible;
+
+        }
     }
 
     public get entry(): { x: number, y: number } {
@@ -77,13 +87,17 @@ class ABuilding implements IBuilding {
 
         this.hitArea = new PIXI.Polygon(points)
 
-        if (this.showHitArea) {
-            let ha = new PIXI.Graphics();
-            ha.beginFill(0xFF00FF, .5)
-            ha.drawPolygon(tmpPoints)
+        // --------------------------------------------------
+        // Dev
+        let ha = new PIXI.Graphics();
+        ha.beginFill(0xFF00FF, .5)
+        ha.drawPolygon(tmpPoints)
 
-            this.layer.addChild(ha)
-        }
+        this.layer.addChild(ha)
+
+        ha.visible = false;
+        this.dev_hitArea.push(ha)
+        // --------------------------------------------------
 
         this.container.hitArea = this.hitArea;
 
