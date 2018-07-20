@@ -9,6 +9,11 @@ class Home extends ABuilding {
     constructor(data: BuildingData, layer: PIXI.Container) {
         super(data, layer)
 
+        this.offset = {
+            x: 5,
+            y: 0
+        }
+
         this.params = <HouseParams data={data} building={this} />
     }
 
