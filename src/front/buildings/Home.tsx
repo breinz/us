@@ -19,8 +19,8 @@ class Home extends ABuilding {
 
     public get entry() {
         return {
-            x: this.container.x,
-            y: this.container.y + this.container.height / 2
+            x: this.container.x + this.container.width / 2,
+            y: this.container.y + this.container.height - 10
         }
     }
 

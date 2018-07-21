@@ -58,8 +58,8 @@ class ABuilding implements IBuilding {
 
     public get entry(): { x: number, y: number } {
         return {
-            x: this.container.x + Math.random() * this.container.width - this.container.width / 2,
-            y: this.container.y + Math.random() * this.container.height - this.container.height / 2
+            x: this.container.x + Math.random() * this.container.width,
+            y: this.container.y + this.container.height
         }
     }
 

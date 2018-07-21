@@ -2,6 +2,7 @@ import * as React from "react"
 import ABuilding from "./ABuilding";
 import { BuildingData } from "./BuildingFactory";
 import HatchParams from "../params/buildings/HatchParams";
+import ChurchParams from "../params/buildings/ChurchParams";
 
 
 class Church extends ABuilding {
@@ -11,7 +12,7 @@ class Church extends ABuilding {
     constructor(data: BuildingData, layer: PIXI.Container) {
         super(data, layer)
 
-        this.params = null;//<HatchParams building={this} />;
+        this.params = <ChurchParams building={this} />;
 
         this.offset = {
             x: 0,
@@ -35,6 +36,13 @@ class Church extends ABuilding {
             })
         } else {
             super.drawBuilding(i)
+        }
+    }
+
+    public get entry() {
+        return {
+            x: this.container.x + 155,
+            y: this.container.y + this.container.height - 90
         }
     }
 
