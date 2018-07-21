@@ -22,14 +22,25 @@ class ABuilding implements IBuilding {
     /**
      * The actual building as seen on stage
      */
-    protected container: PIXI.Container
+    public container: PIXI.Container
 
     private hitArea: PIXI.Polygon;
+
+    /**
+     * Horizontal limit where the user goes behind the building
+     */
+    public horizon: number = 0;
+    private dev_horizon_line: PIXI.Graphics;
 
     private onClick_fct: () => void;
 
 
     protected offset: { x: number, y: number };
+
+    /**
+     * If the building is in front of the user
+     */
+    public front: boolean = false;
 
     /**
      * Params
@@ -46,16 +57,14 @@ class ABuilding implements IBuilding {
 
         this.drawBuilding(null)
 
-        cell.arBuildings.push(this);
-
         dispatcher.on(dispatcher.DEV_SHOW_HIT_AREA, this.onShowHitArea.bind(this));
     }
 
     private onShowHitArea() {
         for (let i = 0; i < this.dev_hitArea.length; i++) {
             this.dev_hitArea[i].visible = !this.dev_hitArea[i].visible;
-
         }
+        this.dev_horizon_line.visible = !this.dev_horizon_line.visible;
     }
 
     public get entry(): { x: number, y: number } {
@@ -105,9 +114,21 @@ class ABuilding implements IBuilding {
 
         cell.grid.addObstacle(this.container, this.offset, this.data.building.obstacle)
 
+        cell.arBuildings.push(this);
+
         dispatcher.on(dispatcher.SWITCH_MODE, this.onSwitchMode.bind(this))
 
         this.onSwitchMode(cell.user_data.mode)
+
+        this.drawHorizon()
+    }
+
+    private drawHorizon() {
+        this.dev_horizon_line = new PIXI.Graphics()
+        this.dev_horizon_line.lineStyle(2, 0xFF0000)
+        this.dev_horizon_line.moveTo(0, this.horizon).lineTo(this.container.width, this.horizon)
+        this.container.addChild(this.dev_horizon_line);
+        this.dev_horizon_line.visible = false;
     }
 
     // **************************************************

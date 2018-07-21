@@ -14,6 +14,8 @@ class Home extends ABuilding {
             y: 0
         }
 
+        this.horizon = 23;
+
         this.params = <HouseParams data={data} building={this} />
     }
 
@@ -30,7 +32,6 @@ class Home extends ABuilding {
     protected drawBuilding(): void {
 
         let i = PIXI.Sprite.fromImage("img/buildings/house2.png")
-        //i.anchor.set(.5, .5)
 
         if (!i.texture.baseTexture.hasLoaded) {
             i.texture.baseTexture.once("loaded", () => {

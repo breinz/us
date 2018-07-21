@@ -112,6 +112,22 @@ export default class Move {
         this.user.x += Math.cos(angle) * speed
         this.user.y += Math.sin(angle) * speed
 
+        // Reorganize the buildings to allow passing behind them
+        for (let i = 0; i < cell.arBuildings.length; i++) {
+            const building = cell.arBuildings[i];
+            if (this.user.y < building.container.y + building.horizon) {
+                if (building.front === false) {
+                    building.container.parent.addChild(building.container)
+                    building.front = true;
+                    console.log(building.data.building.name, "front");
+                }
+            } else if (building.front === true) {
+                building.container.parent.addChildAt(building.container, 0)
+                building.front = false;
+                console.log(building.data.building.name, "back");
+            }
+        }
+
         // Reaches the end destination
         if (Math.abs(target[0] - this.user.x) < 2 && Math.abs(target[1] - this.user.y) < 2) {
             this.targets.shift();

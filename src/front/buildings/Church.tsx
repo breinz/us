@@ -19,6 +19,8 @@ class Church extends ABuilding {
             y: -13
         }
 
+        this.horizon = 140;
+
         //cell.cell_socket.on("gotWater", this.updateRations.bind(this))
     }
 
@@ -37,6 +39,8 @@ class Church extends ABuilding {
         } else {
             super.drawBuilding(i)
         }
+
+        console.log("set horizon");
     }
 
     public get entry() {

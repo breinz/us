@@ -20,6 +20,8 @@ class Well extends ABuilding {
             x: 5,
             y: -3
         };
+
+        this.horizon = 5;
     }
 
     /**

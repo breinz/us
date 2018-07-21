@@ -12,7 +12,6 @@ import UserParams from "../params/user/UserParams"
 import GameParams from "../params/game_params"
 import Dev from "../dev/Dev"
 import i18n from "../i18n"
-import { cell } from "../main";
 import dispatcher from "../dispatcher";
 import { ItemModel } from "../../back/item/model";
 import { UserModel, UserItemModel } from "../../back/user/model";
@@ -64,11 +63,13 @@ export default class Cell {
      */
     public grid: Grid;
 
+    public test = "poipom";
+
     /**
      * All buildings on stage
      * @see ABuilding That pushes into that array
      */
-    public arBuildings: ABuilding[]
+    public arBuildings: ABuilding[];
 
     constructor() {
         // Open the socket to the server
@@ -129,6 +130,10 @@ export default class Cell {
 
         // --------------------------------------------------
         // Buildings
+
+        this.arBuildings = [];
+
+        console.log("cell", this.arBuildings);
 
         var buildings = new Pixi.Container();
         this.app.stage.addChild(buildings);
