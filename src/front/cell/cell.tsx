@@ -18,6 +18,7 @@ import { ItemModel } from "../../back/item/model";
 import { UserModel, UserItemModel } from "../../back/user/model";
 import User from "../user/User";
 import Grid from "./Grid";
+import ABuilding from "../buildings/ABuilding";
 
 export default class Cell {
 
@@ -58,7 +59,16 @@ export default class Cell {
 
     public user_controller: UserParams;
 
+    /**
+     * The grid for pathfinding
+     */
     public grid: Grid;
+
+    /**
+     * All buildings on stage
+     * @see ABuilding That pushes into that array
+     */
+    public arBuildings: ABuilding[]
 
     constructor() {
         // Open the socket to the server
@@ -133,7 +143,8 @@ export default class Cell {
 
         this.user = new User();
         this.user.init()
-        this.app.stage.addChild(this.user)
+        buildings.addChild(this.user)
+        //this.app.stage.addChild(this.user)
 
         // --------------------------------------------------
         // Grid

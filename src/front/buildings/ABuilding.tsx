@@ -46,6 +46,8 @@ class ABuilding implements IBuilding {
 
         this.drawBuilding(null)
 
+        cell.arBuildings.push(this);
+
         dispatcher.on(dispatcher.DEV_SHOW_HIT_AREA, this.onShowHitArea.bind(this));
     }
 
