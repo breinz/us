@@ -40,7 +40,6 @@ class Church extends ABuilding {
             super.drawBuilding(i)
         }
 
-        console.log("set horizon");
     }
 
     public get entry() {

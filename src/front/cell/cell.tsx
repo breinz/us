@@ -18,6 +18,7 @@ import { UserModel, UserItemModel } from "../../back/user/model";
 import User from "../user/User";
 import Grid from "./Grid";
 import ABuilding from "../buildings/ABuilding";
+import Church1 from "../buildings/rooms/Church1";
 
 export default class Cell {
 
@@ -63,7 +64,12 @@ export default class Cell {
      */
     public grid: Grid;
 
-    public test = "poipom";
+    /** 
+     * Main container 
+     */
+    private container: PIXI.Container;
+
+    private dev_container: PIXI.Container;
 
     /**
      * All buildings on stage
@@ -100,6 +106,7 @@ export default class Cell {
         })
 
         dispatcher.on(dispatcher.UPDATE_BAG, this.onUpdateBag.bind(this))
+        dispatcher.on(dispatcher.ENTER, this.onEnter.bind(this))
     }
 
     private onUpdateBag(items: any) {
@@ -129,14 +136,21 @@ export default class Cell {
         background.init(this.app);
 
         // --------------------------------------------------
+        // Container
+
+        this.container = new PIXI.Container();
+        this.app.stage.addChild(this.container);
+
+        this.dev_container = new PIXI.Container();
+        this.app.stage.addChild(this.dev_container);
+
+        // --------------------------------------------------
         // Buildings
 
         this.arBuildings = [];
 
-        console.log("cell", this.arBuildings);
-
         var buildings = new Pixi.Container();
-        this.app.stage.addChild(buildings);
+        this.container.addChild(buildings);
 
         this.data.buildings.forEach((building: BuildingData) => {
             BuildingFactory.create(building, buildings)
@@ -149,25 +163,25 @@ export default class Cell {
         this.user = new User();
         this.user.init()
         buildings.addChild(this.user)
-        //this.app.stage.addChild(this.user)
+        //this.container.addChild(this.user)
 
         // --------------------------------------------------
         // Grid
 
         this.grid = new Grid()
-        this.app.stage.addChild(this.grid);
+        this.dev_container.addChild(this.grid);
 
         // --------------------------------------------------
         // Dig
 
         // Prepare the dig layer
-        this.app.stage.addChild(new Dig());
+        this.container.addChild(new Dig());
 
         // --------------------------------------------------
         // Map
 
         // Prepare the map layer
-        this.app.stage.addChild(new Map());
+        this.container.addChild(new Map());
 
         // --------------------------------------------------
         // Border
@@ -178,7 +192,7 @@ export default class Cell {
         // --------------------------------------------------
         // Debug
 
-        this.app.stage.addChild(new Debug())
+        this.container.addChild(new Debug())
 
         // --------------------------------------------------
         // UI
@@ -205,6 +219,23 @@ export default class Cell {
         border.lineStyle(1, 0xB6B6B6)
         border.drawRect(0.5, 0.5, this.app.view.width - 1, this.app.view.height - 1)
         this.app.stage.addChild(border)
+    }
+
+    /**
+     * The user enters somewhere
+     * @param param Where we enter
+     */
+    private onEnter(param: any) {
+        // Enter in a building
+        console.log("onEnter", param, param instanceof ABuilding);
+        if (param instanceof ABuilding) {
+            const building = param as ABuilding;
+            switch (building.data.building.name) {
+                case "church":
+                    this.container.addChild(new Church1());
+                    break;
+            }
+        }
     }
 
     /**

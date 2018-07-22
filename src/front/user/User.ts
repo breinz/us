@@ -1,5 +1,6 @@
 import { cell } from "../main";
 import Move from "./move";
+import UserSprite from "./UserSprite";
 
 export default class User extends PIXI.Container {
 
@@ -7,6 +8,8 @@ export default class User extends PIXI.Container {
     private over: PIXI.Graphics;
 
     private move: Move;
+
+    private pic: UserSprite;
 
     private _onStageMouseMove: () => void;
     private _onStageMouseUp: () => void;
@@ -29,10 +32,17 @@ export default class User extends PIXI.Container {
     }
 
     private draw() {
-        let s = new PIXI.Graphics()
+        this.pic = new UserSprite("img/boy1.png");
+        this.addChild(this.pic)
+
+        /*let i = PIXI.Sprite.fromImage("img/boy1.png")
+        i.anchor.set(.5, .5);
+        this.addChild(i);*/
+
+        /*let s = new PIXI.Graphics()
         s.beginFill(0)
         s.drawCircle(0, 0, 7)
-        this.addChild(s)
+        this.addChild(s)*/
 
         this.x = cell.user_data.x;
         this.y = cell.user_data.y;
@@ -44,6 +54,20 @@ export default class User extends PIXI.Container {
         this.over.interactive = true
         this.over.on("mouseover", this.onMouseOver.bind(this))
         this.over.on("mousedown", this.onMouseDown.bind(this))
+    }
+
+    /**
+     * Animate the user
+     * @param begin Start or stop the animation
+     * @param angle Angle in radians
+     */
+    public animate(begin: boolean, angle?: number) {
+
+        if (begin) {
+            this.pic.start(angle)
+        } else {
+            this.pic.stop();
+        }
     }
 
     private onMouseOver(): void {

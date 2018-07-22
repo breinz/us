@@ -107,10 +107,6 @@ class WellParams extends ABuildingParams {
                     <div className="num">{this.state.rations}</div>
                     rations
                 </div>
-                <div className="bignum">
-                    <div className="num">{this.state.poison}</div>
-                    poison
-                </div>
                 {this.state.error}
                 <div>
                     {getWater_btn}

@@ -69,6 +69,8 @@ class ChurchParams extends ABuildingParams {
             cell.user.moveTo(this.props.building.entry, this.onEnter.bind(this))
             return;
         }
+
+        dispatcher.dispatch(dispatcher.ENTER, this.props.building)
     }
 
     /**

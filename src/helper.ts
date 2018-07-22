@@ -2,14 +2,19 @@
 /** 
  * Const to convert degres in radians
  */
-export const D2R = Math.PI/180;
+export const D2R = Math.PI / 180;
+
+/**
+ * Const to convert radians in degrees
+ */
+export const R2D = 180 / Math.PI;
 
 /**
  * Cosinus with degrees
- * @param a Ange in degrees
+ * @param a Angle in degrees
  */
 export function cos(a: number) {
-    return Math.cos(a*D2R);
+    return Math.cos(a * D2R);
 }
 
 /**
@@ -17,7 +22,7 @@ export function cos(a: number) {
  * @param a Angle in degrees
  */
 export function sin(a: number) {
-    return Math.sin(a*D2R);
+    return Math.sin(a * D2R);
 }
 
 /**

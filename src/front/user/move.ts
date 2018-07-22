@@ -1,6 +1,7 @@
 import User from "./User";
 import { cell } from "../main";
 import Axios from "axios";
+import { R2D } from "../../helper";
 
 export default class Move {
 
@@ -96,36 +97,45 @@ export default class Move {
 
         let speed = 1.5;
 
-        let target = this.targets[0]
+        let target;
 
-        // Get the angle between user and the next destination
-        let angle = Math.atan2(target[1] - this.user.y, target[0] - this.user.x)
+        if (this.targets.length > 0) {
 
-        // Slows down before reaching the end destination
-        if (this.targets.length === 1) {
-            if (Math.abs(target[0] - this.user.x) < 20 && Math.abs(target[1] - this.user.y) < 20) {
-                speed = Math.max(Math.abs(target[0] - this.user.x), Math.abs(target[1] - this.user.y)) * 1.5 / 20;
-            }
-        }
+            target = this.targets[0]
 
-        // Move the user
-        this.user.x += Math.cos(angle) * speed
-        this.user.y += Math.sin(angle) * speed
+            // Get the angle between user and the next destination
+            let angle = Math.atan2(target[1] - this.user.y, target[0] - this.user.x)
 
-        // Reorganize the buildings to allow passing behind them
-        for (let i = 0; i < cell.arBuildings.length; i++) {
-            const building = cell.arBuildings[i];
-            if (this.user.y < building.container.y + building.horizon) {
-                if (building.front === false) {
-                    building.container.parent.addChild(building.container)
-                    building.front = true;
-                    console.log(building.data.building.name, "front");
+            this.user.animate(true, angle);
+
+            // Slows down before reaching the end destination
+            if (this.targets.length === 1) {
+                if (Math.abs(target[0] - this.user.x) < 20 && Math.abs(target[1] - this.user.y) < 20) {
+                    speed = Math.max(Math.abs(target[0] - this.user.x), Math.abs(target[1] - this.user.y)) * 1.5 / 20;
                 }
-            } else if (building.front === true) {
-                building.container.parent.addChildAt(building.container, 0)
-                building.front = false;
-                console.log(building.data.building.name, "back");
             }
+
+            // Move the user
+            this.user.x += Math.cos(angle) * speed
+            this.user.y += Math.sin(angle) * speed
+
+            // Reorganize the buildings to allow passing behind them
+            for (let i = 0; i < cell.arBuildings.length; i++) {
+                const building = cell.arBuildings[i];
+                if (this.user.y < building.container.y + building.horizon) {
+                    if (building.front === false) {
+                        building.container.parent.addChild(building.container)
+                        building.front = true;
+                    }
+                } else if (building.front === true) {
+                    building.container.parent.addChildAt(building.container, 0)
+                    building.front = false;
+                }
+            }
+        } else {
+            // Special case where the user moves to the position he is on already
+            // This avoids the targets[0] undefined error
+            target = [this.user.x, this.user.y]
         }
 
         // Reaches the end destination
@@ -135,6 +145,7 @@ export default class Move {
                 if (this.callback) {
                     this.callback()
                 }
+                this.user.animate(false);
                 cell.app.ticker.remove(this._move)
 
                 Axios.post("/api/actions/move", {

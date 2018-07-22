@@ -8,6 +8,8 @@ class Dispatcher {
     public SELECT_BUILDING = "selectBuilding";
     public SELECT_BACKGROUND = "selectBackground"
 
+    public ENTER = "enter";
+
     public UPDATE_BAG = "update_bag";
     public UPDATE_PA = "update_pa";
 
