@@ -192,7 +192,7 @@ export default class Cell {
         // --------------------------------------------------
         // Debug
 
-        this.container.addChild(new Debug())
+        this.app.stage.addChild(new Debug())
 
         // --------------------------------------------------
         // UI
