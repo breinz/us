@@ -40,7 +40,7 @@ class ABuilding implements IBuilding {
     /**
      * If the building is in front of the user
      */
-    public front: boolean = false;
+    public front: boolean = undefined;
 
     /**
      * Params
@@ -121,6 +121,8 @@ class ABuilding implements IBuilding {
         this.onSwitchMode(cell.user_data.mode)
 
         this.drawHorizon()
+
+        dispatcher.dispatch(dispatcher.BUILDING_LOADED)
     }
 
     private drawHorizon() {

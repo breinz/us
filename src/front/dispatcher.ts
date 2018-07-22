@@ -1,11 +1,13 @@
 class Dispatcher {
 
+
     public DEV_SHOW_HIT_AREA = "dev_showHitArea";
     public DEV_SHOW_GRID = "dev_showGrid";
 
     public SWITCH_MODE = "switch_mode";
 
     public SELECT_BUILDING = "selectBuilding";
+    public BUILDING_LOADED: "building_loaded";
     public SELECT_BACKGROUND = "selectBackground"
 
     public ENTER = "enter";

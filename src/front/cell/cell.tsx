@@ -147,9 +147,9 @@ export default class Cell {
         // --------------------------------------------------
         // Buildings
 
+        var buildings = new Pixi.Container();
         this.arBuildings = [];
 
-        var buildings = new Pixi.Container();
         this.container.addChild(buildings);
 
         this.data.buildings.forEach((building: BuildingData) => {
@@ -164,6 +164,7 @@ export default class Cell {
         this.user.init()
         buildings.addChild(this.user)
         //this.container.addChild(this.user)
+
 
         // --------------------------------------------------
         // Grid

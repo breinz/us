@@ -2,6 +2,7 @@ import User from "./User";
 import { cell } from "../main";
 import Axios from "axios";
 import { R2D } from "../../helper";
+import dispatcher from "../dispatcher";
 
 export default class Move {
 
@@ -37,6 +38,8 @@ export default class Move {
             .moveTo(10, 0).lineTo(2, 0)
 
         this.frame = 0;
+
+        dispatcher.on(dispatcher.BUILDING_LOADED, this.reorganizeBuildings.bind(this));
     }
 
     /**
@@ -119,19 +122,7 @@ export default class Move {
             this.user.x += Math.cos(angle) * speed
             this.user.y += Math.sin(angle) * speed
 
-            // Reorganize the buildings to allow passing behind them
-            for (let i = 0; i < cell.arBuildings.length; i++) {
-                const building = cell.arBuildings[i];
-                if (this.user.y < building.container.y + building.horizon) {
-                    if (building.front === false) {
-                        building.container.parent.addChild(building.container)
-                        building.front = true;
-                    }
-                } else if (building.front === true) {
-                    building.container.parent.addChildAt(building.container, 0)
-                    building.front = false;
-                }
-            }
+            this.reorganizeBuildings();
         } else {
             // Special case where the user moves to the position he is on already
             // This avoids the targets[0] undefined error
@@ -152,6 +143,22 @@ export default class Move {
                     x: Math.round(this.user.x),
                     y: Math.round(this.user.y)
                 });
+            }
+        }
+    }
+
+    private reorganizeBuildings() {
+        // Reorganize the buildings to allow passing behind them
+        for (let i = 0; i < cell.arBuildings.length; i++) {
+            const building = cell.arBuildings[i];
+            if (this.user.y < building.container.y + building.horizon) {
+                if (building.front === false || building.front === undefined) {
+                    building.container.parent.addChild(building.container)
+                    building.front = true;
+                }
+            } else if (building.front === true || building.front === undefined) {
+                building.container.parent.addChildAt(building.container, 0)
+                building.front = false;
             }
         }
     }
