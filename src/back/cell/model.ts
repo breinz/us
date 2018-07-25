@@ -13,7 +13,11 @@ export type CellBuildingModel = {
     x: number,
     y: number,
     rations?: number,
-    poison?: number
+    poison?: number,
+    visited: mongoose.Types.Array<{
+        by: mongoose.Types.ObjectId,
+        at: Date
+    }>
 }
 
 export type CellModel = Document & {
@@ -36,7 +40,11 @@ export const CellBuildingSchema = new Schema({
     x: Number,
     y: Number,
     rations: Number,
-    poison: { type: Number, default: 0 }
+    poison: { type: Number, default: 0 },
+    visited: [{
+        by: mongoose.Schema.Types.ObjectId,
+        at: Date
+    }]
 })
 
 export const cellSchema = new Schema({

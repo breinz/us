@@ -19,10 +19,10 @@ class Background {
         var r = PIXI.Sprite.fromImage("img/backgrounds/snow-r.png");
         //this.container.addChild(r)
 
-        var l = PIXI.Sprite.fromImage("img/backgrounds/water-l.png");
-        //this.container.addChild(l)
+        var l = PIXI.Sprite.fromImage("img/backgrounds/desert-l.png");
+        this.container.addChild(l)
 
-        var t = PIXI.Sprite.fromImage("img/backgrounds/water-t.png");
+        var t = PIXI.Sprite.fromImage("img/backgrounds/desert-t.png");
         this.container.addChild(t)
 
         var b = PIXI.Sprite.fromImage("img/backgrounds/desert-b.png");

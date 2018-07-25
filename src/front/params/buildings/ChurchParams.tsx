@@ -6,34 +6,12 @@ import { cell } from "../../main";
 import ABuilding from "../../buildings/ABuilding";
 import dispatcher from "../../dispatcher";
 import message from "../../../SocketMessages"
-import ABuildingParams from "./ABuildingParams";
-
-type PropsType = {
-    building: ABuilding
-}
+import ABuildingParams, { PropsType } from "./ABuildingParams";
 
 class ChurchParams extends ABuildingParams {
 
-
-    public props: PropsType;
-
-    public state: {
-        error?: React.ReactElement<"div">,
-    }
-
     constructor(props: PropsType) {
         super(props)
-
-        this.state = {
-        }
-    }
-
-    componentDidMount() {
-        super.componentDidMount()
-    }
-
-    componentWillUnmount() {
-        super.componentWillUnmount()
     }
 
     public render() {
@@ -60,43 +38,6 @@ class ChurchParams extends ABuildingParams {
                 {this.getHiddenActions(hidden_actions)}
             </div>
         )
-    }
-
-    private onEnter(moveTo: boolean) {
-        this.setState({ error: null })
-        if (moveTo) {
-            // Move to the well
-            cell.user.moveTo(this.props.building.entry, this.onEnter.bind(this))
-            return;
-        }
-
-        dispatcher.dispatch(dispatcher.ENTER, this.props.building)
-    }
-
-    /**
-     * Manage Axios error
-     * @param data The return data from Axios
-     * @return Boolean An error occurred or not
-     */
-    private handleError(data: any) {
-        // Unexpected Error
-        if (data.fatal) {
-            console.error(data.fatal);
-            this.setState({
-                error: <div className="error-box">Unexpected Error</div>
-            })
-            return true
-        }
-
-        // Error (cannot add water)
-        if (data.error) {
-            this.setState({
-                error: <div className="error-box">{i18n.__(`errors.${data.error}`)}</div>
-            })
-            return true;
-        }
-
-        return false;
     }
 }
 

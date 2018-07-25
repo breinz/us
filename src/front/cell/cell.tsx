@@ -1,23 +1,21 @@
-import * as Pixi from "pixi.js"
-import axios from "axios"
-import BuildingFactory, { BuildingData } from "../buildings/BuildingFactory";
-import background from "./background"
-import Dig from "../dig/Dig"
-import Debug from "./Debug"
-import Map from "../map/Map";
 import * as React from "react"
 import { render } from "react-dom"
-import * as io from "socket.io-client"
-import UserParams from "../params/user/UserParams"
-import GameParams from "../params/game_params"
-import Dev from "../dev/Dev"
-import i18n from "../i18n"
-import dispatcher from "../dispatcher";
 import { ItemModel } from "../../back/item/model";
-import { UserModel, UserItemModel } from "../../back/user/model";
+import { UserModel } from "../../back/user/model";
 import User from "../user/User";
+import UserParams from "../params/user/UserParams";
 import Grid from "./Grid";
 import ABuilding from "../buildings/ABuilding";
+import i18n from "../i18n";
+import Axios from "axios";
+import dispatcher from "../dispatcher";
+import background from "./background";
+import BuildingFactory, { BuildingData } from "../buildings/BuildingFactory";
+import Dig from "../dig/Dig";
+import Map from "../map/Map";
+import Debug from "./Debug";
+import GameParams from "../params/game_params";
+import Dev from "../dev/Dev"
 import Church1 from "../buildings/rooms/Church1";
 
 export default class Cell {
@@ -25,7 +23,7 @@ export default class Cell {
     /**
      * Pixi application
      */
-    public app: Pixi.Application;
+    public app: PIXI.Application;
 
     /**
      * Main socket, reaches all users
@@ -50,7 +48,7 @@ export default class Cell {
     /**
      * The user data
      */
-    public user_data: UserModel
+    public user_data: UserModel;
 
     /**
      * The user
@@ -85,11 +83,11 @@ export default class Cell {
             // Get the translations
             i18n.init(),
             // Get the cell's data
-            axios.get("/api/cell"),
+            Axios.get("/api/cell"),
             // get all the items
-            axios.get("/api/items"),
+            Axios.get("/api/items"),
             // get the user
-            axios.get("api/users/me")
+            Axios.get("api/users/me")
         ]
         ).then(([i, cell_data, items, user]) => {
             this.data = cell_data.data
@@ -121,8 +119,8 @@ export default class Cell {
         // Game
 
         // Initialize the game
-        Pixi.utils.skipHello();
-        this.app = new Pixi.Application({
+        PIXI.utils.skipHello();
+        this.app = new PIXI.Application({
             width: 560,
             height: 560,
             transparent: true,
@@ -147,7 +145,7 @@ export default class Cell {
         // --------------------------------------------------
         // Buildings
 
-        var buildings = new Pixi.Container();
+        var buildings = new PIXI.Container();
         this.arBuildings = [];
 
         this.container.addChild(buildings);
@@ -226,16 +224,12 @@ export default class Cell {
      * The user enters somewhere
      * @param param Where we enter
      */
-    private onEnter(param: any) {
+    private onEnter(building: ABuilding) {
         // Enter in a building
-        console.log("onEnter", param, param instanceof ABuilding);
-        if (param instanceof ABuilding) {
-            const building = param as ABuilding;
-            switch (building.data.building.name) {
-                case "church":
-                    this.container.addChild(new Church1());
-                    break;
-            }
+        switch (building.data.building.name) {
+            case "church":
+                this.container.addChild(new Church1());
+                break;
         }
     }
 

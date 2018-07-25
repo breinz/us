@@ -6,34 +6,14 @@ import { cell } from "../../main";
 import ABuilding from "../../buildings/ABuilding";
 import dispatcher from "../../dispatcher";
 import message from "../../../SocketMessages"
-import ABuildingParams from "./ABuildingParams";
+import ABuildingParams, { PropsType } from "./ABuildingParams";
 
-type PropsType = {
-    building: ABuilding
-}
 
 class HatchParams extends ABuildingParams {
 
 
-    public props: PropsType;
-
-    public state: {
-        error?: React.ReactElement<"div">,
-    }
-
     constructor(props: PropsType) {
         super(props)
-
-        this.state = {
-        }
-    }
-
-    componentDidMount() {
-        super.componentDidMount()
-    }
-
-    componentWillUnmount() {
-        super.componentWillUnmount()
     }
 
     public render() {
@@ -69,32 +49,6 @@ class HatchParams extends ABuildingParams {
             cell.user.moveTo(this.props.building.entry, this.onDig.bind(this))
             return;
         }
-    }
-
-    /**
-     * Manage Axios error
-     * @param data The return data from Axios
-     * @return Boolean An error occurred or not
-     */
-    private handleError(data: any) {
-        // Unexpected Error
-        if (data.fatal) {
-            console.error(data.fatal);
-            this.setState({
-                error: <div className="error-box">Unexpected Error</div>
-            })
-            return true
-        }
-
-        // Error (cannot add water)
-        if (data.error) {
-            this.setState({
-                error: <div className="error-box">{i18n.__(`errors.${data.error}`)}</div>
-            })
-            return true;
-        }
-
-        return false;
     }
 }
 

@@ -7,12 +7,14 @@ import dig from "./dig"
 import well from "./well"
 import die from "./die";
 import items from "./items"
+import buildings from "./buildings"
 
 var router = express.Router()
 
 router.use("/dig", dig)
 router.use("/well", well)
 router.use("/items", items)
+router.use("/buildings", buildings)
 
 
 // **************************************************

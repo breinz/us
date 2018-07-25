@@ -8,6 +8,7 @@ import Item from "../../Item";
 import i18n from "../../i18n";
 import { cell } from "../../main";
 import Mode from "../../mode";
+import ABuilding from "../../buildings/ABuilding";
 
 class UserParams extends React.Component {
 
@@ -40,6 +41,7 @@ class UserParams extends React.Component {
         dispatcher.on(dispatcher.UPDATE_BAG, this.onUpdateBag.bind(this))
         dispatcher.on(dispatcher.UPDATE_PA, this.onUpdatePa.bind(this))
         dispatcher.on(dispatcher.REST, this.onRest.bind(this))
+        dispatcher.on(dispatcher.ENTER, this.onEnter.bind(this))
     }
 
     public componentDidMount() {
@@ -249,6 +251,16 @@ class UserParams extends React.Component {
      */
     private onUpdatePa(pa: number) {
         this.setState({ pa: pa });
+    }
+
+    /**
+     * Enter a building
+     * @param building The building
+     */
+    private onEnter(building: ABuilding) {
+        if (building.data.building.name === "home") {
+            this.onRest(5)
+        }
     }
 
     private onRest(speed: number) {
