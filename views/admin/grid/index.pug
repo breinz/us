@@ -4,5 +4,13 @@ block content
     .grid-x
         .cell.small-12
             h1 GRID
-        .cell
+        .cell.small-6
             #grid-admin
+        .cell.small-6
+            .callout
+                h3 Load
+                input(type="text" id="bg" value="/assets/img/")
+                button(class="button hollow secondary") Load
+            .callout
+                h3 Output
+                input(type="text" id="output" value=0)
