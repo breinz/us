@@ -4,6 +4,7 @@ import goals from "./goals"
 import levels from "./levels"
 import buildings from "./buildings"
 import items from "./items"
+import grid from "./grid"
 
 const router = express.Router()
 
@@ -29,6 +30,7 @@ router.use("/goals", goals);
 router.use("/levels", levels)
 router.use("/buildings", buildings)
 router.use("/items", items)
+router.use("/grid", grid)
 
 /**
  * Get /admin

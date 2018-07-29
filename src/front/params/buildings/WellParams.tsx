@@ -6,11 +6,7 @@ import { cell } from "../../main";
 import ABuilding from "../../buildings/ABuilding";
 import dispatcher from "../../dispatcher";
 import message from "../../../SocketMessages"
-import ABuildingParams from "./ABuildingParams";
-
-type PropsType = {
-    building: ABuilding
-}
+import ABuildingParams, { PropsType } from "./ABuildingParams";
 
 class WellParams extends ABuildingParams {
 

@@ -99,6 +99,8 @@ class ABuildingParams extends React.Component {
             return;
         }
 
+        cell.user.visible = false;
+
         let res = await Axios.post("/api/actions/buildings/enter", {
             building: this.props.building.data._id
         })

@@ -17,6 +17,7 @@ import Debug from "./Debug";
 import GameParams from "../params/game_params";
 import Dev from "../dev/Dev"
 import Church1 from "../buildings/rooms/Church1";
+import * as io from "socket.io-client"
 
 export default class Cell {
 
@@ -57,6 +58,9 @@ export default class Cell {
 
     public user_controller: UserParams;
 
+    /** The layer that owns the buildings and the user */
+    private buildings_layer: PIXI.Container;
+
     /**
      * The grid for pathfinding
      */
@@ -76,6 +80,7 @@ export default class Cell {
     public arBuildings: ABuilding[];
 
     constructor() {
+        console.log(PIXI);
         // Open the socket to the server
         this.socket = io()
 
@@ -145,13 +150,13 @@ export default class Cell {
         // --------------------------------------------------
         // Buildings
 
-        var buildings = new PIXI.Container();
+        this.buildings_layer = new PIXI.Container();
         this.arBuildings = [];
 
-        this.container.addChild(buildings);
+        this.container.addChild(this.buildings_layer);
 
         this.data.buildings.forEach((building: BuildingData) => {
-            BuildingFactory.create(building, buildings)
+            BuildingFactory.create(building, this.buildings_layer)
         });
 
 
@@ -160,7 +165,7 @@ export default class Cell {
 
         this.user = new User();
         this.user.init()
-        buildings.addChild(this.user)
+        this.buildings_layer.addChild(this.user)
         //this.container.addChild(this.user)
 
 
@@ -228,7 +233,8 @@ export default class Cell {
         // Enter in a building
         switch (building.data.building.name) {
             case "church":
-                this.container.addChild(new Church1());
+                const room = new Church1();
+                this.buildings_layer.addChild(room, this.user);
                 break;
         }
     }

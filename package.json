@@ -9,16 +9,17 @@
     "watch-node": "nodemon",
     "watch-ts": "tsc -w",
     "watch-browser": "watchify dist/front/main.js -o dist/public/js/main.js -v",
+    "watch-admin": "watchify dist/front/admin/main.js -o dist/public/js/admin.js -v",
     "watch-sass": "node-sass src/public/css/main.scss dist/public/css/main.css -w src/public/css --include-path node_modules/foundation-sites/scss/",
     "mongo": "cd ~/Developer; mongod --dbpath=mongodb",
-    "watch": "concurrently -k -p \"[{name}]\" -n \"TypeScript,Node,Sass,Browser\" -c \"yellow.bold,cyan.bold,blue.bold,green.bold\" \"npm run watch-ts\" \"npm run watch-node\" \"npm run watch-sass\" \"npm run watch-browser\""
+    "watch": "concurrently -k -p \"[{name}]\" -n \"TypeScript,Node,Sass,Browser,Admin\" -c \"yellow.bold,cyan.bold,blue.bold,green.bold,red.bold\" \"npm run watch-ts\" \"npm run watch-node\" \"npm run watch-sass\" \"npm run watch-browser\" \"npm run watch-admin\""
   },
   "nodemonConfig": {
     "ignore": [
       "*.json",
       "**/*.json",
       "**/*.map",
-      "dist/public/js/main.js"
+      "dist/public/js/*"
     ],
     "verbose": false
   },
