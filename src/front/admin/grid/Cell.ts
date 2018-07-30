@@ -28,6 +28,10 @@ export default class Cell extends PIXI.Container {
         this.on("mouseover", this.onMouseOver.bind(this))
     }
 
+    public get value(): number {
+        return this.bg.alpha;
+    }
+
     private onMouseDown() {
         this.bg.alpha = this.bg.alpha === 0 ? 1 : 0;
         this.grid.draw = this.bg.alpha;
@@ -36,5 +40,6 @@ export default class Cell extends PIXI.Container {
     private onMouseOver() {
         if (isNaN(this.grid.draw)) return;
         this.bg.alpha = this.grid.draw;
+        this.grid.update();
     }
 }

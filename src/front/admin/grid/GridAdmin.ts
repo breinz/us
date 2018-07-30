@@ -9,7 +9,9 @@ export default class GridAdmin {
 
     private grid: PIXI.Container;
 
-    public draw: number = NaN;
+    private _draw: number = NaN;
+
+    private arCells: Cell[] = [];
 
     constructor() {
         PIXI.utils.skipHello();
@@ -40,6 +42,41 @@ export default class GridAdmin {
         this.bg.addChild(PIXI.Sprite.fromImage(url));
     }
 
+    public get draw(): number {
+        return this._draw;
+    }
+
+    public set draw(value: number) {
+        this._draw = value;
+        this.update()
+    }
+
+    public update() {
+        let str: string = "";
+        let value: number;
+        let count = 0;
+        let el: Cell;
+        for (let i = 0; i < this.arCells.length; i++) {
+            el = this.arCells[i]
+            if (value === undefined) {
+                value = el.value;
+            } else {
+                if (value != el.value) {
+                    str += count;
+                    str += value;
+                    str += ",";
+
+                    count = 0;
+                    value = el.value;
+                }
+            }
+            count++;
+        }
+        (<HTMLInputElement>document.getElementById("output")).value = str;
+
+        console.log(str);
+    }
+
     private drawGrid() {
         let cell;
         for (let i = 0; i < 560 / 20; i++) {
@@ -48,11 +85,13 @@ export default class GridAdmin {
                 cell.x = j * 20;
                 cell.y = i * 20;
                 this.grid.addChild(cell)
+
+                this.arCells.push(cell)
             }
         }
     }
 
     private onMouseUp() {
-        this.draw = NaN;
+        this._draw = NaN;
     }
 }
