@@ -18,4 +18,10 @@ export default class GridAdmin {
 
 
     }
+
+    public load(url: string) {
+        console.log(url);
+        let img = PIXI.Sprite.fromImage(url)
+        this.app.stage.addChild(img)
+    }
 }
