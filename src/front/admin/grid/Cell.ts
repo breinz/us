@@ -18,7 +18,7 @@ export default class Cell extends PIXI.Container {
         this.addChild(this.bg)
 
         const border = new PIXI.Graphics();
-        border.lineStyle(1);
+        border.lineStyle(1, 0, .1);
         border.drawRect(0, 0, 20, 20);
         this.addChild(border)
 
@@ -40,6 +40,5 @@ export default class Cell extends PIXI.Container {
     private onMouseOver() {
         if (isNaN(this.grid.draw)) return;
         this.bg.alpha = this.grid.draw;
-        this.grid.update();
     }
 }

@@ -80,7 +80,7 @@ export default class Cell {
     public arBuildings: ABuilding[];
 
     constructor() {
-        console.log(PIXI);
+
         // Open the socket to the server
         this.socket = io()
 

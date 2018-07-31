@@ -41,8 +41,8 @@ export default class Grid extends PIXI.Container {
             ar = [];
             for (let i = 0; i < this.COLS; i++) {
                 let s = new PIXI.Graphics()
-                s.lineStyle(.5, 0)
-                s.drawRect(0, 0, Grid.CELL_SIZE, Grid.CELL_SIZE)
+                //s.lineStyle(.5, 0)
+                //s.drawRect(0, 0, Grid.CELL_SIZE, Grid.CELL_SIZE)
                 s.x = i * Grid.CELL_SIZE
                 s.y = j * Grid.CELL_SIZE
                 s.visible = false;
@@ -58,12 +58,28 @@ export default class Grid extends PIXI.Container {
     }
 
     private onShowGrid() {
-        for (let i = 0; i < this.arCells.length; i++) {
+        for (let i = 0; i < this.ROWS; i++) {
+            for (let j = 0; j < this.COLS; j++) {
+                const cell = this.arCells[i][j];
+                cell.visible = !cell.visible;
+                if (cell.visible) {
+                    cell.clear()
+                    if (this.grid.isWalkableAt(i, j)) {
+                        cell.lineStyle(.5, 0)
+                        cell.drawRect(0, 0, Grid.CELL_SIZE, Grid.CELL_SIZE)
+                    } else {
+                        cell.beginFill(0x00FFFF, .5)
+                        cell.drawRect(0, 0, Grid.CELL_SIZE, Grid.CELL_SIZE)
+                    }
+                }
+            }
+        }
+        /*for (let i = 0; i < this.arCells.length; i++) {
             const element = this.arCells[i];
             for (let j = 0; j < element.length; j++) {
                 element[j].visible = !element[j].visible;
             }
-        }
+        }*/
     }
 
     /**
@@ -99,15 +115,30 @@ export default class Grid extends PIXI.Container {
 
         // --------------------------------------------------
         //if (this.SHOW_GRID) {
-        for (let i = start.x; i <= end.x; i++) {
-            for (let j = start.y; j <= end.y; j++) {
-                let s = this.arCells[j][i]
-                s.beginFill(0x00FFFF, .5)
-                s.drawRect(0, 0, Grid.CELL_SIZE, Grid.CELL_SIZE)
-            }
-        }
+        //for (let i = start.x; i <= end.x; i++) {
+        //    for (let j = start.y; j <= end.y; j++) {
+        //        let s = this.arCells[j][i]
+        //        s.beginFill(0x00FFFF, .5)
+        //        s.drawRect(0, 0, Grid.CELL_SIZE, Grid.CELL_SIZE)
+        //    }
+        //}
         //}
         // --------------------------------------------------
+    }
+
+    public load(data: string) {
+        const arData = data.split(",")
+        let walkable = arData.shift() === "0"
+        let index = 0;
+        let count = 0;
+        for (let i = 0; i < this.ROWS * this.COLS; i++) {
+            this.grid.setWalkableAt(i % this.ROWS, Math.floor(i / this.COLS), walkable)
+            if (++count >= parseInt(arData[index])) {
+                walkable = !walkable;
+                count = 0;
+                index++;
+            }
+        }
     }
 
     /**
