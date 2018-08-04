@@ -145,7 +145,7 @@ class ABuilding implements IBuilding {
         if (cell.user_controller.state.mode === 1) {
             return
         }
-        dispatcher.dispatch(dispatcher.SELECT_BUILDING, this)
+        dispatcher.dispatch(dispatcher.SELECT_ELEMENT, "building", this.data.building.name, this)
     }
 
     /**

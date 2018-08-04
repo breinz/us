@@ -3,14 +3,13 @@ import dispatcher from "../dispatcher"
 import { camelize, capitalize } from "underscore.string"
 import i18n from "../i18n"
 import Zone from "./Zone"
-import { BuildingData } from "../buildings/BuildingFactory";
 import { cell } from "../main"
 import DigParams from "./DigParams";
 import Map from "./Map";
-import ABuilding from "../buildings/ABuilding";
 import { ItemModel } from "../../back/item/model";
 import ItemParams from "./ItemParams"
 import { UserItemModel } from "../../back/user/model";
+import IElement from "./IElement";
 
 class GameParams extends React.Component {
 
@@ -29,7 +28,7 @@ class GameParams extends React.Component {
     }
 
     public componentDidMount() {
-        dispatcher.on(dispatcher.SELECT_BUILDING, this.onSelectBuilding.bind(this))
+        dispatcher.on(dispatcher.SELECT_ELEMENT, this.onSelectElement.bind(this))
         dispatcher.on(dispatcher.SELECT_BACKGROUND, this.onSelectBackground.bind(this))
         dispatcher.on(dispatcher.DIG, this.onDig.bind(this))
         dispatcher.on(dispatcher.DIG_END, this.onQuitDig.bind(this))
@@ -50,14 +49,16 @@ class GameParams extends React.Component {
     }
 
     /**
-     * Select building
-     * @param data BuildingData
+     * Select element (building, pnj, ...)
+     * @param kind The element's kind
+     * @param title Title in the params box
+     * @param element The component to implement
      */
-    private onSelectBuilding(building: ABuilding) {
+    private onSelectElement(kind: string, title: string, element: IElement) {
 
         this.setState({
-            title: capitalize(i18n.__(`buildings.${building.data.building.name}`)),
-            component: building.params
+            title: capitalize(i18n.__(`${kind}s.${title}`)),
+            component: element ? element.params : null
         })
     }
 

@@ -6,9 +6,9 @@ class Dispatcher {
 
     public SWITCH_MODE = "switch_mode";
 
-    public SELECT_BUILDING = "selectBuilding";
     public BUILDING_LOADED: "building_loaded";
-    public SELECT_BACKGROUND = "selectBackground"
+    public SELECT_BACKGROUND = "selectBackground";
+    public SELECT_ELEMENT = "selectElement";
 
     public ENTER = "enter";
 
