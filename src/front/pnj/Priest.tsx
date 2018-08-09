@@ -50,7 +50,7 @@ export default class Priest extends PIXI.Container implements IPnj {
         console.log("wander");
         setTimeout(() => {
             this.move.to((Math.random() * 14 + 7) * 20, (Math.random() * 6 + 1) * 20, this.wander.bind(this))
-        }, Math.random() * 2000 + 2000);
+        }, Math.random() * 5000 + 2000);
     }
 
     private onClick() {

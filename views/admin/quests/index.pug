@@ -1,0 +1,23 @@
+extends ../../partials/admin/layout
+
+block content
+    .grid-x
+        .cell.small-6
+            h1 QUESTS
+        .cell.small-6.text-right
+            a.button.hollow.secondary.tiny(href="/admin/quests/new") New quest
+        .cell
+            .callout.small
+                table.unstriped.hover.table-scroll
+                    each quest in quests
+                        tr.light-gray
+                            td
+                                a(href=`/admin/quests/${quest.id}`)
+                                    =__(`quests.${quest.name}.title`)
+                                br
+                                small: i=__(`quests.${quest.name}.description`)
+                            td.text-right
+                                +edit(href=`/admin/quests/${quest.id}/edit`)
+                                +delete(href=`/admin/quests/${quest.id}/delete`)
+                    else
+                        tr: td.text-center No quest for now

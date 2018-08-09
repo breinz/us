@@ -27,14 +27,26 @@ export default class PriestParams extends React.Component {
             </button>;
         }
 
+        let quests: React.ReactElement<"div">[] = [];
+        if (this.state.state === "list") {
+            quests.push(<button className="button small secondary hollow" id="1" onClick={() => { this.selectQuest(1) }}>
+                Sacrifice to appease the Universe
+            </button>);
+        }
+
         return (
             <div>
                 {questList_btn}
+                {quests}
             </div>
         );
     }
 
     private listQuest() {
         this.setState({ state: "list" })
+    }
+
+    private selectQuest(id: number) {
+        alert("selectQuest");
     }
 }
