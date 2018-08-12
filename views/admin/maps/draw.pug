@@ -1,0 +1,13 @@
+extends ../../partials/admin/layout
+
+block content
+    .grid-x
+        .cell
+            h1=`Draw ${map.name}`
+        .cell.medium-10
+            #map-admin
+        .cell.medium-2
+            input.button.hollow.secondary(type="submit" value="Save")
+
+            input(type="hidden" id="map-width" value=map.width)
+            input(type="hidden" id="map-height" value=map.height)

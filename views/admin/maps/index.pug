@@ -1,0 +1,25 @@
+extends ../../partials/admin/layout
+
+block content
+    .grid-x
+        .cell.small-6
+            h1 MAPS
+        .cell.small-6.text-right
+            a.button.hollow.secondary.tiny(href="/admin/maps/new") New map
+        .cell
+            .callout.small
+                table.unstriped.hover.table-scroll
+                    each map in maps
+                        tr.light-gray
+                            td
+                                a(href=`/admin/maps/${map.id}`)
+                                    =map.name
+                                    =` (${map.width}x${map.height})`
+                                br
+                                small: i=map.name
+                            td.text-right
+                                a.edit-link(href=`/admin/maps/${map.id}/draw` title="Draw") &num;
+                                +edit(href=`/admin/maps/${map.id}/edit`)
+                                +delete(href=`/admin/maps/${map.id}/delete`)
+                    else
+                        tr: td.text-center No maps for now

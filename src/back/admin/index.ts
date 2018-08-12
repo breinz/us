@@ -6,6 +6,7 @@ import buildings from "./buildings"
 import items from "./items"
 import grid from "./grid"
 import quests from "./quests"
+import maps from "./maps"
 
 const router = express.Router()
 
@@ -33,6 +34,7 @@ router.use("/buildings", buildings)
 router.use("/items", items)
 router.use("/grid", grid)
 router.use("/quests", quests)
+router.use("/maps", maps)
 
 /**
  * Get /admin

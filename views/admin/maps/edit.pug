@@ -1,0 +1,19 @@
+extends ../../partials/admin/layout
+
+block content
+    .grid-x
+        .cell
+            h1=`Edit ${map.name}`
+        .cell.medium-6
+            form(method="POST")
+                .callout
+                    label Name
+                        input(type="text" name="name" value=map.name autofocus)
+                    .grid-x.grid-margin-x
+                        .cell.small-6
+                            label Width
+                                input(type="number" name="width" value=map.width)
+                        .cell.small-6
+                            label Height
+                                input(type="number" name="height" value=map.height)
+                input.button.hollow.secondary(type="submit" value="Save")
