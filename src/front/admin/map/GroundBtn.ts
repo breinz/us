@@ -5,6 +5,7 @@ export default class GroundBtn extends AButton {
     private index: number;
 
     static labels: string[] = ["grass", "desert", "snow", "water", "volcano"];
+    static letters: string[] = ["g", "d", "s", "w", "v"];
     static colors: number[] = [0x88c083, 0xc9c29e, 0xdee5eb, 0x7ea4bf, 0xbc4f4f];
 
     public color: number;
@@ -20,7 +21,7 @@ export default class GroundBtn extends AButton {
         this.color = GroundBtn.colors[index];
         this.label = GroundBtn.labels[index].substr(0, 1);
 
-        this.draw()
+        //this.draw()
     }
 
     protected draw() {

@@ -4,10 +4,14 @@ block content
     .grid-x
         .cell
             h1=`Draw ${map.name}`
-        .cell.medium-10
+        .cell.medium-8
             #map-admin
-        .cell.medium-2
-            input.button.hollow.secondary(type="submit" value="Save")
+        .cell.medium-4
+            form(method="POST")
+                textarea(name="structure" id="structure" cols="30" rows="15")
+                    =map.structure
+
+                input.button.hollow.secondary(type="submit" value="Save")
 
             input(type="hidden" id="map-width" value=map.width)
             input(type="hidden" id="map-height" value=map.height)

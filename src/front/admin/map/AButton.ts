@@ -22,6 +22,8 @@ export default class AButton extends PIXI.Container {
         this.on("click", this.onClick.bind(this))
 
         dispatcher.on(AButton.click, this.onClicked.bind(this))
+
+        this.on("added", () => { this.draw() })
     }
 
     protected draw() {

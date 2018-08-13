@@ -91,6 +91,19 @@ router.get("/:id/draw", async (req, res) => {
 })
 
 /**
+ * Draw
+ */
+router.post("/:id/draw", async (req, res) => {
+    let map = await Map.findById(req.params.id) as MapModel
+
+    map.structure = req.body.structure
+
+    await map.save()
+
+    res.redirect("/admin/maps")
+})
+
+/**
  * Delete a map
  */
 router.get("/:id/delete", async (req, res) => {

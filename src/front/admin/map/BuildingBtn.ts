@@ -3,7 +3,9 @@ import AButton from "./AButton";
 
 export default class BuildingBtn extends AButton {
 
-    private label: string;
+    protected label: string;
+
+    public letter: string;
 
     constructor(label: string) {
         super()
@@ -12,13 +14,15 @@ export default class BuildingBtn extends AButton {
 
         this.action = "building";
 
-        this.draw();
+        this.letter = this.label.substr(0, 1).toUpperCase();
+
+        //this.draw();
     }
 
     protected draw() {
         super.draw();
 
-        let letter = new PIXI.Text(this.label.substr(0, 1).toUpperCase(), {
+        let letter = new PIXI.Text(this.letter, {
             fontWeight: "bold", fontSize: 18
         })
         letter.x = 8;
