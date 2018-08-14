@@ -1,6 +1,7 @@
 import * as mongoose from "mongoose"
 import { Document, Schema, model, Model } from "mongoose"
 import { CellModel, cellSchema, Cell } from "../cell/model";
+import { Map, MapModel } from "../map/model";
 
 // --------------------------------------------------
 // Type
@@ -15,8 +16,8 @@ export type GameModel = Document & {
 // Schema
 
 const gameSchema = new Schema({
-    count_users: {type: Number, default: 0},
-    cells: [ { type: mongoose.Schema.Types.ObjectId, ref: "Cell" } ]
+    count_users: { type: Number, default: 0 },
+    cells: [{ type: mongoose.Schema.Types.ObjectId, ref: "Cell" }]
 }, { timestamps: true })
 
 // --------------------------------------------------
@@ -29,7 +30,7 @@ const gameSchema = new Schema({
 gameSchema.pre("save", async function save(next) {
     let game = <GameModel>this;
 
-    const w = 5;
+    /*const w = 5;
     const h = 5;
 
     const isHome = (x: Number, y: Number) => {
@@ -38,36 +39,87 @@ gameSchema.pre("save", async function save(next) {
         if (x === w-2 && y === 1) return true;
         if (x === w-2 && y === h-2) return true;
         return false
-    }
+    }*/
 
     if (game.isNew) {
-        
+
+        // Find a map
+        const map = await Map.findOne({ name: "test" }) as MapModel; /** @todo conditions */
+
+        let arStructure = map.structure.split(",");
+        let structure_index = 0;
+
         let cell: CellModel;
-        let params:{
-            x: number, 
-            y: number, 
+        let params/*: {
+            x: number,
+            y: number,
             homeForTeam?: number,
             joined?: number,
             gameId: mongoose.Types.ObjectId,
-        };
+            ground: string
+        };*/
         let teamId: number = 0;
 
-        for (let x = 0; x < w; x++) {
-            for (let y = 0; y < h; y++) {
-                params = { x: x, y: y, gameId: game.id };
-                if (isHome(x, y)) {
-                    params.homeForTeam = teamId;
-                    params.joined = 0,
-                    teamId++
-                }
+        let cell_structure: string;
 
-                // Add a cell
+        let prev_cell: CellModel;
+        let first_of_row: CellModel;
+
+        let arCells: CellModel[] = [];
+
+        for (let y = 0; y < map.height; y++) {
+            first_of_row = null;
+            for (let x = 0; x < map.width; x++) {
+                cell_structure = arStructure[structure_index];
+
+                params = {
+                    x: x,
+                    y: y,
+                    gameId: game.id,
+                    ground: cell_structure.substr(0, 1),
+                    joined: 0,
+                };
+
                 cell = <CellModel>new Cell(params)
+                // [row] link to left
+                if (prev_cell) {
+                    cell.setNeighbor("left", prev_cell);
+                }
+                // [row] link the first to the last
+                if (x === map.width - 1) {
+                    first_of_row.setNeighbor("left", cell);
+                }
+                await cell.addBuildings(cell_structure);
                 await cell.save()
 
                 game.cells.push(cell.id)
+
+                structure_index++;
+
+                // Save cells for row link
+                prev_cell = cell;
+                if (first_of_row === null) {
+                    first_of_row = cell;
+                }
+
+                // Save cells for col link
+                arCells.push(cell);
+
+                // [col] link top
+                if (y > 0) {
+                    cell.setNeighbor("top", arCells[(y - 1) * map.height + x]);
+                }
+                // [col] link first to last
+                if (y === map.height - 1) {
+                    arCells[x].setNeighbor("top", cell);
+                }
             }
         }
+
+        /** @todo save all cells */
+        /*for (let i = 0; i < arCells.length; i++) {
+            await arCells[i].save();
+        }*/
 
         next()
     }
@@ -77,7 +129,7 @@ gameSchema.pre("save", async function save(next) {
  * Finds a game to join or create a new one
  */
 gameSchema.statics.findToJoin = async function () {
-    let game: GameModel = await this.findOne({count_users: { $lt: 20 } })
+    let game: GameModel = await this.findOne({ count_users: { $lt: 20 } })
 
     if (!game) {
         game = <GameModel>new Game()

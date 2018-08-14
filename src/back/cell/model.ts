@@ -9,12 +9,12 @@ import { ItemModel } from "../item/model";
 // Type
 
 export type CellBuildingModel = {
-    building: mongoose.Types.ObjectId,
     x: number,
     y: number,
     rations?: number,
     poison?: number,
-    visited: mongoose.Types.Array<{
+    building: mongoose.Types.ObjectId,
+    visited?: mongoose.Types.Array<{
         by: mongoose.Types.ObjectId,
         at: Date
     }>
@@ -24,12 +24,21 @@ export type CellModel = Document & {
     gameId: mongoose.Types.ObjectId,
     x: number,
     y: number,
+    ground: string,
     homeForTeam?: number,
     joined?: number,
+    neighbors: {
+        left: mongoose.Types.ObjectId,
+        right: mongoose.Types.ObjectId,
+        top: mongoose.Types.ObjectId,
+        bottom: mongoose.Types.ObjectId
+    },
     buildings?: mongoose.Types.Array<CellBuildingModel> & Document,
 
     isHome: () => boolean,
-    findToJoin: (gameId: mongoose.Types.ObjectId) => CellModel
+    findToJoin: (gameId: mongoose.Types.ObjectId) => CellModel,
+    addBuildings: (structure: string) => void,
+    setNeighbor: (direction: string, neighbor: CellModel) => void
 }
 
 // --------------------------------------------------
@@ -52,14 +61,21 @@ export const cellSchema = new Schema({
     x: Number,
     y: Number,
     joined: Number,
+    neighbors: {
+        left: mongoose.Schema.Types.ObjectId,
+        right: mongoose.Schema.Types.ObjectId,
+        top: mongoose.Schema.Types.ObjectId,
+        bottom: mongoose.Schema.Types.ObjectId,
+    },
     homeForTeam: Number,
+    test: { type: String, default: "pom" },
     buildings: [CellBuildingSchema]
 })
 
 // --------------------------------------------------
 // Methods
 
-cellSchema.pre("save", async function presave(next) {
+/*cellSchema.pre("save", async function presave(next) {
     let cell = <CellModel>this;
 
     if (cell.isNew) {
@@ -86,7 +102,7 @@ cellSchema.pre("save", async function presave(next) {
             next()
         }
     }
-})
+})*/
 
 /**
  * Is this cell home for a team
@@ -99,15 +115,77 @@ cellSchema.methods.isHome = function () {
 }
 
 /**
+ * Set the neighbor cell, two ways
+ * @param direction 
+ * @param neighbor
+ */
+cellSchema.methods.setNeighbor = async function (direction: "left" | "right" | "top" | "bottom", neighbor: CellModel) {
+    (<CellModel>this).neighbors[direction] = neighbor.id;
+    await this.save();
+    direction = direction === "left" ? "right" : (direction === "right" ? "left" : (direction === "top" ? "bottom" : "top"));
+    neighbor.neighbors[direction] = this.id
+    await neighbor.save();
+}
+
+/**
+ * Add buildings to the cell
+ * @param structure The structure [ground][...buildings]
+ */
+cellSchema.methods.addBuildings = async function (structure: string) {
+    const cell = this as CellModel;
+
+    structure = structure.substr(1);
+
+    const arBuildings = structure.split("");
+
+    let letter: string;
+    for (let i = 0; i < arBuildings.length; i++) {
+        letter = arBuildings[i];
+        switch (letter) {
+            case "H":
+                let home = await Building.findOne({ name: "home" }) as BuildingModel
+                cell.buildings.push(
+                    <CellBuildingModel>{
+                        x: 200, /** @todo find the right place */
+                        y: 250,
+                        building: home.id
+                    });
+                break;
+            case "W":
+                let well = await Building.findOne({ name: "well" }) as BuildingModel;
+                cell.buildings.push(
+                    <CellBuildingModel>{
+                        x: 1,
+                        y: 1,
+                        rations: Math.round(Math.random() * 50 + 20),
+                        building: well.id
+                    })
+                break;
+            case "C":
+                let church = await Building.findOne({ name: "church" }) as BuildingModel;
+                cell.buildings.push(
+                    <CellBuildingModel>{
+                        x: 150,
+                        y: 150,
+                        building: church.id
+                    })
+                break;
+            default:
+                throw "Building not implemented to add onto cell";
+        }
+    }
+}
+
+/**
  * Find a cell to join a game
  * @param gameId The game
  * - has to be a home cell
  * - has to have room for this new player to come
  */
 cellSchema.statics.findToJoin = async function (gameId: mongoose.Types.ObjectId) {
-    let cells = <CellModel[]>await Cell.find({ gameId: gameId, joined: { $lt: 4 } })
-    cells = <CellModel[]>shuffle(cells);
-    return cells[0]
+    let cells = await Cell.find({ gameId: gameId, joined: { $lt: 4 } }) as CellModel[];
+    cells = shuffle(cells) as CellModel[];
+    return cells[0];
 }
 
 // --------------------------------------------------

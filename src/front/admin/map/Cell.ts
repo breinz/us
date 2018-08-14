@@ -21,14 +21,14 @@ export default class Cell extends PIXI.Container {
         this.w = w;
         this.h = h;
 
-        this.ground = state.substr(0, 1);
+        this.ground = state ? state.substr(0, 1) : "g";
 
         this.bg = new PIXI.Graphics()
         this.bg.beginFill(GroundBtn.colors[GroundBtn.letters.indexOf(this.ground)])
         this.bg.drawRect(0, 0, w, h)
         this.addChild(this.bg);
 
-        this.buildings = new PIXI.Text(state.substr(1), { fontSize: 12, wordWrap: true, wordWrapWidth: w - 4, breakWords: true, lineHeight: 12 })
+        this.buildings = new PIXI.Text(state ? state.substr(1) : "", { fontSize: 12, wordWrap: true, wordWrapWidth: w - 4, breakWords: true, lineHeight: 12 })
         this.buildings.x = 2;
         this.addChild(this.buildings)
 
