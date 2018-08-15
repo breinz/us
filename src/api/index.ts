@@ -48,6 +48,10 @@ router.get("/cell", async (req, res) => {
 
     let cell = await Cell.findById(user.currentCell)
         .populate("buildings.building").populate("items")
+        .populate("neighbors.left", "ground")
+        .populate("neighbors.right", "ground")
+        .populate("neighbors.top", "ground")
+        .populate("neighbors.bottom", "ground")
 
     res.send(cell)
 })

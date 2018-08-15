@@ -136,7 +136,7 @@ export default class Cell {
         this.app.stage.interactive = true;
 
         // Draw the background
-        background.init(this.app);
+        background.init(this.app, this.data);
 
         // --------------------------------------------------
         // Container

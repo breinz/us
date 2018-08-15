@@ -27,17 +27,18 @@ export type CellModel = Document & {
     ground: string,
     homeForTeam?: number,
     joined?: number,
+    test: string,
     neighbors: {
-        left: mongoose.Types.ObjectId,
-        right: mongoose.Types.ObjectId,
-        top: mongoose.Types.ObjectId,
-        bottom: mongoose.Types.ObjectId
+        left: mongoose.Types.ObjectId | CellModel,
+        right: mongoose.Types.ObjectId | CellModel,
+        top: mongoose.Types.ObjectId | CellModel,
+        bottom: mongoose.Types.ObjectId | CellModel
     },
     buildings?: mongoose.Types.Array<CellBuildingModel> & Document,
 
     isHome: () => boolean,
     findToJoin: (gameId: mongoose.Types.ObjectId) => CellModel,
-    addBuildings: (structure: string) => void,
+    addBuildings: (structure: string, teamId: number) => Promise<boolean>,
     setNeighbor: (direction: string, neighbor: CellModel) => void
 }
 
@@ -60,6 +61,7 @@ export const cellSchema = new Schema({
     gameId: { type: mongoose.Schema.Types.ObjectId, ref: "Game" },
     x: Number,
     y: Number,
+    ground: String,
     joined: Number,
     neighbors: {
         left: mongoose.Schema.Types.ObjectId,
@@ -68,7 +70,6 @@ export const cellSchema = new Schema({
         bottom: mongoose.Schema.Types.ObjectId,
     },
     homeForTeam: Number,
-    test: { type: String, default: "pom" },
     buildings: [CellBuildingSchema]
 })
 
@@ -131,10 +132,13 @@ cellSchema.methods.setNeighbor = async function (direction: "left" | "right" | "
  * Add buildings to the cell
  * @param structure The structure [ground][...buildings]
  */
-cellSchema.methods.addBuildings = async function (structure: string) {
+cellSchema.methods.addBuildings = async function (structure: string, teamId: number): Promise<boolean> {
     const cell = this as CellModel;
 
+    let isHome = false;
+
     structure = structure.substr(1);
+    cell.test = structure;
 
     const arBuildings = structure.split("");
 
@@ -143,6 +147,7 @@ cellSchema.methods.addBuildings = async function (structure: string) {
         letter = arBuildings[i];
         switch (letter) {
             case "H":
+                cell.homeForTeam = teamId;
                 let home = await Building.findOne({ name: "home" }) as BuildingModel
                 cell.buildings.push(
                     <CellBuildingModel>{
@@ -150,6 +155,7 @@ cellSchema.methods.addBuildings = async function (structure: string) {
                         y: 250,
                         building: home.id
                     });
+                isHome = true;
                 break;
             case "W":
                 let well = await Building.findOne({ name: "well" }) as BuildingModel;
@@ -174,6 +180,8 @@ cellSchema.methods.addBuildings = async function (structure: string) {
                 throw "Building not implemented to add onto cell";
         }
     }
+
+    return isHome;
 }
 
 /**

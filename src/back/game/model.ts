@@ -71,6 +71,7 @@ gameSchema.pre("save", async function save(next) {
             first_of_row = null;
             for (let x = 0; x < map.width; x++) {
                 cell_structure = arStructure[structure_index];
+                console.log(cell_structure);
 
                 params = {
                     x: x,
@@ -83,13 +84,15 @@ gameSchema.pre("save", async function save(next) {
                 cell = <CellModel>new Cell(params)
                 // [row] link to left
                 if (prev_cell) {
-                    cell.setNeighbor("left", prev_cell);
+                    await cell.setNeighbor("left", prev_cell);
                 }
                 // [row] link the first to the last
                 if (x === map.width - 1) {
-                    first_of_row.setNeighbor("left", cell);
+                    await first_of_row.setNeighbor("left", cell);
                 }
-                await cell.addBuildings(cell_structure);
+                if (await cell.addBuildings(cell_structure, teamId)) {
+                    teamId++;
+                }
                 await cell.save()
 
                 game.cells.push(cell.id)
@@ -107,11 +110,11 @@ gameSchema.pre("save", async function save(next) {
 
                 // [col] link top
                 if (y > 0) {
-                    cell.setNeighbor("top", arCells[(y - 1) * map.height + x]);
+                    await cell.setNeighbor("top", arCells[(y - 1) * map.height + x]);
                 }
                 // [col] link first to last
                 if (y === map.height - 1) {
-                    arCells[x].setNeighbor("top", cell);
+                    await arCells[x].setNeighbor("top", cell);
                 }
             }
         }
