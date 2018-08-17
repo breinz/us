@@ -57,7 +57,7 @@ router.get("/map", async (req, res) => {
 
     const map = await Game.findById(user.currentGame).select("cells")
         .populate({
-            path: "cells", select: "neighbors",
+            path: "cells", select: "neighbors, ground",
             populate: [
                 { path: "neighbors.left", select: "ground" },
                 { path: "neighbors.right", select: "ground" },

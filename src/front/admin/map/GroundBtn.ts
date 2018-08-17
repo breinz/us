@@ -1,12 +1,9 @@
 import AButton from "./AButton";
+import { GROUND } from "../../../const";
 
 export default class GroundBtn extends AButton {
 
     private index: number;
-
-    static labels: string[] = ["grass", "desert", "snow", "water", "volcano"];
-    static letters: string[] = ["g", "d", "s", "w", "v"];
-    static colors: number[] = [0x88c083, 0xc9c29e, 0xdee5eb, 0x7ea4bf, 0xbc4f4f];
 
     public color: number;
     public label: string;
@@ -18,8 +15,8 @@ export default class GroundBtn extends AButton {
 
         this.action = "ground";
 
-        this.color = GroundBtn.colors[index];
-        this.label = GroundBtn.labels[index].substr(0, 1);
+        this.color = GROUND.COLORS[index]
+        this.label = GROUND.LABELS[index].substr(0, 1);
 
         //this.draw()
     }
@@ -31,7 +28,7 @@ export default class GroundBtn extends AButton {
         color.beginFill(this.color).drawRect(5, 5, 20, 20)
         this.addChild(color);
 
-        let text = new PIXI.Text(GroundBtn.labels[this.index], AButton.txt_opt)
+        let text = new PIXI.Text(GROUND.LABELS[this.index], AButton.txt_opt)
         text.x = 30;
         text.y = 7;
         this.addChild(text)

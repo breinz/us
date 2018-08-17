@@ -2,9 +2,9 @@ import dispatcher from "../dispatcher";
 import { TweenLite, Linear } from "gsap";
 import Axios from "axios";
 import { cell as main } from "../main";
+import { GROUND } from "../../const";
+import { MapType } from "../../types";
 
-type neighbor_type = { _id: string, ground: string }
-type cell_type = { _id: string, neighbors: { top: neighbor_type, right: neighbor_type, left: neighbor_type, bottom: neighbor_type } }
 
 class Map extends PIXI.Container {
 
@@ -64,14 +64,25 @@ class Map extends PIXI.Container {
 
 
 
-    private build(cells: cell_type[]): void {
-        let cell: cell_type;
+    private build(cells: MapType.Cell[]): void {
+        let cell: MapType.Cell;
         for (let i = 0; i < cells.length; i++) {
             cell = cells[i];
             if (cell._id === main.user_data.currentCell) {
-                console.log("found first cell");
+                this.drawCell(cell, 560 / 2, 560 / 2)
             }
         }
+    }
+
+    private drawCell(cell: MapType.Cell, x: number, y: number): void {
+        const color_index = GROUND.LETTERS.indexOf(cell.ground);
+
+        let c = new PIXI.Graphics();
+        c.lineStyle(1).beginFill(GROUND.COLORS[color_index])
+        c.drawRect(0, 0, 30, 30)
+        c.x = x - 15;
+        c.y = y - 15;
+        this.addChild(c);
     }
 }
 
