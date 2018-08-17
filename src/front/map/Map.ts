@@ -1,5 +1,10 @@
 import dispatcher from "../dispatcher";
 import { TweenLite, Linear } from "gsap";
+import Axios from "axios";
+import { cell as main } from "../main";
+
+type neighbor_type = { _id: string, ground: string }
+type cell_type = { _id: string, neighbors: { top: neighbor_type, right: neighbor_type, left: neighbor_type, bottom: neighbor_type } }
 
 class Map extends PIXI.Container {
 
@@ -25,6 +30,11 @@ class Map extends PIXI.Container {
         this.container.alpha = 1;
 
         TweenLite.from(this.container, .5, { alpha: 0, ease: Linear.easeIn })
+
+        Axios.get("/api/map").then(res => {
+            console.log(res.data.map.cells);
+            this.build(res.data.map.cells)
+        })
     }
 
     /**
@@ -50,6 +60,18 @@ class Map extends PIXI.Container {
         const background = PIXI.Sprite.fromImage("img/backgrounds/dig.png");
         this.container.addChild(background)
         background.interactive = true;
+    }
+
+
+
+    private build(cells: cell_type[]): void {
+        let cell: cell_type;
+        for (let i = 0; i < cells.length; i++) {
+            cell = cells[i];
+            if (cell._id === main.user_data.currentCell) {
+                console.log("found first cell");
+            }
+        }
     }
 }
 

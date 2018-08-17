@@ -30,18 +30,48 @@ router.get("/game", async (req, res) => {
     const user = <UserModel>req.user;
     if (!user.inGame()) res.send({ error: 'notInGame' })
 
-    let game = await Game.findById(user.currentGame)
-        .populate({
-            path: "cells.cell",
-            populate: {
-                path: "buildings.building"
-            }
+    const game = await Game.findById(user.currentGame)
+    /*.populate({
+        path: "cells", select: "neighbors",
+        populate: [
+            { path: "neighbors.left", select: "ground" },
+            { path: "neighbors.right", select: "ground" },
+            { path: "neighbors.top", select: "ground" },
+            { path: "neighbors.bottom", select: "ground" },
+        ]
+    })*/
+    /*.populate({
+        path: "cells.cell",
+        populate: {
+            path: "buildings.building"
         }
-        )
+    }
+    )*/
 
     res.send({ currentGame: game })
 })
 
+router.get("/map", async (req, res) => {
+    const user = <UserModel>req.user;
+    if (!user.inGame()) res.send({ error: 'notInGame' })
+
+    const map = await Game.findById(user.currentGame).select("cells")
+        .populate({
+            path: "cells", select: "neighbors",
+            populate: [
+                { path: "neighbors.left", select: "ground" },
+                { path: "neighbors.right", select: "ground" },
+                { path: "neighbors.top", select: "ground" },
+                { path: "neighbors.bottom", select: "ground" },
+            ]
+        })
+
+    res.send({ map: map })
+})
+
+/**
+ * Get the current cell's data
+ */
 router.get("/cell", async (req, res) => {
     const user = <UserModel>req.user;
     if (!user.inGame()) res.send({ error: 'notInGame' })
@@ -56,6 +86,9 @@ router.get("/cell", async (req, res) => {
     res.send(cell)
 })
 
+/**
+ * Get translations
+ */
 router.get('/i18n', (req, res) => {
     var catalog = i18n.getCatalog(req)
     /*for (const key in catalog) {

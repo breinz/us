@@ -23,7 +23,7 @@ export type UserModel = Document & {
     current_level: mongoose.Types.ObjectId,
     goals: GoalModel[] & Document,
     currentGame: mongoose.Types.ObjectId,
-    currentCell: mongoose.Types.ObjectId,
+    currentCell: mongoose.Types.ObjectId | string,
     x: number,
     y: number,
     /** Play mode 0: exploration 1: fight */
