@@ -11,14 +11,8 @@ export default class User extends PIXI.Container {
 
     private pic: UserSprite;
 
-    private _onStageMouseMove: () => void;
-    private _onStageMouseUp: () => void;
-
     constructor() {
         super()
-
-        this._onStageMouseMove = this.onStageMouseMove.bind(this)
-        this._onStageMouseUp = this.onStageMouseUp.bind(this)
 
         this.draw()
     }
@@ -35,15 +29,6 @@ export default class User extends PIXI.Container {
         this.pic = new UserSprite("img/boy1.png");
         this.addChild(this.pic)
 
-        /*let i = PIXI.Sprite.fromImage("img/boy1.png")
-        i.anchor.set(.5, .5);
-        this.addChild(i);*/
-
-        /*let s = new PIXI.Graphics()
-        s.beginFill(0)
-        s.drawCircle(0, 0, 7)
-        this.addChild(s)*/
-
         this.x = cell.user_data.x;
         this.y = cell.user_data.y;
 
@@ -52,8 +37,6 @@ export default class User extends PIXI.Container {
         this.over.drawCircle(0, 0, 20)
         this.addChild(this.over)
         this.over.interactive = true
-        this.over.on("mouseover", this.onMouseOver.bind(this))
-        this.over.on("mousedown", this.onMouseDown.bind(this))
     }
 
     /**
@@ -68,27 +51,6 @@ export default class User extends PIXI.Container {
         } else {
             this.pic.stop();
         }
-    }
-
-    private onMouseOver(): void {
-
-    }
-
-    private onMouseDown(): void {
-        cell.app.stage.on("mousemove", this._onStageMouseMove)
-        cell.app.stage.on("mouseup", this._onStageMouseUp)
-    }
-
-    private onStageMouseMove(e: PIXI.interaction.InteractionEvent): void {
-        cell.app.stage.off("mousemove", this._onStageMouseMove)
-        cell.app.stage.off("mouseup", this._onStageMouseUp)
-
-        this.move.start(e)
-    }
-
-    private onStageMouseUp(): void {
-        cell.app.stage.off("mousemove", this._onStageMouseMove)
-        cell.app.stage.off("mouseup", this._onStageMouseUp)
     }
 
 }

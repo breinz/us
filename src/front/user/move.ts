@@ -1,18 +1,21 @@
 import User from "./User";
 import { cell } from "../main";
 import Axios from "axios";
-import { R2D } from "../../helper";
 import dispatcher from "../dispatcher";
 
 export default class Move {
 
     private user: User;
 
-    private will_move: boolean = false
+    private v2_cursorVisible: boolean = false;
+    private v2_mouseMove: (e: PIXI.interaction.InteractionEvent) => void
+    private v2_mouseUp: () => void;
+
+    private THRESHOLD: number = 10;
+    private move_threshold: { x: number, y: number };
+
     private move_cursor: PIXI.Graphics;
 
-    private _onMoveCursorMove: () => void;
-    private _onStageMouseUp: () => void;
     private _move: () => void;
 
     private targets: number[][];
@@ -24,9 +27,10 @@ export default class Move {
     constructor(user: User) {
         this.user = user;
 
-        this._onMoveCursorMove = this.onMoveCursorMove.bind(this)
-        this._onStageMouseUp = this.onStageMouseUp.bind(this)
         this._move = this.move.bind(this)
+
+        this.v2_mouseMove = this.onMouseMove.bind(this);
+        this.v2_mouseUp = this.onMouseUp.bind(this);
 
         this.move_cursor = new PIXI.Graphics()
         this.move_cursor.lineStyle(2, 0)
@@ -40,22 +44,61 @@ export default class Move {
         this.frame = 0;
 
         dispatcher.on(dispatcher.BUILDING_LOADED, this.reorganizeBuildings.bind(this));
+
+        cell.app.stage.on("mousedown", this.onMouseDown.bind(this));
     }
 
     /**
-     * Show the cursor to move to a destination
+     * Mouse down
+     * @param e MouseEvent
      */
-    public start(e: PIXI.interaction.InteractionEvent) {
-        this.user.addChild(this.move_cursor)
-        this.move_cursor.x = e.data.global.x - this.user.x;
-        this.move_cursor.y = e.data.global.y - this.user.y;
+    private onMouseDown(e: PIXI.interaction.InteractionEvent) {
+        this.move_threshold = { x: e.data.global.x, y: e.data.global.y };
 
-        cell.app.ticker.remove(this._move)
+        this.v2_cursorVisible = false;
 
-        cell.app.view.setAttribute("style", "cursor:none")
+        cell.app.stage.on("mousemove", this.v2_mouseMove)
+        cell.app.stage.on("mouseup", this.v2_mouseUp);
+    }
 
-        cell.app.stage.on("mousemove", this._onMoveCursorMove)
-        cell.app.stage.on("mouseup", this._onStageMouseUp)
+    /**
+     * Mouse move
+     * @param e MouseEvent
+     */
+    private onMouseMove(e: PIXI.interaction.InteractionEvent) {
+        if (this.v2_cursorVisible) {
+            this.move_cursor.x = e.data.global.x;
+            this.move_cursor.y = e.data.global.y;
+        } else {
+            if (
+                Math.abs(e.data.global.x - this.move_threshold.x) > this.THRESHOLD ||
+                Math.abs(e.data.global.y - this.move_threshold.y) > this.THRESHOLD
+            ) {
+                this.v2_cursorVisible = true;
+
+                cell.app.stage.addChild(this.move_cursor);
+                cell.app.view.setAttribute("style", "cursor:none");
+                this.move_cursor.x = e.data.global.x;
+                this.move_cursor.y = e.data.global.y;
+            }
+        }
+    }
+
+    /**
+     * Mouse up
+     * @param e MouseEvent
+     */
+    private onMouseUp(e: PIXI.interaction.InteractionEvent) {
+        cell.app.stage.off("mousemove", this.v2_mouseMove)
+        cell.app.stage.off("mouseup", this.v2_mouseUp);
+
+        cell.app.stage.removeChild(this.move_cursor);
+        cell.app.view.setAttribute("style", "cursor:default");
+
+        if (this.v2_cursorVisible) {
+            this.to(e.data.global.x, e.data.global.y)
+        }
+        this.v2_cursorVisible = false;
     }
 
     /**
@@ -73,22 +116,6 @@ export default class Move {
 
         this.frame = 0;
         cell.app.ticker.add(this._move)
-    }
-
-    private onMoveCursorMove(e: PIXI.interaction.InteractionEvent): void {
-        this.move_cursor.x = e.data.global.x - this.user.x;
-        this.move_cursor.y = e.data.global.y - this.user.y;
-    }
-
-    private onStageMouseUp(e: PIXI.interaction.InteractionEvent): void {
-        cell.app.stage.off("mousemove", this._onMoveCursorMove)
-        cell.app.stage.off("mouseup", this._onStageMouseUp)
-
-        this.to(e.data.global.x, e.data.global.y)
-
-        this.user.removeChild(this.move_cursor)
-
-        cell.app.view.setAttribute("style", "cursor:default")
     }
 
     private move() {

@@ -3,12 +3,13 @@ import { TweenLite, Linear } from "gsap";
 import Axios from "axios";
 import { cell as main } from "../main";
 import { GROUND } from "../../const";
-import { MapType } from "../../types";
 
 
 class Map extends PIXI.Container {
 
     private container: PIXI.Container;
+
+    private cells: US.Map.Cell[];
 
     constructor() {
         super()
@@ -64,17 +65,22 @@ class Map extends PIXI.Container {
 
 
 
-    private build(cells: MapType.Cell[]): void {
-        let cell: MapType.Cell;
+    private build(cells: US.Map.Cell[]): void {
+        this.cells = cells;
+
+        const one_side = Math.floor(Math.sqrt(cells.length) / 2);
+        let cell: US.Map.Cell;
         for (let i = 0; i < cells.length; i++) {
             cell = cells[i];
             if (cell._id === main.user_data.currentCell) {
-                this.drawCell(cell, 560 / 2, 560 / 2)
+                this.drawCell(cell, 560 / 2, 560 / 2, 560 / 2, 560 / 2, 0, one_side);
             }
         }
     }
 
-    private drawCell(cell: MapType.Cell, x: number, y: number): void {
+    private drawCell(cell: US.Map.Cell, x: number, y: number, ox: number, oy: number, count: number, side: number): void {
+        cell.done = true;
+
         const color_index = GROUND.LETTERS.indexOf(cell.ground);
 
         let c = new PIXI.Graphics();
@@ -83,6 +89,23 @@ class Map extends PIXI.Container {
         c.x = x - 15;
         c.y = y - 15;
         this.addChild(c);
+
+        count++;
+
+        for (let i = 0; i < this.cells.length; i++) {
+            if (this.cells[i]._id === cell.neighbors.right._id && this.cells[i].done !== true) {
+                this.drawCell(this.cells[i], x + 30, y, ox, oy, count, side)
+            }
+        }
+
+        /*let right;
+        if (count >= side) {
+            count = -this.cells.length;
+            right = ox - side * 30;
+        } else {
+            right = x + 30;
+        }*/
+
     }
 }
 

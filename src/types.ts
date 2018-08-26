@@ -1,15 +1,18 @@
-export namespace MapType {
-    export namespace Cell {
-        export type Neighbor = { _id: string, ground: string }
-    }
-    export type Cell = {
-        _id: string,
-        ground: string,
-        neighbors: {
-            top: MapType.Cell.Neighbor,
-            right: MapType.Cell.Neighbor,
-            left: MapType.Cell.Neighbor,
-            bottom: MapType.Cell.Neighbor
+namespace US {
+    export namespace Map {
+        export namespace Cell {
+            export type Neighbor = { _id: string, ground: string }
+        }
+        export type Cell = {
+            _id: string,
+            ground: string,
+            done: boolean,
+            neighbors: {
+                top: Map.Cell.Neighbor,
+                right: Map.Cell.Neighbor,
+                left: Map.Cell.Neighbor,
+                bottom: Map.Cell.Neighbor
+            }
         }
     }
 }
