@@ -28,7 +28,7 @@ export default class Dev extends React.Component {
         return (
             <div className="box">
                 <div className="content">
-                    <div className="itemList">
+                    <div className="item-list">
                         {items}
                     </div>
                     <button className="button small hollow secondary" onClick={this.clearBag.bind(this)}>

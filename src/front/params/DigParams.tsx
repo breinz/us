@@ -74,7 +74,7 @@ class DigParams extends React.Component {
                 {this.tuto ? this.state.tuto : null}
                 {this.populateTimer()}
                 {this.tuto ? this.state.tuto_items : null}
-                <div className="itemList">{items}</div>
+                <div className="item-list">{items}</div>
                 {this.tuto ? this.state.tuto_button : null}
                 <div>
                     {this.state.keepDigging_btn}

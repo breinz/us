@@ -54,39 +54,29 @@ class UserParams extends React.Component {
         if (this.state.resting) {
             items = <button className="button success small" onClick={this.onWakeup.bind(this)}>{i18n.__("actions.wakeup")}</button>
         } else {
-            if (this.state.mode === Mode.FIGHT) {
-                weapons =
-                    <div className="grid-x">
-                        <div className="cell small-3">
-                            <div className="weapon-box">
-                                <small>Long range</small>
-                            </div>
-                        </div>
-                        <div className="cell small-3">
-                            <div className="weapon-box">
-                                <small>Short range</small>
-                            </div>
-                        </div>
-                        <div className="cell small-3">
-                            <div className="weapon-box">
-                                <small>Defense</small>
-                            </div>
-                        </div>
-                        <div className="cell small-3">
-                            <div className="weapon-box end">
-                                <small>Spell</small>
-                            </div>
-                        </div>
+            weapons =
+                <div id="equipped-list">
+                    <div className="equipped-item">
                     </div>
-            }
+                    <div className="equipped-item">
+                    </div>
+                    <div className="equipped-item">
+                    </div>
+                    <div className="equipped-item">
+                    </div>
+                    <div className="equipped-item">
+                    </div>
+                    <div className="equipped-item end">
+                    </div>
+                </div>;
             items = <div id="bag">
-                <div className="itemList">
+                <div className="item-list">
                     {this.populateItems(2)}
                 </div>
-                <div className="itemList">
+                <div className="item-list">
                     {this.populateItems(1)}
                 </div>
-                <div className="itemList">
+                <div className="item-list">
                     {this.populateItems(0)}
                 </div>
             </div>;

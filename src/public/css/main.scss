@@ -266,14 +266,21 @@ table {
     padding: 5px;
 }
 
-.weapon-box {
-    border: 1px solid #B6B6B6;
-    box-sizing: border-box;
-    margin-right: 5px;
+#equipped-list {
     height: 50px;
+    margin-bottom: 4px;
 
-    &.end {
-        margin-right: 0;
+    .equipped-item {
+        border: 1px solid #B6B6B6;
+        box-sizing: border-box;
+        margin-right: 4px;
+        height: 50px;
+        width: 50px;
+        float: left;
+
+        &.end {
+            margin-right: 0;
+        }
     }
 }
 
@@ -285,7 +292,7 @@ table {
     margin-right: 35px;
 }
 
-.itemList {
+.item-list {
     margin: 10px 0;
 }
 

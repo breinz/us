@@ -4,9 +4,6 @@ import UserSprite from "./UserSprite";
 
 export default class User extends PIXI.Container {
 
-    /** invisible layer used as mouse hit area */
-    private over: PIXI.Graphics;
-
     private move: Move;
 
     private pic: UserSprite;
@@ -21,22 +18,26 @@ export default class User extends PIXI.Container {
         this.move = new Move(this);
     }
 
+    /**
+     * Move to a destination
+     * @param dest Destination
+     * @param callback Callback
+     */
     public moveTo(dest: { x: number, y: number }, callback?: () => void) {
         this.move.to(dest.x, dest.y, callback)
     }
 
     private draw() {
+        /*let base = new PIXI.Graphics();
+        base.lineStyle(2, 0xFF0000, .6).beginFill(0xFF0000, .2);
+        base.drawEllipse(0, 11, 16, 6);
+        this.addChild(base);*/
+
         this.pic = new UserSprite("img/boy1.png");
         this.addChild(this.pic)
 
         this.x = cell.user_data.x;
         this.y = cell.user_data.y;
-
-        this.over = new PIXI.Graphics();
-        this.over.beginFill(0, 0)
-        this.over.drawCircle(0, 0, 20)
-        this.addChild(this.over)
-        this.over.interactive = true
     }
 
     /**
@@ -45,7 +46,6 @@ export default class User extends PIXI.Container {
      * @param angle Angle in radians
      */
     public animate(begin: boolean, angle?: number) {
-
         if (begin) {
             this.pic.start(angle)
         } else {
