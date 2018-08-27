@@ -30,7 +30,7 @@ router.use("/buildings", buildings)
 router.post("/grabItem", async (req, res) => {
     try {
         // Get the user
-        const user = await User.findById(req.user._id).populate("items.item") as UserModel
+        const user = await User.findById(req.user._id).populate("items.bag.item") as UserModel
 
         // Get the item
         const item = req.body.item as ItemModel;
@@ -44,12 +44,12 @@ router.post("/grabItem", async (req, res) => {
         }
 
         // Add the item to the bag
-        user.items.push(push)
+        user.items.bag.push(push)
 
         // Save
         await user.save()
 
-        res.send({ success: true, bag: user.items })
+        res.send({ success: true, bag: user.items.bag })
     } catch (err) {
         res.send({ fatal: err.message });
     }
@@ -62,10 +62,10 @@ router.post("/grabItem", async (req, res) => {
 router.post("/drink", async (req, res) => {
     try {
         // Find the user
-        const user = await User.findById(req.user._id).populate("items.item") as UserModel
+        const user = await User.findById(req.user._id).populate("items.bag.item") as UserModel
 
         // Find the user's bottle
-        const item = user.items.id(req.body.item._id) as UserItemModel
+        const item = user.items.bag.id(req.body.item._id) as UserItemModel
 
         if (item === null) {
             return res.send({ error: "drink.no_water" })
@@ -87,10 +87,10 @@ router.post("/drink", async (req, res) => {
         let bottle = await Item.findOne({ name: "bottle" }) as ItemModel
 
         // Remove the full bottle
-        user.items.remove(item)
+        user.items.bag.remove(item)
 
         // Add the empty bottle
-        user.items.push({ item: bottle })
+        user.items.bag.push({ item: bottle })
 
         // Get to 200 pa
         user.pa = user.pa + 200;
@@ -103,7 +103,7 @@ router.post("/drink", async (req, res) => {
 
         await user.save();
 
-        res.send({ success: true, bag: user.items, pa: user.pa })
+        res.send({ success: true, bag: user.items.bag, pa: user.pa })
     } catch (err) {
         res.send({ fatal: err.message });
     }
@@ -125,14 +125,14 @@ Remove ammo from bag
 */
 router.post("/reload", async (req, res) => {
     try {
-        const user = await User.findById(req.user._id).populate("items.item") as UserModel
+        const user = await User.findById(req.user._id).populate("items.bag.item") as UserModel
 
         if (user.pa < 1) {
             return res.send({ error: "not_enough_pa" })
         }
 
         // Find the gun
-        const user_pistol = user.items.id(req.body.user_pistol_id) as UserItemModel
+        const user_pistol = user.items.bag.id(req.body.user_pistol_id) as UserItemModel
 
         // No pistol
         if (user_pistol === null) {
@@ -148,7 +148,7 @@ router.post("/reload", async (req, res) => {
         const ammo = await Item.findOne({ name: "ammo" }) as ItemModel
 
         // Find the ammo in the bag
-        const user_ammo = user.items.find(element => {
+        const user_ammo = user.items.bag.find(element => {
             return element.item.equals(ammo._id)
         })
 
@@ -161,11 +161,11 @@ router.post("/reload", async (req, res) => {
         user_pistol.ammo++;
 
         // Remove one ammo from bag
-        user.items.remove(user_ammo)
+        user.items.bag.remove(user_ammo)
 
         await user.save()
 
-        res.send({ success: true, ammo: user_pistol.ammo, bag: user.items })
+        res.send({ success: true, ammo: user_pistol.ammo, bag: user.items.bag })
     } catch (err) {
         res.send({ fatal: true, error: err.message })
     }

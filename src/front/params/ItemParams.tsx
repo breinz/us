@@ -168,7 +168,7 @@ export default class ItemParams extends React.Component {
 
         // Select empty bottle
         dispatcher.dispatch(dispatcher.SELECT_ITEM,
-            cell.user_data.items.find(item => { return item.item.name === "bottle" })
+            cell.user_data.items.bag.find(item => { return item.item.name === "bottle" })
         )
     }
 
@@ -183,7 +183,7 @@ export default class ItemParams extends React.Component {
 
         // Select empty bottle
         dispatcher.dispatch(dispatcher.SELECT_ITEM,
-            cell.user_data.items.find(item => { return item.item.name === "rope" })
+            cell.user_data.items.bag.find(item => { return item.item.name === "rope" })
         )
     }
 

@@ -30,7 +30,9 @@ export type UserModel = Document & {
     mode: number,
     team: number,
     /** Items owned by the user */
-    items?: mongoose.Types.Array<UserItemModel> & Document,
+    items?: {
+        bag: mongoose.Types.Array<UserItemModel> & Document,
+    },
     dig: {
         /** 
          * How pa are used while digging 
@@ -94,11 +96,13 @@ const userSchema = new Schema({
     y: { type: Number, default: 400 },
     mode: { type: Number, default: 0 },
     team: Number,
-    items: [{
-        item: { type: mongoose.Schema.Types.ObjectId, ref: "Item" },
-        ammo: Number,
-        poisoned: Boolean
-    }],
+    items: {
+        bag: [{
+            item: { type: mongoose.Schema.Types.ObjectId, ref: "Item" },
+            ammo: Number,
+            poisoned: Boolean
+        }]
+    },
     //dig_count: Number,
     dig: {
         pa: { type: Number, default: 1 },
@@ -219,8 +223,8 @@ userSchema.methods.joinGame = async function () {
     user.team = cell.homeForTeam;
 
     user.drank_at = null;
-    for (let i = user.items.length; i >= 0; i--) {
-        user.items.remove(user.items[i])
+    for (let i = user.items.bag.length; i >= 0; i--) {
+        user.items.bag.remove(user.items.bag[i])
     }
     user.dig.current.count = 0;
     user.dig.current.hitWall_count = 0;
@@ -250,8 +254,8 @@ userSchema.methods.hasItem = function (item: ItemModel | string, count?: number)
 
     let has;
     let howMany = 0;
-    for (let itemId = 0; itemId < user.items.length; itemId++) {
-        has = user.items[itemId];
+    for (let itemId = 0; itemId < user.items.bag.length; itemId++) {
+        has = user.items.bag[itemId];
         if (item.hasOwnProperty("_id")) {
             if (has.item.equals((item as ItemModel)._id)) {
                 if (count === undefined) {

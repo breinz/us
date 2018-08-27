@@ -11,8 +11,8 @@ let router = express.Router()
  */
 router.post("/clearBag", async (req, res) => {
     const user = req.user as UserModel;
-    for (let i = user.items.length; i >= 0; i--) {
-        user.items.remove(user.items[i])
+    for (let i = user.items.bag.length; i >= 0; i--) {
+        user.items.bag.remove(user.items.bag[i])
     }
     await user.save()
     res.send({ success: true, bag: [] })

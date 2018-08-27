@@ -22,7 +22,7 @@ class UserParams extends React.Component {
     }
 
     public state: {
-        items: UserItemModel[],
+        bag: UserItemModel[],
         resting: boolean,
         pa: number,
         mode: number
@@ -31,8 +31,10 @@ class UserParams extends React.Component {
     constructor(props: UserModel) {
         super(props)
 
+        console.log(this.props.user.items.bag);
+
         this.state = {
-            items: this.props.user.items,
+            bag: this.props.user.items.bag,
             resting: this.props.user.rest != null,
             pa: this.props.user.pa,
             mode: cell.user_data.mode
@@ -116,10 +118,10 @@ class UserParams extends React.Component {
      */
     public hasItem(item: string, count?: number): UserItemModel | boolean {
         let how_many = 0;
-        for (let i = 0; i < this.state.items.length; i++) {
-            if (this.state.items[i].item.name === item) {
+        for (let i = 0; i < this.state.bag.length; i++) {
+            if (this.state.bag[i].item.name === item) {
                 if (count === undefined) {
-                    return this.state.items[i];
+                    return this.state.bag[i];
                 }
                 how_many++;
             }
@@ -203,15 +205,18 @@ class UserParams extends React.Component {
     }
 
     private populateItems(weight: number): React.ReactElement<"a">[] {
-        let list = this.state.items.map((item, index) => {
-            if (item.item.weight === weight) {
-                return (
-                    <a href="#" onClick={() => { this.onClickItem(item); return false; }} key={item._id}>
-                        <Item user_item={item} />
-                    </a>
-                )
-            }
-        })
+        let list = null;
+        if (this.state.bag) {
+            list = this.state.bag.map((item, index) => {
+                if (item.item.weight === weight) {
+                    return (
+                        <a href="#" onClick={() => { this.onClickItem(item); return false; }} key={item._id}>
+                            <Item user_item={item} />
+                        </a>
+                    )
+                }
+            })
+        }
         return list;
     }
 
@@ -223,7 +228,7 @@ class UserParams extends React.Component {
     }
 
     private onGrabItem(item: ItemModel) {
-        this.state.items.push({ _id: Math.random(), item: item })
+        this.state.bag.push({ _id: Math.random(), item: item })
         this.forceUpdate()
     }
 
@@ -232,7 +237,8 @@ class UserParams extends React.Component {
      * @param bag The bag content
      */
     private onUpdateBag(bag: UserItemModel[]) {
-        this.setState({ items: bag });
+        console.log("onUpdateBag", bag);
+        this.setState({ bag: bag });
     }
 
     /**

@@ -11,7 +11,7 @@ router.get('/', (req, res, next) => {
     User.find((err, users) => {
         if (err) next(err)
         res.send({ users: users })
-    }).populate("items.item")
+    }).populate("items.bag.item")
 })
 
 /**
@@ -21,7 +21,7 @@ router.get("/me", (req, res, next) => {
     User.findById(req.user.id, (err, user) => {
         if (err) next(err)
         res.send({ user: user })
-    }).populate("items.item")
+    }).populate("items.bag.item")
 })
 
 /**

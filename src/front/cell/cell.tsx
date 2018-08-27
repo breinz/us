@@ -113,7 +113,7 @@ export default class Cell {
     }
 
     private onUpdateBag(items: any) {
-        this.user_data.items = items;
+        this.user_data.items.bag = items;
     }
 
     /**

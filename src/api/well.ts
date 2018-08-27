@@ -13,13 +13,13 @@ router.post("/getWater", async (req, res, next) => {
     try {
         //const user = req.user as UserModel
 
-        const user = await User.findById(req.user.id).populate("items.item") as UserModel
+        const user = await User.findById(req.user.id).populate("items.bag.item") as UserModel
 
         // Find the item bottle
         let bottle_empty_id = (await Item.findOne({ name: "bottle" }, ["_id"]) as ItemModel).id
 
         // Find the bottle in bag
-        let user_bottle = user.items.find(user_item => {
+        let user_bottle = user.items.bag.find(user_item => {
             return user_item.item.equals(bottle_empty_id);
         })
         if (!user_bottle) {
@@ -50,11 +50,11 @@ router.post("/getWater", async (req, res, next) => {
         await cell.save()
 
         // Remove the bottle from the user
-        user.items.remove(user_bottle);
+        user.items.bag.remove(user_bottle);
 
         // Add the bottle_full to the user
         let bottle_full: ItemModel = await Item.findOne({ name: "bottle_full" }) as ItemModel;
-        user.items.push({ item: bottle_full, poisoned: poison })
+        user.items.bag.push({ item: bottle_full, poisoned: poison })
 
         await user.save()
 
@@ -64,7 +64,7 @@ router.post("/getWater", async (req, res, next) => {
             wellId: req.body.wellId,
             rations: well.rations,
             poison: well.poison,
-            bag: user.items
+            bag: user.items.bag
         })
     } catch (err) {
         res.send({ fatal: err.message });
@@ -78,7 +78,7 @@ router.post("/getWater", async (req, res, next) => {
 router.post("/addWater", async (req, res, next) => {
     try {
         //const user = req.user as UserModel
-        const user = await User.findById(req.user.id).populate("items.item") as UserModel
+        const user = await User.findById(req.user.id).populate("items.bag.item") as UserModel
 
         // Find the item bottle
         let bottle: ItemModel = await Item.findOne({ name: "bottle" }) as ItemModel
@@ -94,7 +94,7 @@ router.post("/addWater", async (req, res, next) => {
         well = await cell.buildings.id(req.body.wellId)
 
         // Check if the user has a full bottle
-        let user_bottle = user.items.find(item => {
+        let user_bottle = user.items.bag.find(item => {
             return item.item.equals(bottle_full._id)
         })
         if (!user_bottle) {
@@ -106,10 +106,10 @@ router.post("/addWater", async (req, res, next) => {
         await cell.save()
 
         // Add the empty bottle to the user
-        user.items.push({ item: bottle })
+        user.items.bag.push({ item: bottle })
 
         // Remove the full bottle from the user
-        user.items.remove(user_bottle)
+        user.items.bag.remove(user_bottle)
 
         await user.save()
 
@@ -118,7 +118,7 @@ router.post("/addWater", async (req, res, next) => {
             success: true,
             wellId: req.body.wellId,
             rations: well.rations,
-            bag: user.items
+            bag: user.items.bag
         })
     } catch (err) {
         res.send({ fatal: err.message });
@@ -130,13 +130,13 @@ router.post("/addWater", async (req, res, next) => {
  */
 router.post("/poison", async (req, res) => {
     try {
-        const user = await User.findById(req.user.id).populate("items.item") as UserModel
+        const user = await User.findById(req.user.id).populate("items.bag.item") as UserModel
 
         // Find the item poison
         let poison_id = (await Item.findOne({ name: "poison" }, ["_id"]) as ItemModel).id
 
         // Find the poison in bag
-        let user_poison = user.items.find(user_item => {
+        let user_poison = user.items.bag.find(user_item => {
             return user_item.item.equals(poison_id);
         })
         if (!user_poison) {
@@ -151,7 +151,7 @@ router.post("/poison", async (req, res) => {
         await cell.save()
 
         // Remove the poison from the user
-        user.items.remove(user_poison);
+        user.items.bag.remove(user_poison);
 
         await user.save()
 
@@ -160,7 +160,7 @@ router.post("/poison", async (req, res) => {
             success: true,
             wellId: req.body.wellId,
             poison: well.poison,
-            bag: user.items
+            bag: user.items.bag
         })
     } catch (err) {
         res.send({ fatal: err.message });
