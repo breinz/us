@@ -32,6 +32,7 @@ export type UserModel = Document & {
     /** Items owned by the user */
     items?: {
         bag: mongoose.Types.Array<UserItemModel> & Document,
+        equipped: mongoose.Types.Array<UserItemModel> & Document,
     },
     dig: {
         /** 
@@ -98,6 +99,11 @@ const userSchema = new Schema({
     team: Number,
     items: {
         bag: [{
+            item: { type: mongoose.Schema.Types.ObjectId, ref: "Item" },
+            ammo: Number,
+            poisoned: Boolean
+        }],
+        equipped: [{
             item: { type: mongoose.Schema.Types.ObjectId, ref: "Item" },
             ammo: Number,
             poisoned: Boolean

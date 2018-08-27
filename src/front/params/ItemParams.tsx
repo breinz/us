@@ -147,8 +147,16 @@ export default class ItemParams extends React.Component {
         )
     }
 
-    private equip() {
-        throw "Yet to implement";
+    private async equip() {
+        let res = await Axios.post("/api/actions/items/equip", {
+            bagItem_id: this.props.item._id
+        })
+
+        if (this.handleError(res.data)) {
+            return;
+        }
+
+        dispatcher.dispatch(dispatcher.UPDATE_BAG, res.data.bag)
 
     }
 
