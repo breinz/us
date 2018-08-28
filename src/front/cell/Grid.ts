@@ -6,8 +6,6 @@ type Coords = { x: number, y: number };
 
 export default class Grid extends PIXI.Container {
 
-    private SHOW_GRID: boolean = false;
-
     private static CELL_SIZE: number = 20
 
     private COLS: number;
