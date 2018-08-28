@@ -30,7 +30,6 @@ export default class Grid extends PIXI.Container {
         this.finder = new Path.BestFirstFinder({ diagonalMovement: 4 })
 
         // --------------------------------------------------
-        //if (this.SHOW_GRID) {
         this.arCells = []
         let ar: PIXI.Graphics[]
 
@@ -41,8 +40,6 @@ export default class Grid extends PIXI.Container {
             ar = [];
             for (let i = 0; i < this.COLS; i++) {
                 let s = new PIXI.Graphics()
-                //s.lineStyle(.5, 0)
-                //s.drawRect(0, 0, Grid.CELL_SIZE, Grid.CELL_SIZE)
                 s.x = i * Grid.CELL_SIZE
                 s.y = j * Grid.CELL_SIZE
                 s.visible = false;
@@ -51,7 +48,6 @@ export default class Grid extends PIXI.Container {
             }
             this.arCells.push(ar);
         }
-        //}
         // --------------------------------------------------
 
         dispatcher.on(dispatcher.DEV_SHOW_GRID, this.onShowGrid.bind(this))
@@ -60,7 +56,7 @@ export default class Grid extends PIXI.Container {
     private onShowGrid() {
         for (let i = 0; i < this.ROWS; i++) {
             for (let j = 0; j < this.COLS; j++) {
-                const cell = this.arCells[i][j];
+                const cell = this.arCells[j][i];
                 cell.visible = !cell.visible;
                 if (cell.visible) {
                     cell.clear()
@@ -74,12 +70,6 @@ export default class Grid extends PIXI.Container {
                 }
             }
         }
-        /*for (let i = 0; i < this.arCells.length; i++) {
-            const element = this.arCells[i];
-            for (let j = 0; j < element.length; j++) {
-                element[j].visible = !element[j].visible;
-            }
-        }*/
     }
 
     /**
@@ -112,18 +102,6 @@ export default class Grid extends PIXI.Container {
                 this.grid.setWalkableAt(x, y, false)
             }
         }
-
-        // --------------------------------------------------
-        //if (this.SHOW_GRID) {
-        //for (let i = start.x; i <= end.x; i++) {
-        //    for (let j = start.y; j <= end.y; j++) {
-        //        let s = this.arCells[j][i]
-        //        s.beginFill(0x00FFFF, .5)
-        //        s.drawRect(0, 0, Grid.CELL_SIZE, Grid.CELL_SIZE)
-        //    }
-        //}
-        //}
-        // --------------------------------------------------
     }
 
     public load(data: string) {
@@ -221,7 +199,6 @@ export default class Grid extends PIXI.Container {
         let cells = this.finder.findPath(start.x, start.y, end.x, end.y, this.grid.clone())
 
         // --------------------------------------------------
-        //if (this.SHOW_GRID) {
         for (let i = 0; i < this.arClean.length; i++) {
             this.arClean[i].clear()
             this.arClean[i].lineStyle(1).drawRect(0, 0, Grid.CELL_SIZE, Grid.CELL_SIZE)
@@ -233,7 +210,6 @@ export default class Grid extends PIXI.Container {
             s.drawRect(0, 0, Grid.CELL_SIZE, Grid.CELL_SIZE)
             this.arClean.push(s)
         }
-        //}
         // --------------------------------------------------
 
         // Smoothen path
@@ -241,19 +217,15 @@ export default class Grid extends PIXI.Container {
         cells = Path.Util.compressPath(cells)
 
         // --------------------------------------------------
-        //if (this.SHOW_GRID) {
         for (let i = 0; i < cells.length; i++) {
             let s = this.arCells[cells[i][1]][cells[i][0]]
             s.beginFill(0xFF0000, .3)
             s.drawRect(0, 0, Grid.CELL_SIZE, Grid.CELL_SIZE)
         }
-        //}
         // --------------------------------------------------
 
         // Convert into pixels
-        let tmp;
         cells.forEach(ar => {
-            tmp = ar[0]
             ar[0] = this.toPix(ar[0])
             ar[1] = this.toPix(ar[1])
         })
@@ -265,7 +237,5 @@ export default class Grid extends PIXI.Container {
         }
 
         return cells;
-
     }
-
 }
