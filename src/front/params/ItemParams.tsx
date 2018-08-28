@@ -18,7 +18,8 @@ export default class ItemParams extends React.Component {
 
     public state: {
         error: React.ReactElement<"div">,
-        ammo?: number
+        ammo?: number,
+        origin: string
     }
 
     constructor(props: PropsType) {
@@ -26,7 +27,8 @@ export default class ItemParams extends React.Component {
 
         this.state = {
             error: null,
-            ammo: this.props.item.ammo
+            ammo: this.props.item.ammo,
+            origin: this.props.origin
         }
     }
 
@@ -123,7 +125,7 @@ export default class ItemParams extends React.Component {
                 {i18n.__("actions.items.equip")}
             </button>;
 
-        if (this.props.origin === "equipped") {
+        if (this.state.origin === "equipped") {
             equip = <button className="button warning small" onClick={this.unequip.bind(this)}>
                 {i18n.__("actions.items.unequip")}
             </button>;
@@ -163,6 +165,8 @@ export default class ItemParams extends React.Component {
             return;
         }
 
+        this.setState({ origin: "equipped" })
+
         dispatcher.dispatch(dispatcher.UPDATE_BAG, res.data.items.bag)
         dispatcher.dispatch(dispatcher.UPDATE_EQUIPPED, res.data.items.equipped);
     }
@@ -175,6 +179,8 @@ export default class ItemParams extends React.Component {
         if (this.handleError(res.data)) {
             return;
         }
+
+        this.setState({ origin: "bag" })
 
         dispatcher.dispatch(dispatcher.UPDATE_BAG, res.data.items.bag)
         dispatcher.dispatch(dispatcher.UPDATE_EQUIPPED, res.data.items.equipped);
