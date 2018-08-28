@@ -40,7 +40,8 @@ export default class ItemParams extends React.Component {
         if (props.item._id === this.props.item._id) return;
         this.setState({
             error: null,
-            ammo: props.item.ammo
+            ammo: props.item.ammo,
+            origin: props.origin
         })
     }
 

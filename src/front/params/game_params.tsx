@@ -105,6 +105,7 @@ class GameParams extends React.Component {
     /**
      * Select an item from user's bag
      * @param item The item selected
+     * @param origin Where is the item from (bag, equipped)
      */
     private onSelectItem(item: UserItemModel, origin: string): void {
 
