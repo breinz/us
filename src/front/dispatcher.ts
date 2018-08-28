@@ -13,6 +13,7 @@ class Dispatcher {
     public ENTER = "enter";
 
     public UPDATE_BAG = "update_bag";
+    public UPDATE_EQUIPPED = "update_equipped";
     public UPDATE_PA = "update_pa";
 
     public SHOW_MAP = "show_map"

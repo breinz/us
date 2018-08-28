@@ -156,8 +156,8 @@ export default class ItemParams extends React.Component {
             return;
         }
 
-        dispatcher.dispatch(dispatcher.UPDATE_BAG, res.data.bag)
-
+        dispatcher.dispatch(dispatcher.UPDATE_BAG, res.data.items.bag)
+        dispatcher.dispatch(dispatcher.UPDATE_EQUIPPED, res.data.items.equipped);
     }
 
     /**

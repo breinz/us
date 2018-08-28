@@ -10,7 +10,10 @@ router.use("/string", string)
  * @param bagItem_id
  */
 router.post("/equip", async (req, res) => {
-    const user = await User.findById(req.user.id).populate("items.bag.item") as UserModel;
+    const user = await
+        User.findById(req.user.id)
+            .populate("items.bag.item")
+            .populate("items.equipped.item") as UserModel;
 
     // The bagItem to equip
     const item = user.items.bag.id(req.body.bagItem_id)
@@ -21,7 +24,7 @@ router.post("/equip", async (req, res) => {
 
     await user.save();
 
-    res.send({ success: true, bag: user.items.bag });
+    res.send({ success: true, items: user.items });
 })
 
 export default router;

@@ -23,6 +23,7 @@ class UserParams extends React.Component {
 
     public state: {
         bag: UserItemModel[],
+        equipped: UserItemModel[],
         resting: boolean,
         pa: number,
         mode: number
@@ -35,12 +36,14 @@ class UserParams extends React.Component {
 
         this.state = {
             bag: this.props.user.items.bag,
+            equipped: this.props.user.items.equipped,
             resting: this.props.user.rest != null,
             pa: this.props.user.pa,
             mode: cell.user_data.mode
         }
 
         dispatcher.on(dispatcher.UPDATE_BAG, this.onUpdateBag.bind(this))
+        dispatcher.on(dispatcher.UPDATE_EQUIPPED, this.onUpdateEquipped.bind(this))
         dispatcher.on(dispatcher.UPDATE_PA, this.onUpdatePa.bind(this))
         dispatcher.on(dispatcher.REST, this.onRest.bind(this))
         dispatcher.on(dispatcher.ENTER, this.onEnter.bind(this))
@@ -59,16 +62,22 @@ class UserParams extends React.Component {
             weapons =
                 <div id="equipped-list">
                     <div className="equipped-item">
+                        {this.populateEquipped(0)}
                     </div>
                     <div className="equipped-item">
+                        {this.populateEquipped(1)}
                     </div>
                     <div className="equipped-item">
+                        {this.populateEquipped(2)}
                     </div>
                     <div className="equipped-item">
+                        {this.populateEquipped(3)}
                     </div>
                     <div className="equipped-item">
+                        {this.populateEquipped(4)}
                     </div>
                     <div className="equipped-item end">
+                        {this.populateEquipped(5)}
                     </div>
                 </div>;
             items = <div id="bag">
@@ -220,6 +229,19 @@ class UserParams extends React.Component {
         return list;
     }
 
+    private populateEquipped(index: number): React.ReactElement<"div"> {
+        console.log("populateEquipped", index, this.state.equipped);
+        if (index > this.state.equipped.length - 1) {
+            return null;
+        }
+        const item = this.state.equipped[index];
+        return (
+            <a href="#" onClick={() => { this.onClickItem(item); return false; }}>
+                <Item user_item={item} />
+            </a>
+        );
+    }
+
     /**
      * Click on an item
      */
@@ -233,12 +255,19 @@ class UserParams extends React.Component {
     }
 
     /**
-     * The content of the bag changed
+     * The content of the bag has changed
      * @param bag The bag content
      */
     private onUpdateBag(bag: UserItemModel[]) {
-        console.log("onUpdateBag", bag);
         this.setState({ bag: bag });
+    }
+
+    /**
+     * The equipped items have changed
+     * @param equipped The equipped items
+     */
+    private onUpdateEquipped(equipped: UserItemModel[]) {
+        this.setState({ equipped: equipped })
     }
 
     /**

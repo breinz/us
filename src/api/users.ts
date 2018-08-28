@@ -22,6 +22,7 @@ router.get("/me", (req, res, next) => {
         if (err) next(err)
         res.send({ user: user })
     }).populate("items.bag.item")
+        .populate("items.equipped.item")
 })
 
 /**
