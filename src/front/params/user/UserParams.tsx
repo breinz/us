@@ -3,7 +3,6 @@ import dispatcher from "../../dispatcher"
 import { UserModel, UserItemModel } from "../../../back/user/model";
 import { ItemModel } from "../../../back/item/model";
 import Axios from "axios";
-import { TweenLite, Quint } from "gsap";
 import Item from "../../Item";
 import i18n from "../../i18n";
 import { cell } from "../../main";
@@ -32,8 +31,6 @@ class UserParams extends React.Component {
     constructor(props: UserModel) {
         super(props)
 
-        console.log(this.props.user.items.bag);
-
         this.state = {
             bag: this.props.user.items.bag,
             equipped: this.props.user.items.equipped,
@@ -55,40 +52,23 @@ class UserParams extends React.Component {
     public render() {
 
         let items;
-        let weapons;
+        let equipped;
         if (this.state.resting) {
             items = <button className="button success small" onClick={this.onWakeup.bind(this)}>{i18n.__("actions.wakeup")}</button>
         } else {
-            weapons =
+            equipped =
                 <div id="equipped-list">
-                    <div className="equipped-item">
-                        {this.populateEquipped(0)}
-                    </div>
-                    <div className="equipped-item">
-                        {this.populateEquipped(1)}
-                    </div>
-                    <div className="equipped-item">
-                        {this.populateEquipped(2)}
-                    </div>
-                    <div className="equipped-item">
-                        {this.populateEquipped(3)}
-                    </div>
-                    <div className="equipped-item">
-                        {this.populateEquipped(4)}
-                    </div>
-                    <div className="equipped-item end">
-                        {this.populateEquipped(5)}
-                    </div>
+                    {this.displayEquipped()}
                 </div>;
             items = <div id="bag">
                 <div className="item-list">
-                    {this.populateItems(2)}
+                    {this.populateBagItems(2)}
                 </div>
                 <div className="item-list">
-                    {this.populateItems(1)}
+                    {this.populateBagItems(1)}
                 </div>
                 <div className="item-list">
-                    {this.populateItems(0)}
+                    {this.populateBagItems(0)}
                 </div>
             </div>;
         }
@@ -110,7 +90,7 @@ class UserParams extends React.Component {
                             </div>
                         </div>
                     </div>
-                    {weapons}
+                    {equipped}
                     {items}
                 </div>
                 <div id="pa-bar">
@@ -213,46 +193,9 @@ class UserParams extends React.Component {
         dispatcher.dispatch(dispatcher.SWITCH_MODE, mode)
     }
 
-    private populateItems(weight: number): React.ReactElement<"a">[] {
-        let list = null;
-        if (this.state.bag) {
-            list = this.state.bag.map((item, index) => {
-                if (item.item.weight === weight) {
-                    return (
-                        <a href="#" onClick={() => { this.onClickItem(item); return false; }} key={item._id}>
-                            <Item user_item={item} />
-                        </a>
-                    )
-                }
-            })
-        }
-        return list;
-    }
-
-    private populateEquipped(index: number): React.ReactElement<"div"> {
-        console.log("populateEquipped", index, this.state.equipped);
-        if (index > this.state.equipped.length - 1) {
-            return null;
-        }
-        const item = this.state.equipped[index];
-        return (
-            <a href="#" onClick={() => { this.onClickItem(item); return false; }}>
-                <Item user_item={item} />
-            </a>
-        );
-    }
-
-    /**
-     * Click on an item
-     */
-    private onClickItem(item: UserItemModel) {
-        dispatcher.dispatch(dispatcher.SELECT_ITEM, item);
-    }
-
-    private onGrabItem(item: ItemModel) {
-        this.state.bag.push({ _id: Math.random(), item: item })
-        this.forceUpdate()
-    }
+    // --------------------------------------------------
+    // BAG
+    // --------------------------------------------------
 
     /**
      * The content of the bag has changed
@@ -263,11 +206,83 @@ class UserParams extends React.Component {
     }
 
     /**
+     * Populate one type of bag's items
+     * @param weight The weight of items targets
+     */
+    private populateBagItems(weight: number): React.ReactElement<"a">[] {
+        let list = null;
+        if (this.state.bag) {
+            list = this.state.bag.map((item, index) => {
+                if (item.item.weight === weight) {
+                    return (
+                        <a href="#" onClick={() => { this.onClickItem(item, "bag"); return false; }} key={item._id}>
+                            <Item user_item={item} />
+                        </a>
+                    )
+                }
+            })
+        }
+        return list;
+    }
+
+    // --------------------------------------------------
+    // EQUIPPED
+    // --------------------------------------------------
+
+    /**
      * The equipped items have changed
      * @param equipped The equipped items
      */
     private onUpdateEquipped(equipped: UserItemModel[]) {
         this.setState({ equipped: equipped })
+    }
+
+    /**
+     * Display equipped
+     */
+    private displayEquipped(): React.ReactElement<"div">[] {
+        let ar: React.ReactElement<"div">[] = [];
+        /** @todo replace 5 by the number of spots the user actually has */
+        for (let i = 0; i < 5; i++) {
+            ar.push(
+                <div className="equipped-item" key={`equipped-${i}`}>
+                    {this.populateEquipped(i)}
+                </div>
+            );
+        }
+        return ar;
+    }
+
+    /**
+     * Populate ONE equipped item
+     * @param index Index in the equipped array
+     */
+    private populateEquipped(index: number): React.ReactElement<"div"> {
+        if (index > this.state.equipped.length - 1) {
+            return null;
+        }
+        const item = this.state.equipped[index];
+        return (
+            <a href="#" onClick={() => { this.onClickItem(item, "equipped"); return false; }}>
+                <Item user_item={item} />
+            </a>
+        );
+    }
+
+    // --------------------------------------------------
+    // ITEMS
+    // --------------------------------------------------
+
+    /**
+     * Click on an item
+     */
+    private onClickItem(item: UserItemModel, origin: string) {
+        dispatcher.dispatch(dispatcher.SELECT_ITEM, item, origin);
+    }
+
+    private onGrabItem(item: ItemModel) {
+        this.state.bag.push({ _id: Math.random(), item: item })
+        this.forceUpdate()
     }
 
     /**

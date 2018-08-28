@@ -8,7 +8,8 @@ import dispatcher from "../dispatcher";
 import { cell } from "../main";
 
 type PropsType = {
-    item: UserItemModel
+    item: UserItemModel,
+    origin: string
 }
 
 export default class ItemParams extends React.Component {
@@ -117,10 +118,16 @@ export default class ItemParams extends React.Component {
 
     private getPistolButtons() {
         let hidden_actions = 0;
-        const equip =
+        let equip =
             <button className="button success small" onClick={this.equip.bind(this)}>
                 {i18n.__("actions.items.equip")}
             </button>;
+
+        if (this.props.origin === "equipped") {
+            equip = <button className="button warning small" onClick={this.unequip.bind(this)}>
+                {i18n.__("actions.items.unequip")}
+            </button>;
+        }
 
         let reload;
         if (this.props.item.ammo < 6 && cell.user_controller.hasItem("ammo")) {
@@ -150,6 +157,19 @@ export default class ItemParams extends React.Component {
     private async equip() {
         let res = await Axios.post("/api/actions/items/equip", {
             bagItem_id: this.props.item._id
+        })
+
+        if (this.handleError(res.data)) {
+            return;
+        }
+
+        dispatcher.dispatch(dispatcher.UPDATE_BAG, res.data.items.bag)
+        dispatcher.dispatch(dispatcher.UPDATE_EQUIPPED, res.data.items.equipped);
+    }
+
+    private async unequip() {
+        let res = await Axios.post("/api/actions/items/unequip", {
+            item_id: this.props.item._id
         })
 
         if (this.handleError(res.data)) {

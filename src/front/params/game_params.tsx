@@ -106,11 +106,11 @@ class GameParams extends React.Component {
      * Select an item from user's bag
      * @param item The item selected
      */
-    private onSelectItem(item: UserItemModel): void {
+    private onSelectItem(item: UserItemModel, origin: string): void {
 
         this.setState({
             title: i18n.__(`items.${item.item.name}`),
-            component: <ItemParams item={item} />
+            component: <ItemParams item={item} origin={origin} />
         })
     }
 
