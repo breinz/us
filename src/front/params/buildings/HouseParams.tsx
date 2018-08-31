@@ -1,9 +1,7 @@
 import * as React from "react"
-import { BuildingData } from "../../buildings/BuildingFactory";
 import i18n from "../../i18n"
 import ABuilding from "../../buildings/ABuilding";
 import { cell } from "../../main";
-import dispatcher from "../../dispatcher";
 import ABuildingParams from "./ABuildingParams";
 
 type PropsType = {

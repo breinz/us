@@ -154,7 +154,8 @@ cellSchema.methods.addBuildings = async function (structure: string, teamId: num
                         x: 200, /** @todo find the right place */
                         y: 250,
                         building: home.id
-                    });
+                    }
+                );
                 isHome = true;
                 break;
             case "W":
@@ -165,7 +166,8 @@ cellSchema.methods.addBuildings = async function (structure: string, teamId: num
                         y: 1,
                         rations: Math.round(Math.random() * 50 + 20),
                         building: well.id
-                    })
+                    }
+                )
                 break;
             case "C":
                 let church = await Building.findOne({ name: "church" }) as BuildingModel;
@@ -174,7 +176,18 @@ cellSchema.methods.addBuildings = async function (structure: string, teamId: num
                         x: 150,
                         y: 150,
                         building: church.id
-                    })
+                    }
+                )
+                break;
+            case "S":
+                const safe = await Building.findOne({ name: "safe" }) as BuildingModel;
+                cell.buildings.push(
+                    <CellBuildingModel>{
+                        x: 120,
+                        y: 40,
+                        building: safe.id
+                    }
+                )
                 break;
             default:
                 throw "Building not implemented to add onto cell";

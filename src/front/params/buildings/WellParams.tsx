@@ -1,9 +1,6 @@
 import * as React from "react"
-import Axios from "axios"
-import { BuildingData } from "../../buildings/BuildingFactory";
 import i18n from "../../i18n"
 import { cell } from "../../main";
-import ABuilding from "../../buildings/ABuilding";
 import dispatcher from "../../dispatcher";
 import message from "../../../SocketMessages"
 import ABuildingParams, { PropsType } from "./ABuildingParams";
@@ -127,21 +124,19 @@ class WellParams extends ABuildingParams {
             return;
         }
 
-        let res;
-
-        res = await Axios.post("/api/actions//well/getWater", {
+        let data = await this.api("/api/actions//well/getWater", {
             wellId: this.props.building.data._id
         })
 
-        if (this.handleError(res.data)) {
+        if (this.handleError(data)) {
             return;
         }
 
         // Inform all users in that cell about the new rations number
-        cell.cell_socket.emit(message.WELL.GET_WATER.UP, res.data)
+        cell.cell_socket.emit(message.WELL.GET_WATER.UP, data)
 
         // Update the user's bag
-        dispatcher.dispatch(dispatcher.UPDATE_BAG, res.data.bag)
+        dispatcher.dispatch(dispatcher.UPDATE_BAG, data.bag)
     }
 
     /**
@@ -156,19 +151,19 @@ class WellParams extends ABuildingParams {
             return;
         }
 
-        let res = await Axios.post("/api/actions/well/addWater", {
+        let data = await this.api("/api/actions/well/addWater", {
             wellId: this.props.building.data._id
         })
 
-        if (this.handleError(res.data)) {
+        if (this.handleError(data)) {
             return;
         }
 
         // Inform all users in that cell about the new rations number
-        cell.cell_socket.emit("addWater", res.data)
+        cell.cell_socket.emit("addWater", data)
 
         // Update the user's bag
-        dispatcher.dispatch(dispatcher.UPDATE_BAG, res.data.bag)
+        dispatcher.dispatch(dispatcher.UPDATE_BAG, data.bag)
 
     }
 
@@ -197,19 +192,19 @@ class WellParams extends ABuildingParams {
             return;
         }
 
-        let res = await Axios.post("/api/actions/well/poison", {
+        let data = await this.api("/api/actions/well/poison", {
             wellId: this.props.building.data._id
         })
 
-        if (this.handleError(res.data)) {
+        if (this.handleError(data)) {
             return;
         }
 
         // Inform all users that this well is poisoned
-        cell.cell_socket.emit("well.poison", res.data)
+        cell.cell_socket.emit("well.poison", data)
 
         // Update the user's bag
-        dispatcher.dispatch(dispatcher.UPDATE_BAG, res.data.bag)
+        dispatcher.dispatch(dispatcher.UPDATE_BAG, data.bag)
     }
 
     /**

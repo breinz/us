@@ -1,6 +1,7 @@
 import MapAdmin from "./MapAdmin";
 import GroundBtn from "./GroundBtn";
 import BuildingBtn from "./BuildingBtn";
+import { GROUND } from "../../../const";
 
 export default class Cell extends PIXI.Container {
 
@@ -24,7 +25,7 @@ export default class Cell extends PIXI.Container {
         this.ground = state ? state.substr(0, 1) : "g";
 
         this.bg = new PIXI.Graphics()
-        this.bg.beginFill(GroundBtn.colors[GroundBtn.letters.indexOf(this.ground)])
+        this.bg.beginFill(GROUND.COLORS[GROUND.LETTERS.indexOf(this.ground)])
         this.bg.drawRect(0, 0, w, h)
         this.addChild(this.bg);
 

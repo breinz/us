@@ -94,6 +94,7 @@ export default class MapAdmin {
         vcontainer.addChild(new BuildingBtn("house"));
         vcontainer.addChild(new BuildingBtn("well"));
         vcontainer.addChild(new BuildingBtn("church"));
+        vcontainer.addChild(new BuildingBtn("safe"));
     }
 
     private onButtonClick(btn: AButton) {

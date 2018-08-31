@@ -35,6 +35,9 @@ class ABuilding implements IBuilding {
     private onClick_fct: () => void;
 
 
+    /**
+     * Buildings are placed by multiples of 20, offset is here to finely place it.
+     */
     protected offset: { x: number, y: number };
 
     /**
@@ -55,7 +58,9 @@ class ABuilding implements IBuilding {
 
         this.offset = { x: 0, y: 0 };
 
-        this.drawBuilding(null)
+        setTimeout(() => {
+            this.drawBuilding(null)
+        }, 1);
 
         dispatcher.on(dispatcher.DEV_SHOW_HIT_AREA, this.onShowHitArea.bind(this));
     }
@@ -81,6 +86,7 @@ class ABuilding implements IBuilding {
         this.container = new PIXI.Container();
         this.container.addChild(building);
 
+        console.log(this.data.building.name, this.offset);
         this.container.x = this.data.x + this.offset.x;
         this.container.y = this.data.y + this.offset.y;
 
@@ -128,7 +134,7 @@ class ABuilding implements IBuilding {
     private drawHorizon() {
         this.dev_horizon_line = new PIXI.Graphics()
         this.dev_horizon_line.lineStyle(2, 0xFF0000)
-        this.dev_horizon_line.moveTo(0, this.horizon).lineTo(this.container.width, this.horizon)
+        this.dev_horizon_line.moveTo(-50, this.horizon).lineTo(this.container.width + 50, this.horizon)
         this.container.addChild(this.dev_horizon_line);
         this.dev_horizon_line.visible = false;
     }

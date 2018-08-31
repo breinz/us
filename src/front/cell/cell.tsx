@@ -148,6 +148,12 @@ export default class Cell {
         this.app.stage.addChild(this.dev_container);
 
         // --------------------------------------------------
+        // Grid
+
+        this.grid = new Grid()
+        this.dev_container.addChild(this.grid);
+
+        // --------------------------------------------------
         // Buildings
 
         this.buildings_layer = new PIXI.Container();
@@ -168,12 +174,6 @@ export default class Cell {
         this.buildings_layer.addChild(this.user)
         //this.container.addChild(this.user)
 
-
-        // --------------------------------------------------
-        // Grid
-
-        this.grid = new Grid()
-        this.dev_container.addChild(this.grid);
 
         // --------------------------------------------------
         // Dig

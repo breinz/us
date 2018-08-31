@@ -1,16 +1,10 @@
 import * as React from "react"
-import Axios from "axios"
-import { BuildingData } from "../../buildings/BuildingFactory";
 import i18n from "../../i18n"
 import { cell } from "../../main";
-import ABuilding from "../../buildings/ABuilding";
-import dispatcher from "../../dispatcher";
-import message from "../../../SocketMessages"
 import ABuildingParams, { PropsType } from "./ABuildingParams";
 
 
 class HatchParams extends ABuildingParams {
-
 
     constructor(props: PropsType) {
         super(props)

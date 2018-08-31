@@ -53,6 +53,17 @@ class ABuildingParams extends React.Component {
         )
     }
 
+    protected async api(url: string, params: object): Promise<any> {
+        let res;
+        try {
+            res = await Axios.post(url, params);
+        } catch (err) {
+            return { fatal: err };
+        }
+
+        return res.data;
+    }
+
     /**
      * Manage Axios error
      * @param data The return data from Axios
