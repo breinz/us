@@ -4,6 +4,7 @@ import { cell } from "../../main";
 import dispatcher from "../../dispatcher";
 import message from "../../../SocketMessages"
 import ABuildingParams, { PropsType } from "./ABuildingParams";
+import { UserItemModel } from "../../../back/user/model";
 
 class WellParams extends ABuildingParams {
 
@@ -124,9 +125,11 @@ class WellParams extends ABuildingParams {
             return;
         }
 
-        let data = await this.api("/api/actions//well/getWater", {
+        let data: { success: boolean, bag?: UserItemModel[], error?: string, fatal?: string };
+
+        data = await this.post("/api/actions//well/getWater", {
             wellId: this.props.building.data._id
-        })
+        });
 
         if (this.handleError(data)) {
             return;
@@ -151,7 +154,7 @@ class WellParams extends ABuildingParams {
             return;
         }
 
-        let data = await this.api("/api/actions/well/addWater", {
+        let data = await this.post("/api/actions/well/addWater", {
             wellId: this.props.building.data._id
         })
 
@@ -192,7 +195,7 @@ class WellParams extends ABuildingParams {
             return;
         }
 
-        let data = await this.api("/api/actions/well/poison", {
+        let data = await this.post("/api/actions/well/poison", {
             wellId: this.props.building.data._id
         })
 

@@ -1,23 +1,24 @@
 import * as mongoose from "mongoose"
 import { Document, Schema, model, Model } from "mongoose"
 import { BuildingModel, buildingSchema, Building } from "../building/model";
-import { Game, GameModel } from "../game/model";
 import { shuffle } from "../../helper";
-import { ItemModel } from "../item/model";
 
 // --------------------------------------------------
 // Type
 
-export type CellBuildingModel = {
+export type CellBuildingModel = Document & {
+    _id: string,
     x: number,
     y: number,
     rations?: number,
     poison?: number,
-    building: mongoose.Types.ObjectId,
+    building: mongoose.Types.ObjectId & BuildingModel,
     visited?: mongoose.Types.Array<{
         by: mongoose.Types.ObjectId,
         at: Date
-    }>
+    }>,
+
+    isOpen: (delay: number) => boolean
 }
 
 export type CellModel = Document & {
@@ -45,7 +46,7 @@ export type CellModel = Document & {
 // --------------------------------------------------
 // Schema
 
-export const CellBuildingSchema = new Schema({
+export const cellBuildingSchema = new Schema({
     building: { type: mongoose.Schema.Types.ObjectId, ref: "Building" },
     x: Number,
     y: Number,
@@ -70,7 +71,7 @@ export const cellSchema = new Schema({
         bottom: mongoose.Schema.Types.ObjectId,
     },
     homeForTeam: Number,
-    buildings: [CellBuildingSchema]
+    buildings: [cellBuildingSchema]
 })
 
 // --------------------------------------------------
@@ -104,6 +105,26 @@ export const cellSchema = new Schema({
         }
     }
 })*/
+
+cellBuildingSchema.methods.isOpen = function (delay: number = 1000 * 60 * 60 * 6): boolean {
+    const cellBuilding = this as CellBuildingModel;
+    console.log("isOpen", cellBuilding.visited.length);
+
+    if (!cellBuilding.visited) {
+        return false;
+    }
+
+    if (cellBuilding.visited.length < 1) {
+        return false;
+    }
+
+    const at = cellBuilding.visited[cellBuilding.visited.length - 1].at;
+    if (new Date(at) > new Date(Date.now() - delay)) {
+        return true;
+    }
+
+    return false;
+}
 
 /**
  * Is this cell home for a team
@@ -213,5 +234,5 @@ cellSchema.statics.findToJoin = async function (gameId: mongoose.Types.ObjectId)
 // Model
 
 export const Cell = model("Cell", cellSchema) as Model<Document> & CellModel
-export const CellBuilding = model("CellBuilding", CellBuildingSchema) as Model<Document> & CellBuildingModel
+export const CellBuilding = model("CellBuilding", cellBuildingSchema) as Model<Document> & CellBuildingModel
 export default Cell

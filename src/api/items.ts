@@ -1,10 +1,12 @@
 import * as express from "express"
 import string from "./items/string"
+import safe from "./buildings/safe"
 import { User, UserModel } from "../back/user/model";
 
 let router = express.Router()
 
 router.use("/string", string)
+router.use("/safe", safe)
 
 /**
  * Equip an item

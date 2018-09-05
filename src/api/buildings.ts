@@ -1,9 +1,11 @@
 import * as express from "express"
-import { User, UserModel } from "../back/user/model";
 import { Cell, CellModel, CellBuildingModel } from "../back/cell/model";
-import { ItemModel } from "../back/item/model";
+import safe from "./buildings/safe";
+import { UserModel } from "../back/user/model";
 
 const router = express.Router()
+
+router.use("/safe", safe)
 
 /**
  * Enter a building

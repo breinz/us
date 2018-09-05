@@ -1,8 +1,8 @@
 import IBuilding from "./IBuilding";
-import { BuildingData } from "./BuildingFactory";
 import dispatcher from "../dispatcher";
 import { cell } from "../main";
 import Mode from "../mode";
+import { CellBuildingModel } from "../../back/cell/model";
 
 class ABuilding implements IBuilding {
 
@@ -17,7 +17,7 @@ class ABuilding implements IBuilding {
     /**
      * Data
      */
-    public data: BuildingData;
+    public data: CellBuildingModel/* BuildingData*/;
 
     /**
      * The actual building as seen on stage
@@ -50,7 +50,7 @@ class ABuilding implements IBuilding {
      */
     public params: React.ReactElement<"div">
 
-    constructor(data: BuildingData, layer: PIXI.Container) {
+    constructor(data: CellBuildingModel/* BuildingData*/, layer: PIXI.Container) {
         this.data = data;
         this.layer = layer;
 

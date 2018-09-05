@@ -2,6 +2,10 @@ import * as React from "react"
 import i18n from "../../i18n"
 import { cell } from "../../main";
 import ABuildingParams, { PropsType } from "./ABuildingParams";
+import Safe, { SAFE_API } from "../../buildings/Safe";
+import messages from "../../../SocketMessages";
+import { ItemModel } from "../../../back/item/model";
+
 
 class SafeParams extends ABuildingParams {
 
@@ -35,12 +39,17 @@ class SafeParams extends ABuildingParams {
 
         let open_btn;
         if (!asleep) {
-            open_btn =
-                <button
-                    onClick={() => this.doOpen(true)}
-                    className="button success small">
-                    {i18n.__("actions.open")}
-                </button>;
+
+            if (this.isOpen() && false) {
+                hidden_actions++;
+            } else {
+                open_btn =
+                    <button
+                        onClick={() => this.doOpen(true)}
+                        className="button success small">
+                        {i18n.__("actions.open")}
+                    </button>;
+            }
 
         }
 
@@ -59,6 +68,21 @@ class SafeParams extends ABuildingParams {
     // Open
     // --------------------------------------------------
 
+    private isOpen(): boolean {
+        if (!this.props.building.data.visited) {
+            return false;
+        }
+        if (this.props.building.data.visited.length === 0) {
+            return false;
+        }
+        const at: Date = new Date(this.props.building.data.visited[this.props.building.data.visited.length - 1].at);
+        if (at > new Date(Date.now() - Safe.REFILL_DELAY)) {
+            return true;
+        }
+
+        return false;
+    }
+
     private async doOpen(moveTo: boolean = false) {
         this.setState({ error: null })
         if (moveTo) {
@@ -67,25 +91,19 @@ class SafeParams extends ABuildingParams {
             return;
         }
 
-        /*let res;
-        try {
-            res = await Axios.post("/api/actions/safe/open", {
-                safeId: this.props.building.data._id
-            })
-        } catch{
-            this.setState({
-                error: <div className="error-box">Unexpected Error</div>
-            })
-            return;
-        }*/
-
-        let data = await this.api("/api/actions/safe/open", {
+        const data: SAFE_API["OPEN"] = await this.post("/api/actions/buildings/safe/open", {
             safeId: this.props.building.data._id
-        })
+        });
+
+        console.log(data);
 
         if (this.handleError(data)) {
             return;
         }
+
+        cell.cell_socket.emit(messages.SAFE.OPEN.UP, data)
+
+        // ==> data.item is the item in the safe
 
         // Inform all users in that cell about the new rations number
         //cell.cell_socket.emit("addWater", res.data)

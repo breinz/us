@@ -14,8 +14,6 @@ import adminRouter from "../back/admin"
 import * as passport from "passport"
 import * as passport_config from "./user/passport"
 import * as capitalize from "capitalize"
-import User, { UserModel } from "./user/model"; // tmp
-import { Level } from "./level/model";
 
 let app = express()
 

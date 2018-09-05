@@ -16,12 +16,17 @@ block content
                         .cell.small-6
                             label y
                                 input(type="number" name="y" min=0 value=item.y)
-                    label Weight
-                        div
-                            select(name="weight")
-                                option(value="1" selected=item.weight===1) Normal
-                                option(value="2" selected=item.weight===2) Heavy
-                                option(value="0" selected=item.weight===0) Light
+                    .grid-x.grid-margin-x
+                        .cell.small-4
+                            label Weight
+                                div
+                                    select(name="weight")
+                                        option(value="1" selected=item.weight===1) Normal
+                                        option(value="2" selected=item.weight===2) Heavy
+                                        option(value="0" selected=item.weight===0) Light
+                        .cell.small-4
+                            label In safe&nbsp;
+                                input(type="checkbox" name="in_safe" checked=item.in_safe)
                     .grid-x.grid-margin-x
                         .cell.small-4
                             label Frequency

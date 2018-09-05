@@ -1,13 +1,13 @@
-import { BuildingData } from "../buildings/BuildingFactory";
 import ABuilding from "./ABuilding";
 import { cell } from "../main";
 import * as React from "react"
 import WellParams from "../params/buildings/WellParams";
+import { CellBuildingModel } from "../../back/cell/model";
 
 class Well extends ABuilding {
 
 
-    constructor(data: BuildingData, layer: PIXI.Container) {
+    constructor(data: CellBuildingModel/* BuildingData*/, layer: PIXI.Container) {
         super(data, layer)
 
         this.params = <WellParams building={this} />

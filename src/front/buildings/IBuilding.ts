@@ -1,8 +1,8 @@
-import { BuildingData } from "./BuildingFactory";
 import IElement from "../params/IElement";
+import { CellBuildingModel } from "../../back/cell/model";
 
 interface IBuilding extends IElement {
-    data: BuildingData;
+    data: CellBuildingModel/* BuildingData*/;
 }
 
 export default IBuilding

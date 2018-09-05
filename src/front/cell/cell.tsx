@@ -10,7 +10,7 @@ import i18n from "../i18n";
 import Axios from "axios";
 import dispatcher from "../dispatcher";
 import background from "./background";
-import BuildingFactory, { BuildingData } from "../buildings/BuildingFactory";
+import BuildingFactory from "../buildings/BuildingFactory";
 import Dig from "../dig/Dig";
 import Map from "../map/Map";
 import Debug from "./Debug";
@@ -18,6 +18,7 @@ import GameParams from "../params/game_params";
 import Dev from "../dev/Dev"
 import Church1 from "../buildings/rooms/Church1";
 import * as io from "socket.io-client"
+import { CellBuildingModel } from "../../back/cell/model";
 
 export default class Cell {
 
@@ -161,7 +162,7 @@ export default class Cell {
 
         this.container.addChild(this.buildings_layer);
 
-        this.data.buildings.forEach((building: BuildingData) => {
+        this.data.buildings.forEach((building: CellBuildingModel/* BuildingData*/) => {
             BuildingFactory.create(building, this.buildings_layer)
         });
 

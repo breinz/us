@@ -64,6 +64,10 @@ class Io {
             cellSocket.on("well.poison", (params) => {
                 io.of(`/${cellId}`).emit("well.poisoned", params)
             })
+
+            cellSocket.on(message.SAFE.OPEN.UP, (params) => {
+                io.of(`/${cellId}`).emit(message.SAFE.OPEN.DOWN, params)
+            })
         })
 
         this.cells.push(cellId)

@@ -8,8 +8,9 @@ import ABuilding from "./ABuilding";
 import Hatch from "./Hatch";
 import Church from "./Church";
 import Safe from "./Safe";
+import { CellBuildingModel } from "../../back/cell/model";
 
-export type BuildingData = {
+/*export type BuildingData = {
     _id: string,
     x: number,
     y: number,
@@ -31,7 +32,7 @@ export type BuildingData = {
             height: number
         }
     }
-}
+}*/
 
 class BuildingFactory {
 
@@ -39,7 +40,7 @@ class BuildingFactory {
 
     }
 
-    public static create(data: BuildingData, layer: PIXI.Container): ABuilding {
+    public static create(data: CellBuildingModel /*BuildingData*/, layer: PIXI.Container): ABuilding {
         switch (data.building.name) {
             case "home":
                 return new Home(data, layer);

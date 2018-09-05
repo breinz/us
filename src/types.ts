@@ -1,4 +1,6 @@
-namespace US {
+import { ItemModel } from "./back/item/model";
+
+export namespace US {
     export namespace Map {
         export namespace Cell {
             export type Neighbor = { _id: string, ground: string }
@@ -15,4 +17,10 @@ namespace US {
             }
         }
     }
+    export namespace APIRESULT {
+        export namespace SAFE {
+            export type OPEN = { success: boolean, item?: ItemModel, error?: string, fatal?: string };
+        }
+    }
+
 }

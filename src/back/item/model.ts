@@ -9,7 +9,8 @@ export type ItemModel = Document & {
     weight: number,
     frequency: number,
     frequency_change: number,
-    frequency_limit: number
+    frequency_limit: number,
+    in_safe: boolean,
 
     findByName: (name: string) => DocumentQuery<Document, Document>
 }
@@ -35,7 +36,9 @@ export const itemSchema = new Schema({
     frequency_change: Number,
 
     /** up to where the frequency can go */
-    frequency_limit: Number
+    frequency_limit: Number,
+
+    in_safe: { type: Boolean, default: false }
 })
 
 /**

@@ -1,12 +1,12 @@
-import { BuildingData } from "../buildings/BuildingFactory";
 import ABuilding from "./ABuilding";
 import HouseParams from "../params/buildings/HouseParams";
 import * as React from 'react'
+import { CellBuildingModel } from "../../back/cell/model";
 
 
 class Home extends ABuilding {
 
-    constructor(data: BuildingData, layer: PIXI.Container) {
+    constructor(data: CellBuildingModel /*BuildingData*/, layer: PIXI.Container) {
         super(data, layer)
 
         this.offset = {

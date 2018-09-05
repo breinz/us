@@ -45,7 +45,8 @@ router.post("/new", async (req, res, next) => {
         wight: req.body.weight,
         frequency: req.body.frequency,
         frequency_change: req.body.frequency_change,
-        frequency_limit: req.body.frequency_limit
+        frequency_limit: req.body.frequency_limit,
+        in_safe: req.body.in_safe.checked
     })
 
     try {
@@ -92,8 +93,9 @@ router.post("/:itemId/edit", (req, res, next) => {
         weight: req.body.weight,
         frequency: req.body.frequency,
         frequency_change: req.body.frequency_change,
-        frequency_limit: req.body.frequency_limit
-    }, (err, doc) => {
+        frequency_limit: req.body.frequency_limit,
+        in_safe: req.body.in_safe === "on"
+    }, (err) => {
         if (err) next(err)
         res.redirect("/admin/items")
     })

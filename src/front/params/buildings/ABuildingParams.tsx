@@ -53,7 +53,12 @@ class ABuildingParams extends React.Component {
         )
     }
 
-    protected async api(url: string, params: object): Promise<any> {
+    /**
+     * Performs a post api call 
+     * @param url Url
+     * @param params Params
+     */
+    protected async post(url: string, params: object): Promise<any> {
         let res;
         try {
             res = await Axios.post(url, params);
@@ -69,7 +74,7 @@ class ABuildingParams extends React.Component {
      * @param data The return data from Axios
      * @return Boolean An error occurred or not
      */
-    protected handleError(data: any) {
+    protected handleError(data: { success: boolean, error?: string, fatal?: string }) {
         // Unexpected Error
         if (data.fatal) {
             console.error(data.fatal);

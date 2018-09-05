@@ -1,15 +1,14 @@
 import * as React from "react"
 import ABuilding from "./ABuilding";
-import { BuildingData } from "./BuildingFactory";
-import HatchParams from "../params/buildings/HatchParams";
 import ChurchParams from "../params/buildings/ChurchParams";
+import { CellBuildingModel } from "../../back/cell/model";
 
 
 class Church extends ABuilding {
 
 
 
-    constructor(data: BuildingData, layer: PIXI.Container) {
+    constructor(data: CellBuildingModel/* BuildingData*/, layer: PIXI.Container) {
         super(data, layer)
 
         this.params = <ChurchParams building={this} />;
