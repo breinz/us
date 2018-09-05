@@ -3,6 +3,7 @@ import { TweenLite, Linear } from "gsap";
 import Axios from "axios";
 import { cell as main } from "../main";
 import { GROUND } from "../../const";
+import { US } from "../../types";
 
 
 class Map extends PIXI.Container {

@@ -16,8 +16,6 @@ export type SAFE_API = {
     }
 };
 
-//export const REFILL_DELAY: number = 1000 * 60 * 60 * 6;
-
 class Safe extends ABuilding {
 
 

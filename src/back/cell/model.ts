@@ -15,7 +15,7 @@ export type CellBuildingModel = Document & {
     building: mongoose.Types.ObjectId & BuildingModel,
     visited?: mongoose.Types.Array<{
         by: mongoose.Types.ObjectId,
-        at: Date
+        at: Date | string
     }>,
 
     isOpen: (delay: number) => boolean
@@ -76,35 +76,6 @@ export const cellSchema = new Schema({
 
 // --------------------------------------------------
 // Methods
-
-/*cellSchema.pre("save", async function presave(next) {
-    let cell = <CellModel>this;
-
-    if (cell.isNew) {
-        if (cell.isHome()) {
-            let home = <BuildingModel>await Building.findOne({ name: "home" })
-            cell.buildings.push(
-                <CellBuildingModel>{
-                    building: home.id,
-                    x: 200,
-                    y: 250
-                }
-            )
-
-            let well = <BuildingModel>await Building.findOne({ name: "well" })
-            cell.buildings.push(
-                <CellBuildingModel>{
-                    building: well.id,
-                    x: 225,
-                    y: 200,
-                    rations: Math.round(Math.random() * 25) + 50
-                }
-            )
-
-            next()
-        }
-    }
-})*/
 
 cellBuildingSchema.methods.isOpen = function (delay: number = 1000 * 60 * 60 * 6): boolean {
     const cellBuilding = this as CellBuildingModel;

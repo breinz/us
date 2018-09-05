@@ -2,31 +2,38 @@ import * as React from "react"
 import i18n from "../../i18n"
 import { cell } from "../../main";
 import ABuildingParams, { PropsType } from "./ABuildingParams";
-import Safe, { SAFE_API } from "../../buildings/Safe";
 import messages from "../../../SocketMessages";
-import { ItemModel } from "../../../back/item/model";
+import { ITEMS } from "../../../const";
+import { SAFE_API } from "../../buildings/Safe";
+import { timer_toString } from "../../../helper";
 
 
 class SafeParams extends ABuildingParams {
 
     public state: {
-        error?: React.ReactElement<"div">
+        error?: React.ReactElement<"div">,
+        refill: number
     }
+
+    private timer: number;
 
     constructor(props: PropsType) {
         super(props)
 
         this.state = {
+            refill: this.isOpen() ? 30 : null
         }
     }
 
     componentDidMount() {
         //cell.cell_socket.on(message.WELL.GET_WATER.DOWN, this.updateRations_fct)
+        this.timer = setInterval(this.updateRefillTime.bind(this), 1000)
 
         super.componentDidMount()
     }
 
     componentWillUnmount() {
+        clearInterval(this.timer);
         //cell.cell_socket.off(message.WELL.GET_WATER.DOWN, this.updateRations_fct)
 
         super.componentWillUnmount()
@@ -40,7 +47,9 @@ class SafeParams extends ABuildingParams {
         let open_btn;
         if (!asleep) {
 
-            if (this.isOpen() && false) {
+            // --------------------------------------------------
+            // Open
+            if (this.isOpen()) {
                 hidden_actions++;
             } else {
                 open_btn =
@@ -53,9 +62,20 @@ class SafeParams extends ABuildingParams {
 
         }
 
+        // --------------------------------------------------
+        // Refill
+        let refill = null;
+        if (this.isOpen()) {
+            refill = <div className="bignum">
+                <div className="num">{this.refil_time}</div>
+                refill
+            </div>
+        }
+
         return (
             <div>
                 {this.state.error}
+                {refill}
                 <div>
                     {open_btn}
                 </div>
@@ -68,6 +88,9 @@ class SafeParams extends ABuildingParams {
     // Open
     // --------------------------------------------------
 
+    /**
+     * Has this safe been opened
+     */
     private isOpen(): boolean {
         if (!this.props.building.data.visited) {
             return false;
@@ -76,13 +99,28 @@ class SafeParams extends ABuildingParams {
             return false;
         }
         const at: Date = new Date(this.props.building.data.visited[this.props.building.data.visited.length - 1].at);
-        if (at > new Date(Date.now() - Safe.REFILL_DELAY)) {
+        if (at > new Date(Date.now() - ITEMS.SAFE.REFILL_DELAY)) {
             return true;
         }
 
         return false;
     }
 
+    private get refil_time(): string {
+        let at = new Date(this.props.building.data.visited[this.props.building.data.visited.length - 1].at)
+        at = new Date(at.getTime() + ITEMS.SAFE.REFILL_DELAY);
+
+        return timer_toString(at)
+    }
+
+    private updateRefillTime() {
+        this.forceUpdate();
+    }
+
+    /**
+     * Open
+     * @param moveTo 
+     */
     private async doOpen(moveTo: boolean = false) {
         this.setState({ error: null })
         if (moveTo) {

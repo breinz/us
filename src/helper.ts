@@ -37,3 +37,32 @@ export function shuffle(ar: Object[]) {
     }
     return ar;
 }
+
+/**
+ * Converts a date in the future in a timer HH:MM:SS
+ * @param time The date in the future
+ */
+export function timer_toString(time: Date): string {
+    let diff = (time.getTime() - Date.now()) / 1000;
+
+    let displ: string = "";
+    if (diff > 60 * 60) {
+        displ = addZero(Math.floor(diff / (60 * 60))) + ":";
+        diff -= Math.floor(diff / (60 * 60)) * 60 * 60;
+    }
+    if (diff > 60) {
+        displ += addZero(Math.floor(diff / 60)) + ":";
+        diff -= Math.floor(diff / 60) * 60;
+    }
+    displ += addZero(Math.floor(diff));
+    return displ;
+}
+
+/**
+ * Adds a zero on a one digit number
+ * @param num The number
+ */
+export function addZero(num: number): string {
+    if (num < 10) return "0" + num;
+    return num.toString();
+}
