@@ -12,7 +12,7 @@ class SafeParams extends ABuildingParams {
 
     public state: {
         error?: React.ReactElement<"div">,
-        refill: number
+        last_open_at: string
     }
 
     private timer: number;
@@ -21,13 +21,23 @@ class SafeParams extends ABuildingParams {
         super(props)
 
         this.state = {
-            refill: this.isOpen() ? 30 : null
+            last_open_at: this.open_at
         }
+    }
+
+    private get open_at(): string {
+        const visited = this.props.building.data.visited;
+        if (!visited || visited === undefined || visited.length === 0) {
+            return null;
+        }
+        return visited[visited.length - 1].at as string;
     }
 
     componentDidMount() {
         //cell.cell_socket.on(message.WELL.GET_WATER.DOWN, this.updateRations_fct)
         this.timer = setInterval(this.updateRefillTime.bind(this), 1000)
+
+        cell.cell_socket.on(messages.SAFE.OPEN.DOWN, (params: SAFE_API["OPEN"]) => { this.opened(params) });
 
         super.componentDidMount()
     }
@@ -54,7 +64,7 @@ class SafeParams extends ABuildingParams {
             } else {
                 open_btn =
                     <button
-                        onClick={() => this.doOpen(true)}
+                        onClick={() => this.doOpen()}
                         className="button success small">
                         {i18n.__("actions.open")}
                     </button>;
@@ -92,13 +102,10 @@ class SafeParams extends ABuildingParams {
      * Has this safe been opened
      */
     private isOpen(): boolean {
-        if (!this.props.building.data.visited) {
+        if (!this.state.last_open_at) {
             return false;
         }
-        if (this.props.building.data.visited.length === 0) {
-            return false;
-        }
-        const at: Date = new Date(this.props.building.data.visited[this.props.building.data.visited.length - 1].at);
+        const at: Date = new Date(this.state.last_open_at);
         if (at > new Date(Date.now() - ITEMS.SAFE.REFILL_DELAY)) {
             return true;
         }
@@ -107,7 +114,7 @@ class SafeParams extends ABuildingParams {
     }
 
     private get refil_time(): string {
-        let at = new Date(this.props.building.data.visited[this.props.building.data.visited.length - 1].at)
+        let at = new Date(this.state.last_open_at)
         at = new Date(at.getTime() + ITEMS.SAFE.REFILL_DELAY);
 
         return timer_toString(at)
@@ -121,11 +128,11 @@ class SafeParams extends ABuildingParams {
      * Open
      * @param moveTo 
      */
-    private async doOpen(moveTo: boolean = false) {
+    private async doOpen(moveTo: boolean = true) {
         this.setState({ error: null })
         if (moveTo) {
-            // Move to the well
-            cell.user.moveTo(this.props.building.entry, this.doOpen.bind(this))
+            // Move to the building
+            cell.user.moveTo(this.props.building.entry, () => { this.doOpen(false) })
             return;
         }
 
@@ -140,14 +147,12 @@ class SafeParams extends ABuildingParams {
         }
 
         cell.cell_socket.emit(messages.SAFE.OPEN.UP, data)
+    }
 
-        // ==> data.item is the item in the safe
-
-        // Inform all users in that cell about the new rations number
-        //cell.cell_socket.emit("addWater", res.data)
-
-        // Update the user's bag
-        //dispatcher.dispatch(dispatcher.UPDATE_BAG, res.data.bag)
+    private opened(data: SAFE_API["OPEN"]) {
+        this.setState({
+            last_open_at: data.now
+        })
     }
 }
 

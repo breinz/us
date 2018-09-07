@@ -86,7 +86,6 @@ class ABuilding implements IBuilding {
         this.container = new PIXI.Container();
         this.container.addChild(building);
 
-        console.log(this.data.building.name, this.offset);
         this.container.x = this.data.x + this.offset.x;
         this.container.y = this.data.y + this.offset.y;
 

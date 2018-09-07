@@ -6,6 +6,6 @@ export const GROUND = {
 
 export const ITEMS = {
     SAFE: {
-        REFILL_DELAY: 1000 * 60 * 60 * 6
+        REFILL_DELAY: 1000 * 60;// * 60 * 6
     }
 }

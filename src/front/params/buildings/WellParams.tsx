@@ -58,7 +58,7 @@ class WellParams extends ABuildingParams {
         if (!asleep && cell.user_controller.hasItem("bottle")) {
             getWater_btn =
                 <button
-                    onClick={() => { this.getWater(true) }}
+                    onClick={() => { this.getWater() }}
                     className="button success small"
                     dangerouslySetInnerHTML={{ __html: i18n.__("actions.getWater") }}>
                 </button>;
@@ -71,7 +71,7 @@ class WellParams extends ABuildingParams {
         if (!asleep && cell.user_controller.hasItem("bottle_full")) {
             addWater_btn =
                 <button
-                    onClick={() => { this.addWater(true) }}
+                    onClick={() => { this.addWater() }}
                     className="button secondary hollow small"
                     dangerouslySetInnerHTML={{ __html: i18n.__("actions.addWater") }}>
                 </button>
@@ -84,7 +84,7 @@ class WellParams extends ABuildingParams {
         if (!asleep && cell.user_controller.hasItem("poison")) {
             poison_btn =
                 <button
-                    onClick={() => { this.poison(true) }}
+                    onClick={() => { this.poison() }}
                     className="button secondary hollow small"
                     dangerouslySetInnerHTML={{ __html: i18n.__("actions.poison") }}>
                 </button>;
@@ -117,11 +117,11 @@ class WellParams extends ABuildingParams {
      * Get water from the well
      * @param moveTo If we make the user move close to the well
      */
-    private async getWater(moveTo: boolean = false) {
+    private async getWater(moveTo: boolean = true) {
         this.setState({ error: null })
         if (moveTo) {
             // Move to the well
-            cell.user.moveTo(this.props.building.entry, this.getWater.bind(this))
+            cell.user.moveTo(this.props.building.entry, () => { this.getWater(false) })
             return;
         }
 
@@ -146,11 +146,11 @@ class WellParams extends ABuildingParams {
      * Add water to the well
      * @param moveTo Is the user has to move close to the well
      */
-    private async addWater(moveTo: boolean = false) {
+    private async addWater(moveTo: boolean = true) {
         this.setState({ error: null })
         if (moveTo) {
             // Move to the well
-            cell.user.moveTo(this.props.building.entry, this.addWater.bind(this))
+            cell.user.moveTo(this.props.building.entry, () => { this.addWater(false) })
             return;
         }
 
@@ -186,12 +186,12 @@ class WellParams extends ABuildingParams {
      * Poison the well
      * @param moveTo If the user has to move close to the well
      */
-    private async poison(moveTo: boolean = false) {
+    private async poison(moveTo: boolean = true) {
         this.setState({ error: null })
 
         // Move to the well
         if (moveTo) {
-            cell.user.moveTo(this.props.building.entry, this.poison.bind(this))
+            cell.user.moveTo(this.props.building.entry, () => { this.poison(false) })
             return;
         }
 

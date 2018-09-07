@@ -10,6 +10,7 @@ import { ITEMS } from "../../const";
 export type SAFE_API = {
     OPEN: {
         success: boolean,
+        now: string,
         item?: ItemModel,
         error?: string,
         fatal?: string
@@ -60,7 +61,7 @@ class Safe extends ABuilding {
         }*/
     }
 
-    protected opened(params: SAFE_API["OPEN"]) {
+    protected opened() {
         this.tmp.clear().beginFill(0xFF6600).drawRect(0, 0, 32, 22)
     }
 

@@ -229,8 +229,10 @@ userSchema.methods.joinGame = async function () {
     user.team = cell.homeForTeam;
 
     user.drank_at = null;
-    for (let i = user.items.bag.length; i >= 0; i--) {
-        user.items.bag.remove(user.items.bag[i])
+    if (user.items && user.items.bag) {
+        for (let i = user.items.bag.length; i >= 0; i--) {
+            user.items.bag.remove(user.items.bag[i])
+        }
     }
     user.dig.current.count = 0;
     user.dig.current.hitWall_count = 0;

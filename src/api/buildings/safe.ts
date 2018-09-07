@@ -15,6 +15,8 @@ router.post("/open", async (req, res) => {
 
         const safe = cell.buildings.id(req.body.safeId) as CellBuildingModel;
 
+        const now = Date.now()
+
         // Safe already open
         if (safe.isOpen(ITEMS.SAFE.REFILL_DELAY)) {
             res.send({ success: false, error: "buildings.safe.open.already" })
@@ -23,7 +25,7 @@ router.post("/open", async (req, res) => {
 
         safe.visited.push({
             by: req.user.id,
-            at: Date.now()
+            at: now
 
         });
 
@@ -33,7 +35,7 @@ router.post("/open", async (req, res) => {
         let items = await Item.find({ in_safe: true }) as ItemModel[]
         items = shuffle(items) as ItemModel[];
 
-        res.send({ success: true, item: items[0] });
+        res.send({ success: true, item: items[0], now: now });
     } catch (err) {
         res.send({ fatal: err.message })
     }
