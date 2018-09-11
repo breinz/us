@@ -1,7 +1,7 @@
 import { Server, Socket } from "socket.io";
 import { Http2Server } from "http2";
 import message from "./SocketMessages"
-
+import { Us } from "./us";
 
 class Io {
 
@@ -51,22 +51,27 @@ class Io {
         // --------------------------------------------------
 
         this.io.of(`/${cellId}`).on("connection", (cellSocket: Socket) => {
-            //console.log(`client connected to cell ${cellId}`);
 
-            cellSocket.on(message.WELL.GET_WATER.UP, (params) => {
-                io.of(`/${cellId}`).emit(message.WELL.GET_WATER.DOWN, params)
+            const socket = io.of(`/${cellId}`);
+
+            cellSocket.on(message.Well.GET_WATER, (params) => {
+                socket.emit(message.Well.GOT_WATER, params)
             })
 
-            cellSocket.on("addWater", (params) => {
-                io.of(`/${cellId}`).emit("addedWater", params)
+            cellSocket.on(message.Well.ADD_WATER, (params) => {
+                socket.emit(message.Well.ADDED_WATER, params)
             })
 
-            cellSocket.on("well.poison", (params) => {
-                io.of(`/${cellId}`).emit("well.poisoned", params)
+            cellSocket.on(message.Well.POISON, (params: Us.Safe.ApiResult.Poison) => {
+                socket.emit(message.Well.POISONED, params)
             })
 
-            cellSocket.on(message.SAFE.OPEN.UP, (params) => {
-                io.of(`/${cellId}`).emit(message.SAFE.OPEN.DOWN, params)
+            cellSocket.on(message.Safe.OPEN, (params: Us.Safe.ApiResult.Open) => {
+                socket.emit(message.Safe.OPENED, params)
+            })
+
+            cellSocket.on(message.Safe.REFILL, (params) => {
+                socket.emit(message.Safe.REFILLED, params)
             })
         })
 

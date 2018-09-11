@@ -34,7 +34,9 @@ class GameParams extends React.Component {
         dispatcher.on(dispatcher.DIG_END, this.onQuitDig.bind(this))
         dispatcher.on(dispatcher.SHOW_MAP, this.onShowMap.bind(this))
         dispatcher.on(dispatcher.HIDE_MAP, this.onHideMap.bind(this))
-        dispatcher.on(dispatcher.SELECT_ITEM, this.onSelectItem.bind(this))
+        dispatcher.on(dispatcher.SELECT_ITEM,
+            (item: UserItemModel, origin: string) => this.onSelectItem(item, origin)
+        )
     }
 
     public render() {

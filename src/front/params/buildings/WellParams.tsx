@@ -4,7 +4,7 @@ import { cell } from "../../main";
 import dispatcher from "../../dispatcher";
 import message from "../../../SocketMessages"
 import ABuildingParams, { PropsType } from "./ABuildingParams";
-import { UserItemModel } from "../../../back/user/model";
+import { Us } from "../../../us";
 
 class WellParams extends ABuildingParams {
 
@@ -14,8 +14,8 @@ class WellParams extends ABuildingParams {
         error?: React.ReactElement<"div">
     }
 
-    private updateRations_fct: () => void
-    private updatePoison_fct: () => void
+    private updateRations_fct: (data: Us.Well.ApiResult.getWater) => void;
+    private updatePoison_fct: (data: Us.Well.ApiResult.getWater) => void;
 
     constructor(props: PropsType) {
         super(props)
@@ -25,25 +25,25 @@ class WellParams extends ABuildingParams {
             poison: this.props.building.data.poison
         }
 
-        this.updateRations_fct = this.updateRations.bind(this)
-        this.updatePoison_fct = this.updatePoison.bind(this);
+        this.updateRations_fct = (data) => { this.updateRations(data.rations) };
+        this.updatePoison_fct = (data) => { this.updatePoison(data.poison) };
 
     }
 
     componentDidMount() {
-        cell.cell_socket.on(message.WELL.GET_WATER.DOWN, this.updateRations_fct)
-        cell.cell_socket.on(message.WELL.GET_WATER.DOWN, this.updatePoison_fct)
-        cell.cell_socket.on("addedWater", this.updateRations_fct)
-        cell.cell_socket.on("well.poisoned", this.updatePoison_fct)
+        cell.cell_socket.on(message.Well.GOT_WATER, this.updateRations_fct)
+        cell.cell_socket.on(message.Well.GOT_WATER, this.updatePoison_fct)
+        cell.cell_socket.on(message.Well.ADDED_WATER, this.updateRations_fct)
+        cell.cell_socket.on(message.Well.POISONED, this.updatePoison_fct)
 
         super.componentDidMount()
     }
 
     componentWillUnmount() {
-        cell.cell_socket.off(message.WELL.GET_WATER.DOWN, this.updateRations_fct)
-        cell.cell_socket.off(message.WELL.GET_WATER.DOWN, this.updatePoison_fct)
-        cell.cell_socket.off("addedWater", this.updateRations_fct)
-        cell.cell_socket.off("well.poisoned", this.updatePoison_fct)
+        cell.cell_socket.off(message.Well.GOT_WATER, this.updateRations_fct)
+        cell.cell_socket.off(message.Well.GOT_WATER, this.updatePoison_fct)
+        cell.cell_socket.off(message.Well.ADDED_WATER, this.updateRations_fct)
+        cell.cell_socket.off(message.Well.POISONED, this.updatePoison_fct)
 
         super.componentWillUnmount()
     }
@@ -125,9 +125,9 @@ class WellParams extends ABuildingParams {
             return;
         }
 
-        let data: { success: boolean, bag?: UserItemModel[], error?: string, fatal?: string };
+        //let data: { success: boolean, bag?: UserItemModel[], error?: string, fatal?: string };
 
-        data = await this.post("/api/actions//well/getWater", {
+        let data: Us.Well.ApiResult.getWater = await this.post("/api/actions/well/getWater", {
             wellId: this.props.building.data._id
         });
 
@@ -136,7 +136,7 @@ class WellParams extends ABuildingParams {
         }
 
         // Inform all users in that cell about the new rations number
-        cell.cell_socket.emit(message.WELL.GET_WATER.UP, data)
+        cell.cell_socket.emit(message.Well.GET_WATER, data)
 
         // Update the user's bag
         dispatcher.dispatch(dispatcher.UPDATE_BAG, data.bag)
@@ -172,10 +172,10 @@ class WellParams extends ABuildingParams {
 
     /**
      * Someone took water from that well
-     * @param data Data
+     * @param rations The number of rations left
      */
-    private updateRations(data: { rations: number }) {
-        this.setState({ rations: data.rations })
+    private updateRations(rations: number) {
+        this.setState({ rations: rations })
     }
 
     // --------------------------------------------------
@@ -204,7 +204,7 @@ class WellParams extends ABuildingParams {
         }
 
         // Inform all users that this well is poisoned
-        cell.cell_socket.emit("well.poison", data)
+        cell.cell_socket.emit(message.Well.POISON, data)
 
         // Update the user's bag
         dispatcher.dispatch(dispatcher.UPDATE_BAG, data.bag)
@@ -212,10 +212,10 @@ class WellParams extends ABuildingParams {
 
     /**
      * The well was poisoned
-     * @param data Data
+     * @param poison The number of poisoned rations in the well
      */
-    private updatePoison(data: { poison: number }) {
-        this.setState({ poison: data.poison })
+    private updatePoison(poison: number) {
+        this.setState({ poison: poison })
     }
 }
 

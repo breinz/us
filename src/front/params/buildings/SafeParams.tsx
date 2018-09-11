@@ -2,11 +2,12 @@ import * as React from "react"
 import i18n from "../../i18n"
 import { cell } from "../../main";
 import ABuildingParams, { PropsType } from "./ABuildingParams";
-import messages from "../../../SocketMessages";
 import { ITEMS } from "../../../const";
-import { SAFE_API } from "../../buildings/Safe";
-import { timer_toString } from "../../../helper";
-
+import { timer_toString, D2R, R2D } from "../../../helper";
+import { Us } from "../../../us";
+import messages from "../../../SocketMessages";
+import Item from "../../cell/Item";
+import { TweenLite, Bounce, Quint, Linear } from "gsap";
 
 class SafeParams extends ABuildingParams {
 
@@ -15,7 +16,19 @@ class SafeParams extends ABuildingParams {
         last_open_at: string
     }
 
-    private timer: number;
+    /**
+     * The timer 
+     */
+    private timer: NodeJS.Timer;
+
+    /**
+     * Reference to function opened
+     */
+    private opened_fct: (params: Us.Safe.ApiResult.Open) => void;
+    /**
+     * Reference to function refilled
+     */
+    private refilled_fct: () => void;
 
     constructor(props: PropsType) {
         super(props)
@@ -23,28 +36,28 @@ class SafeParams extends ABuildingParams {
         this.state = {
             last_open_at: this.open_at
         }
-    }
 
-    private get open_at(): string {
-        const visited = this.props.building.data.visited;
-        if (!visited || visited === undefined || visited.length === 0) {
-            return null;
-        }
-        return visited[visited.length - 1].at as string;
+        this.opened_fct = (params: Us.Safe.ApiResult.Open) => this.opened(params);
+        this.refilled_fct = () => this.refilled();
     }
 
     componentDidMount() {
         //cell.cell_socket.on(message.WELL.GET_WATER.DOWN, this.updateRations_fct)
-        this.timer = setInterval(this.updateRefillTime.bind(this), 1000)
+        if (this.isOpen()) {
+            this.startTimer()
+        }
 
-        cell.cell_socket.on(messages.SAFE.OPEN.DOWN, (params: SAFE_API["OPEN"]) => { this.opened(params) });
+        cell.cell_socket.on(messages.Safe.OPENED, this.opened_fct);
+        cell.cell_socket.on(messages.Safe.REFILLED, this.refilled_fct);
 
         super.componentDidMount()
     }
 
     componentWillUnmount() {
         clearInterval(this.timer);
-        //cell.cell_socket.off(message.WELL.GET_WATER.DOWN, this.updateRations_fct)
+
+        cell.cell_socket.off(messages.Safe.OPENED, this.opened_fct);
+        cell.cell_socket.off(messages.Safe.REFILLED, this.refilled_fct);
 
         super.componentWillUnmount()
     }
@@ -99,6 +112,17 @@ class SafeParams extends ABuildingParams {
     // --------------------------------------------------
 
     /**
+     * Only to populate the initial state
+     */
+    private get open_at(): string {
+        const visited = this.props.building.data.visited;
+        if (!visited || visited === undefined || visited.length === 0) {
+            return null;
+        }
+        return visited[visited.length - 1].at as string;
+    }
+
+    /**
      * Has this safe been opened
      */
     private isOpen(): boolean {
@@ -113,6 +137,73 @@ class SafeParams extends ABuildingParams {
         return false;
     }
 
+    /**
+     * Open the safe
+     * @param moveTo 
+     */
+    private async doOpen(moveTo: boolean = true) {
+        this.setState({ error: null })
+
+        if (moveTo) {
+            // Move to the building
+            cell.user.moveTo(this.props.building.entry, () => { this.doOpen(false) })
+            return;
+        }
+
+        const data: Us.Safe.ApiResult.Open = await this.post("/api/actions/buildings/safe/open", {
+            safeId: this.props.building.data._id
+        });
+
+        if (this.handleError(data)) {
+            return;
+        }
+
+        cell.cell_socket.emit(messages.Safe.OPEN, data)
+    }
+
+    /**
+     * This safe has been opened
+     * @param data Data
+     */
+    private opened(data: Us.Safe.ApiResult.Open) {
+        this.setState({
+            last_open_at: data.now
+        })
+
+        const container = new PIXI.Container();
+        cell.app.stage.addChild(container);
+        container.x = this.props.building.data.x + this.props.building.container.width / 2
+        container.y = this.props.building.data.y;
+
+        let item: Item = new Item(data.item);
+        container.addChild(item);
+
+        TweenLite.to(container, 1.3, {
+            x: container.x + Math.cos(data.direction) * 70,// (Math.random() > .5 ? 70 : -70),
+            y: container.y + Math.sin(data.direction) * 70,//20,
+            ease: Linear.easeOut
+        });
+        TweenLite.to(item, .3, {
+            y: item.x - 30,
+            ease: Quint.easeOut,
+            onComplete: () => {
+                TweenLite.to(item, 1, {
+                    y: item.x,
+                    ease: Bounce.easeOut
+                })
+            }
+        })
+
+        this.startTimer()
+    }
+
+    // --------------------------------------------------
+    // Refill
+    // --------------------------------------------------
+
+    /**
+     * The timer value as displayed (HH:MM:SS)
+     */
     private get refil_time(): string {
         let at = new Date(this.state.last_open_at)
         at = new Date(at.getTime() + ITEMS.SAFE.REFILL_DELAY);
@@ -120,39 +211,26 @@ class SafeParams extends ABuildingParams {
         return timer_toString(at)
     }
 
-    private updateRefillTime() {
-        this.forceUpdate();
+    private refilled() {
+        this.forceUpdate()
     }
+
+    private updateRefillTime() {
+        if (this.isOpen()) {
+            this.forceUpdate();
+        } else {
+            clearInterval(this.timer)
+        }
+    }
+
+    // --------------------------------------------------
 
     /**
-     * Open
-     * @param moveTo 
+     * Starts the timer, that ticks every second to update the refill time
      */
-    private async doOpen(moveTo: boolean = true) {
-        this.setState({ error: null })
-        if (moveTo) {
-            // Move to the building
-            cell.user.moveTo(this.props.building.entry, () => { this.doOpen(false) })
-            return;
-        }
-
-        const data: SAFE_API["OPEN"] = await this.post("/api/actions/buildings/safe/open", {
-            safeId: this.props.building.data._id
-        });
-
-        console.log(data);
-
-        if (this.handleError(data)) {
-            return;
-        }
-
-        cell.cell_socket.emit(messages.SAFE.OPEN.UP, data)
-    }
-
-    private opened(data: SAFE_API["OPEN"]) {
-        this.setState({
-            last_open_at: data.now
-        })
+    private startTimer() {
+        clearInterval(this.timer)
+        this.timer = setInterval(() => { this.updateRefillTime() }, 1000)
     }
 }
 

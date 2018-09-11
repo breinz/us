@@ -32,7 +32,7 @@ class ABuilding implements IBuilding {
     public horizon: number = 0;
     private dev_horizon_line: PIXI.Graphics;
 
-    private onClick_fct: () => void;
+    private onRightClick_fct: () => void;
 
 
     /**
@@ -50,11 +50,11 @@ class ABuilding implements IBuilding {
      */
     public params: React.ReactElement<"div">
 
-    constructor(data: CellBuildingModel/* BuildingData*/, layer: PIXI.Container) {
+    constructor(data: CellBuildingModel, layer: PIXI.Container) {
         this.data = data;
         this.layer = layer;
 
-        this.onClick_fct = this.onClick.bind(this);
+        this.onRightClick_fct = () => this.onRightClick();
 
         this.offset = { x: 0, y: 0 };
 
@@ -145,7 +145,7 @@ class ABuilding implements IBuilding {
     /**
      * Click
      */
-    private onClick(event: Event): void {
+    private onRightClick(): void {
         // Fight mode, don't select buildings
         if (cell.user_controller.state.mode === 1) {
             return
@@ -160,10 +160,10 @@ class ABuilding implements IBuilding {
     private onSwitchMode(mode: number) {
         if (mode === Mode.EXPLORATION) {
             this.container.interactive = true;
-            this.container.on("click", this.onClick_fct)
+            this.container.on("rightclick", this.onRightClick_fct)
         } else {
             this.container.interactive = false;
-            this.container.off("click", this.onClick_fct)
+            this.container.off("rightclick", this.onRightClick_fct)
         }
     }
 

@@ -10,30 +10,6 @@ import Church from "./Church";
 import Safe from "./Safe";
 import { CellBuildingModel } from "../../back/cell/model";
 
-/*export type BuildingData = {
-    _id: string,
-    x: number,
-    y: number,
-    rations?: number,
-    poison?: number,
-    building: {
-        name: string,
-        offset: {
-            top: number,
-            right: number,
-            bottom: number,
-            left: number
-        },
-        hitArea: string,
-        obstacle: {
-            x: number,
-            y: number,
-            width: number,
-            height: number
-        }
-    }
-}*/
-
 class BuildingFactory {
 
     private constructor() {

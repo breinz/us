@@ -1,4 +1,5 @@
-import { Document, Schema, model } from "mongoose"
+import { Schema, model, Document } from "mongoose"
+
 
 // --------------------------------------------------
 // Type
@@ -42,7 +43,7 @@ export const buildingSchema = new Schema({
         width: Number,
         height: Number
     }
-})
+});
 
 // --------------------------------------------------
 // Model

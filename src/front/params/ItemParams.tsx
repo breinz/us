@@ -6,6 +6,7 @@ import Item from "../Item";
 import Axios from "axios";
 import dispatcher from "../dispatcher";
 import { cell } from "../main";
+import { ItemModel } from "../../back/item/model";
 
 type PropsType = {
     item: UserItemModel,

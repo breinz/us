@@ -1,4 +1,4 @@
-import { ItemModel } from "./back/item/model";
+/*import { ItemModel } from "./back/item/model";
 
 export namespace US {
     export namespace Map {
@@ -24,3 +24,13 @@ export namespace US {
     }
 
 }
+
+declare namespace Us {
+    export namespace Api {
+        type SAFE = {
+            OPEN: {
+                pom: string
+            }
+        }
+    }
+}*/

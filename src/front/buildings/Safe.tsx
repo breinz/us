@@ -2,36 +2,32 @@ import ABuilding from "./ABuilding";
 import * as React from "react"
 import SafeParams from "../params/buildings/SafeParams";
 import { CellBuildingModel } from "../../back/cell/model";
-import { ItemModel } from "../../back/item/model";
 import messages from "../../SocketMessages";
 import { cell } from "../main";
 import { ITEMS } from "../../const";
+import { Us } from "../../us";
 
-export type SAFE_API = {
-    OPEN: {
-        success: boolean,
-        now: string,
-        item?: ItemModel,
-        error?: string,
-        fatal?: string
-    }
-};
 
-class Safe extends ABuilding {
+export default class Safe extends ABuilding {
 
+    // --------------------------------------------------
+    // API Messages
+    //public static OPEN: string = "safe_open";
+    //public static OPENED: string = "safe_opened";
+
+    private refill_timer: NodeJS.Timer;
 
     private tmp: PIXI.Graphics;
 
-    private open: boolean;
-
     constructor(data: CellBuildingModel/* BuildingData*/, layer: PIXI.Container) {
+
         super(data, layer)
 
-        this.open = this.isOpen();
 
         this.params = <SafeParams building={this} />
 
-        cell.cell_socket.on(messages.SAFE.OPEN.DOWN, this.opened.bind(this))
+        cell.cell_socket.on(messages.Safe.OPENED/* "Us.Safe.Socket.OPEN"*/, (data: Us.Safe.ApiResult.Open) => { this.opened(data) })
+        cell.cell_socket.on(messages.Safe.REFILLED, () => { this.refilled() })
 
         this.offset = {
             x: 0,
@@ -41,14 +37,31 @@ class Safe extends ABuilding {
         this.horizon = 5;
     }
 
+    /*public get entry(): { x: number, y: number } {
+        return {
+            x: this.container.x + this.container.width / 2,
+            y: this.container.y
+        }
+    }*/
+
     /**
      * @inheritDoc
      */
     protected drawBuilding(): void {
 
+        const open = this.isOpen();
+
         this.tmp = new PIXI.Graphics();
-        this.tmp.beginFill(this.open ? 0xFF6600 : 0xFFFF00).drawRect(0, 0, 32, 22)
+        this.tmp.beginFill(open ? 0xFF6600 : 0xFFFF00).drawRect(0, 0, 32, 22)
         super.drawBuilding(this.tmp)
+
+        if (open) {
+            let at = new Date(this.data.visited[this.data.visited.length - 1].at);
+
+            this.refill_timer = setTimeout(() => {
+                this.refilled()
+            }, at.getTime() + ITEMS.SAFE.REFILL_DELAY - Date.now());
+        }
 
         /*let i = PIXI.Sprite.fromImage("img/buildings/well2.png")
 
@@ -61,10 +74,38 @@ class Safe extends ABuilding {
         }*/
     }
 
-    protected opened() {
+    protected opened(data: Us.Safe.ApiResult.Open) {
         this.tmp.clear().beginFill(0xFF6600).drawRect(0, 0, 32, 22)
+
+        this.data.visited.push({ at: data.now });
+
+        const at = new Date(data.now);
+
+        Date.now() - at.getTime()
+
+        clearTimeout(this.refill_timer);
+
+        this.refill_timer = setTimeout(() => {
+            this.refill()
+        }, at.getTime() + ITEMS.SAFE.REFILL_DELAY - Date.now());
     }
 
+    // --------------------------------------------------
+    // REFILL
+    // --------------------------------------------------
+
+    private refill() {
+        cell.cell_socket.emit(messages.Safe.REFILL, this.data._id)
+    }
+
+    private refilled() {
+        this.tmp.clear()
+        this.tmp.beginFill(0xFFFF00).drawRect(0, 0, 32, 22)
+    }
+
+    /**
+     * Only to initialize this.open
+     */
     private isOpen(): boolean {
         if (!this.data.visited) {
             return false;
@@ -83,4 +124,4 @@ class Safe extends ABuilding {
 
 }
 
-export default Safe
+//export default Safe

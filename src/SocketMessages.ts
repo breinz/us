@@ -1,11 +1,17 @@
 const messages = {
-    WELL: {
-        GET_WATER: { UP: "well.getWater", DOWN: "well.getWater.down" },
+    Well: {
+        GET_WATER: "well.getwater", GOT_WATER: "well.gotwater",
+        ADD_WATER: "well.addwater", ADDED_WATER: "well.addedwater",
+        POISON: "well.poison", POISONED: "well.poisened"
+
+        /*GET_WATER: { UP: "well.getWater", DOWN: "well.getWater.down" },
         ADD_WATER: { UP: "well.addWater", DOWN: "well.addWater.down" },
-        POISON: { UP: "well.poison", DOWN: "well.poison.down" }
+        POISON: { UP: "well.poison", DOWN: "well.poison.down" }*/
     },
-    SAFE: {
-        OPEN: { UP: "safe.open", DOWN: "safe.open.down" }
+    Safe: {
+        OPEN: "safe.open", OPENED: "safe.opened",
+        REFILL: "safe.refill", REFILLED: "safe.refilled"
+        //REFILL: { UP: "safe.refill", DOWN: "safe.refill.down" }
     }
 }
 

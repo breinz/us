@@ -15,7 +15,7 @@ class Background {
         app.stage.addChild(this.container);
 
         this.container.interactive = true;
-        this.container.on("click", this.onClick);
+        this.container.on("rightclick", this.onRightClick);
 
         this.cell = new PIXI.Container();
         this.container.addChild(this.cell);
@@ -37,7 +37,7 @@ class Background {
         this.cell.addChild(b)
     }
 
-    private onClick(e: Event) {
+    private onRightClick() {
         dispatcher.dispatch(dispatcher.SELECT_BACKGROUND)
     }
 }

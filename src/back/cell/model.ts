@@ -2,9 +2,16 @@ import * as mongoose from "mongoose"
 import { Document, Schema, model, Model } from "mongoose"
 import { BuildingModel, buildingSchema, Building } from "../building/model";
 import { shuffle } from "../../helper";
+import { ItemModel } from "../item/model";
+import { UserItemModel } from "../user/model";
 
 // --------------------------------------------------
 // Type
+
+export type CellItemModel = UserItemModel & {
+    x: number,
+    y: number
+};
 
 export type CellBuildingModel = Document & {
     _id: string,
@@ -36,6 +43,7 @@ export type CellModel = Document & {
         bottom: mongoose.Types.ObjectId | CellModel
     },
     buildings?: mongoose.Types.Array<CellBuildingModel> & Document,
+    items?: mongoose.Types.Array<CellItemModel> & Document,
 
     isHome: () => boolean,
     findToJoin: (gameId: mongoose.Types.ObjectId) => CellModel,

@@ -1,8 +1,9 @@
 import * as express from "express"
-import { Cell, CellModel, CellBuildingModel, CellBuilding } from "../../back/cell/model";
+import { Cell, CellModel, CellBuildingModel, CellBuilding, CellItemModel } from "../../back/cell/model";
 import { Item, ItemModel } from "../../back/item/model";
-import { shuffle } from "../../helper";
+import { shuffle, D2R } from "../../helper";
 import { ITEMS } from "../../const";
+import { Us } from "../../us";
 
 let router = express.Router()
 
@@ -10,6 +11,8 @@ let router = express.Router()
  * Open the safe
  */
 router.post("/open", async (req, res) => {
+    let send: Us.Safe.ApiResult.Open = { success: false, by: req.user.id };
+
     try {
         const cell = await Cell.findById(req.user.currentCell).populate("buildings.building") as CellModel;
 
@@ -19,7 +22,8 @@ router.post("/open", async (req, res) => {
 
         // Safe already open
         if (safe.isOpen(ITEMS.SAFE.REFILL_DELAY)) {
-            res.send({ success: false, error: "buildings.safe.open.already" })
+            send.error = "buildings.safe.open.already";
+            res.send(send)
             return;
         }
 
@@ -29,15 +33,31 @@ router.post("/open", async (req, res) => {
 
         });
 
-        await cell.save();
+
 
         // Find an item to get out
         let items = await Item.find({ in_safe: true }) as ItemModel[]
         items = shuffle(items) as ItemModel[];
 
-        res.send({ success: true, item: items[0], now: now });
+        // Add the item to the cell
+        let cellItem = { item: items[0] } as CellItemModel;
+
+        if (cellItem.item.name === "pistol") {
+            cellItem.ammo = Math.ceil(Math.random() * 6);
+        }
+
+        cell.items.push(cellItem);
+
+        await cell.save();
+
+        send.success = true;
+        send.item = cellItem;//items[0]
+        send.now = now;
+        send.direction = Math.random() * 360 * D2R
+        res.send(send);
     } catch (err) {
-        res.send({ fatal: err.message })
+        send.fatal = err.message;
+        res.send(send)
     }
 })
 

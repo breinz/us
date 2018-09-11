@@ -3,14 +3,15 @@ import { TweenLite, Linear } from "gsap";
 import Axios from "axios";
 import { cell as main } from "../main";
 import { GROUND } from "../../const";
-import { US } from "../../types";
+import { Us } from "../../us";
+//import { US } from "../../types";
 
 
 class Map extends PIXI.Container {
 
     private container: PIXI.Container;
 
-    private cells: US.Map.Cell[];
+    private cells: Us.Map.Cell[];// US.Map.Cell[];
 
     constructor() {
         super()
@@ -66,11 +67,11 @@ class Map extends PIXI.Container {
 
 
 
-    private build(cells: US.Map.Cell[]): void {
+    private build(cells: Us.Map.Cell[]): void {
         this.cells = cells;
 
         const one_side = Math.floor(Math.sqrt(cells.length) / 2);
-        let cell: US.Map.Cell;
+        let cell: Us.Map.Cell;
         for (let i = 0; i < cells.length; i++) {
             cell = cells[i];
             if (cell._id === main.user_data.currentCell) {
@@ -79,7 +80,7 @@ class Map extends PIXI.Container {
         }
     }
 
-    private drawCell(cell: US.Map.Cell, x: number, y: number, ox: number, oy: number, count: number, side: number): void {
+    private drawCell(cell: Us.Map.Cell, x: number, y: number, ox: number, oy: number, count: number, side: number): void {
         cell.done = true;
 
         const color_index = GROUND.LETTERS.indexOf(cell.ground);

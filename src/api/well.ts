@@ -2,6 +2,8 @@ import * as express from "express"
 import { User, UserModel } from "../back/user/model";
 import { Item, ItemModel } from "../back/item/model";
 import { CellModel, CellBuildingModel, Cell } from "../back/cell/model";
+import { Us } from "../us";
+
 
 const router = express.Router()
 
@@ -9,9 +11,11 @@ const router = express.Router()
  * POST /api/actions/getWater
  * @param wellId The well id
  */
-router.post("/getWater", async (req, res, next) => {
+router.post("/getWater", async (req, res) => {
+    // RETURN VALUE
+    let send: Us.Well.ApiResult.getWater = { success: false };
+
     try {
-        //const user = req.user as UserModel
 
         const user = await User.findById(req.user.id).populate("items.bag.item") as UserModel
 
@@ -23,18 +27,23 @@ router.post("/getWater", async (req, res, next) => {
             return user_item.item.equals(bottle_empty_id);
         })
         if (!user_bottle) {
-            return res.send({ error: "no_bottle" });
+            // --------------------------------------------------
+            // No bottle
+            send.error = "no_bottle";
+            return res.send(send);
         }
 
-        let cell: CellModel;
-        let well: CellBuildingModel;
-
         // Find the well
-        cell = <CellModel>await Cell.findById(user.currentCell)
-        well = await cell.buildings.id(req.body.wellId)
+        const cell = await Cell.findById(user.currentCell) as CellModel
+        let well = await cell.buildings.id(req.body.wellId) as CellBuildingModel
 
         // Check if the well has enough water left
-        if (well.rations <= 0) return res.send({ error: "well_empty" })
+        if (well.rations <= 0) {
+            // --------------------------------------------------
+            // No water
+            send.error = "well_empty"
+            return res.send(send)
+        }
 
         // Check if the well has been poisoned
         let poison = false;
@@ -58,16 +67,19 @@ router.post("/getWater", async (req, res, next) => {
 
         await user.save()
 
-        // Send back the data needed to update 
-        res.send({
-            success: true,
-            wellId: req.body.wellId,
-            rations: well.rations,
-            poison: well.poison,
-            bag: user.items.bag
-        })
+        // --------------------------------------------------
+        // Success
+        send.success = true;
+        send.wellId = req.body.wellId;
+        send.rations = well.rations;
+        send.poison = well.poison;
+        send.bag = user.items.bag;
+        res.send(send)
     } catch (err) {
-        res.send({ fatal: err.message });
+        // --------------------------------------------------
+        // Fatal
+        send.fatal = err.message;
+        res.send(send);
         throw err;
     }
 })
@@ -75,7 +87,9 @@ router.post("/getWater", async (req, res, next) => {
 /**
  * Add water to a well
  */
-router.post("/addWater", async (req, res, next) => {
+router.post("/addWater", async (req, res) => {
+    let send: Us.Well.ApiResult.addWater = { success: false };
+
     try {
         //const user = req.user as UserModel
         const user = await User.findById(req.user.id).populate("items.bag.item") as UserModel
@@ -98,7 +112,8 @@ router.post("/addWater", async (req, res, next) => {
             return item.item.equals(bottle_full._id)
         })
         if (!user_bottle) {
-            return res.send({ error: "well.add_water.no_bottle" })
+            send.error = "well.add_water.no_bottle";
+            return res.send(send)
         }
 
         // Add one ration from the well
@@ -114,14 +129,14 @@ router.post("/addWater", async (req, res, next) => {
         await user.save()
 
         // Send back the data needed to update 
-        res.send({
-            success: true,
-            wellId: req.body.wellId,
-            rations: well.rations,
-            bag: user.items.bag
-        })
+        send.success = true;
+        send.wellId = req.body.wellId;
+        send.rations = well.rations;
+        send.bag = user.items.bag;
+        res.send(send)
     } catch (err) {
-        res.send({ fatal: err.message });
+        send.fatal = err.message;
+        res.send(send);
     }
 })
 
@@ -129,6 +144,8 @@ router.post("/addWater", async (req, res, next) => {
  * Poison
  */
 router.post("/poison", async (req, res) => {
+    let send: Us.Well.ApiResult.poison = { success: false };
+
     try {
         const user = await User.findById(req.user.id).populate("items.bag.item") as UserModel
 
@@ -140,7 +157,8 @@ router.post("/poison", async (req, res) => {
             return user_item.item.equals(poison_id);
         })
         if (!user_poison) {
-            return res.send({ error: "well.poison.no_poison" });
+            send.error = "well.poison.no_poison";
+            return res.send(send);
         }
 
         // Find the well
@@ -156,14 +174,15 @@ router.post("/poison", async (req, res) => {
         await user.save()
 
         // Send back the data needed to update 
-        res.send({
-            success: true,
-            wellId: req.body.wellId,
-            poison: well.poison,
-            bag: user.items.bag
-        })
+        send.success = true;
+        send.wellId = req.body.wellId;
+        send.poison = well.poison;
+        send.bag = user.items.bag;
+        res.send(send)
+
     } catch (err) {
-        res.send({ fatal: err.message });
+        send.fatal = err.message;
+        res.send(send);
         throw err;
     }
 })

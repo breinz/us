@@ -1,3 +1,4 @@
+import * as PIXI from "pixi.js"
 import * as React from "react"
 import { render } from "react-dom"
 import { ItemModel } from "../../back/item/model";
@@ -131,6 +132,9 @@ export default class Cell {
             height: 560,
             transparent: true,
             antialias: true
+        })
+        this.app.view.addEventListener("contextmenu", (e) => {
+            e.preventDefault();
         })
         document.getElementById("cell").appendChild(this.app.view)
 

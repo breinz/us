@@ -1,4 +1,4 @@
-import * as PIXI from "pixi.js"
+//import * as PIXI from "pixi.js"
 import Cell from "./Cell";
 
 export default class GridAdmin {

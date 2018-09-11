@@ -1,5 +1,4 @@
 import * as express from "express"
-import * as mongoose from "mongoose";
 import { Building, BuildingModel } from "../building/model";
 
 let router = express.Router()
@@ -73,7 +72,7 @@ router.get("/:buildingId/edit", async (req, res, next) => {
  */
 router.post("/:buildingId/edit", async (req, res, next) => {
     try {
-        let building: BuildingModel = <BuildingModel>await Building.findById(req.params.buildingId)
+        let building = await Building.findById(req.params.buildingId) as BuildingModel;
 
         building.name = req.body.name
 

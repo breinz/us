@@ -1,8 +1,5 @@
 import * as express from "express"
-import { Building, BuildingModel } from "../back/building/model";
-import { Cell, CellModel, CellBuildingModel } from "../back/cell/model";
-import { UserModel, UserItemModel, User } from "../back/user/model";
-import { Item, ItemModel } from "../back/item/model";
+import { UserModel } from "../back/user/model";
 
 let router = express.Router()
 

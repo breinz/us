@@ -1,17 +1,17 @@
 /** @see home_out.pug */
-type LevelModel = {color: number, innerDist: number, outerDist: number}
+type LevelModel = { color: number, innerDist: number, outerDist: number }
 declare const a: number;
 declare const l: LevelModel;
 declare const g: number;
 
-import * as Pixi from "pixi.js"
+//import * as Pixi from "pixi.js"
 import * as h from "../../helper"
 
 class Lvl {
     /**
      * Pixi application
      */
-    private app: Pixi.Application;
+    private app: PIXI.Application;
 
     /**
      * Number of goals
@@ -34,12 +34,12 @@ class Lvl {
     /**
      * Star border
      */
-    private border: Pixi.Graphics;
+    private border: PIXI.Graphics;
 
     /**
      * Star elements
      */
-    private elements:[Pixi.Graphics];
+    private elements: [PIXI.Graphics];
 
     /**
      * Animation
@@ -49,7 +49,7 @@ class Lvl {
     /**
      * Star center (for animation)
      */
-    private center:[number, number];
+    private center: [number, number];
 
     /**
      * Star angle (for animation)
@@ -62,8 +62,8 @@ class Lvl {
      * Init
      */
     public init = () => {
-        Pixi.utils.skipHello();
-        this.app = new Pixi.Application({
+        PIXI.utils.skipHello();
+        this.app = new PIXI.Application({
             width: 220,
             height: 220,
             transparent: true,
@@ -80,7 +80,7 @@ class Lvl {
         // Star elements
         let e;
         for (let index = 0; index < this.goals; index++) {
-            e = new Pixi.Graphics();
+            e = new PIXI.Graphics();
             e.interactive = true;
             e.on("mouseover", () => {
                 document.getElementById(`goal${index}`).classList.add("hover")
@@ -97,7 +97,7 @@ class Lvl {
         }
 
         // Star border
-        this.border = new Pixi.Graphics();
+        this.border = new PIXI.Graphics();
         this.app.stage.addChild(this.border)
 
         this.drawStar();
@@ -115,7 +115,7 @@ class Lvl {
         //let star_element;
 
         // angle between two star branches
-        let a = 360/this.goals;
+        let a = 360 / this.goals;
 
         let angle = a + this._angle;
 
@@ -132,13 +132,13 @@ class Lvl {
             e.beginFill(index < this.achieved ? this.level.color : 0xEEEEEE)
             e.lineStyle(.5, 0x707070, .5)
 
-            dax = this.center[0]+h.cos(angle)    *this.level.innerDist
-            dbx = this.center[0]+h.cos(angle+a/2)*this.level.outerDist
-            dcx = this.center[0]+h.cos(angle+a)  *this.level.innerDist
+            dax = this.center[0] + h.cos(angle) * this.level.innerDist
+            dbx = this.center[0] + h.cos(angle + a / 2) * this.level.outerDist
+            dcx = this.center[0] + h.cos(angle + a) * this.level.innerDist
 
-            day = this.center[1]+h.sin(angle)    *this.level.innerDist
-            dby = this.center[1]+h.sin(angle+a/2)*this.level.outerDist
-            dcy = this.center[1]+h.sin(angle+a)  *this.level.innerDist  
+            day = this.center[1] + h.sin(angle) * this.level.innerDist
+            dby = this.center[1] + h.sin(angle + a / 2) * this.level.outerDist
+            dcy = this.center[1] + h.sin(angle + a) * this.level.innerDist
 
             e.drawPolygon([
                 this.center[0], this.center[1], dax, day, dbx, dby, dcx, dcy])
@@ -146,13 +146,13 @@ class Lvl {
 
             border_ar.push(dax, day, dbx, dby)
 
-            angle+= a;
+            angle += a;
         }
 
         this.border.clear()
         this.border.lineStyle(1, 0x707070)
         this.border.drawPolygon(border_ar).closePath()
-        
+
     }
 
     private animateStar = () => {
@@ -160,7 +160,7 @@ class Lvl {
         this._angle += .02
         //this.outerDist += Math.cos(this.index/500)/100
         //this.innerDist += Math.cos(this.index/400)/100
-        
+
         //this.center[0] += 1;
         this.drawStar()
     }
