@@ -42,6 +42,10 @@ router.post("/open", async (req, res) => {
         // Add the item to the cell
         let cellItem = { item: items[0] } as CellItemModel;
 
+        const direction = Math.random() * 360 * D2R;
+        cellItem.x = safe.x + Math.cos(direction) * ITEMS.SAFE.THROW_AT;
+        cellItem.y = safe.y + Math.sin(direction) * ITEMS.SAFE.THROW_AT;
+
         if (cellItem.item.name === "pistol") {
             cellItem.ammo = Math.ceil(Math.random() * 6);
         }
@@ -50,10 +54,12 @@ router.post("/open", async (req, res) => {
 
         await cell.save();
 
+        cellItem._id = "" + Math.random();
+
         send.success = true;
-        send.item = cellItem;//items[0]
+        send.cellItem = cellItem;//items[0]
         send.now = now;
-        send.direction = Math.random() * 360 * D2R
+        send.direction = direction;
         res.send(send);
     } catch (err) {
         send.fatal = err.message;

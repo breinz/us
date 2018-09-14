@@ -8,6 +8,7 @@ import well from "./well"
 import die from "./die";
 import items from "./items"
 import buildings from "./buildings"
+import { Us } from "../us";
 
 var router = express.Router()
 
@@ -60,6 +61,8 @@ router.post("/grabItem", async (req, res) => {
 // **************************************************
 
 router.post("/drink", async (req, res) => {
+    let ret: Us.Bottle.ApiResult.drink = { success: false };
+
     try {
         // Find the user
         const user = await User.findById(req.user._id).populate("items.bag.item") as UserModel
@@ -68,18 +71,21 @@ router.post("/drink", async (req, res) => {
         const item = user.items.bag.id(req.body.item._id) as UserItemModel
 
         if (item === null) {
-            return res.send({ error: "drink.no_water" })
+            ret.error = "drink.no_water"
+            return res.send(ret)
         }
 
         // Did the user already drink today
         if (user.drank_at !== undefined && (new Date(user.drank_at)).getDate() === (new Date()).getDate()) {
-            return res.send({ error: "drink.already_today" })
+            ret.error = "drink.already_today"
+            return res.send(ret)
         }
 
         // Is the water poisoned
         if (item.poisoned === true) {
             die(req, "poison");
-            res.send({ dead: true });
+            ret.dead = true;
+            res.send(ret);
             return;
         }
 
@@ -103,9 +109,13 @@ router.post("/drink", async (req, res) => {
 
         await user.save();
 
-        res.send({ success: true, bag: user.items.bag, pa: user.pa })
+        ret.success = true;
+        ret.bag = user.items.bag;
+        ret.pa = user.pa;
+        res.send(ret)
     } catch (err) {
-        res.send({ fatal: err.message });
+        ret.fatal = err.message;
+        res.send(ret);
     }
 })
 
@@ -124,11 +134,14 @@ Remove ammo from bag
 /**  
 */
 router.post("/reload", async (req, res) => {
+    let ret: Us.Pistol.ApiResult.reload = { success: false };
     try {
+
         const user = await User.findById(req.user._id).populate("items.bag.item") as UserModel
 
         if (user.pa < 1) {
-            return res.send({ error: "not_enough_pa" })
+            ret.error = "not_enough_pa";
+            return res.send(ret)
         }
 
         // Find the gun
@@ -136,12 +149,14 @@ router.post("/reload", async (req, res) => {
 
         // No pistol
         if (user_pistol === null) {
-            return res.send({ error: "items.not_in_bag" })
+            ret.error = "items.not_in_bag";
+            return res.send(ret);
         }
 
         // Pistol fully loaded => error
         if (user_pistol.ammo >= 6) {
-            return res.send({ error: "items.pistol.reload.full" })
+            ret.error = "items.pistol.reload.full";
+            return res.send(ret)
         }
 
         // Find item ammo
@@ -154,7 +169,8 @@ router.post("/reload", async (req, res) => {
 
         // No ammo in the bag => error
         if (user_ammo === undefined) {
-            return res.send({ error: "items.pistol.reload.no_ammo" })
+            ret.error = "items.pistol.reload.no_ammo";
+            return res.send(ret);
         }
 
         // Add one ammo to the pistol
@@ -165,9 +181,13 @@ router.post("/reload", async (req, res) => {
 
         await user.save()
 
-        res.send({ success: true, ammo: user_pistol.ammo, bag: user.items.bag })
+        ret.success = true;
+        ret.ammo = user_pistol.ammo;
+        ret.bag = user.items.bag;
+        res.send(ret)
     } catch (err) {
-        res.send({ fatal: true, error: err.message })
+        ret.fatal = err.message;
+        res.send(ret)
     }
 })
 

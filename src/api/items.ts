@@ -2,6 +2,7 @@ import * as express from "express"
 import string from "./items/string"
 import safe from "./buildings/safe"
 import { User, UserModel } from "../back/user/model";
+import { Us } from "../us";
 
 let router = express.Router()
 
@@ -13,21 +14,31 @@ router.use("/safe", safe)
  * @param bagItem_id
  */
 router.post("/equip", async (req, res) => {
-    const user = await
-        User.findById(req.user.id)
-            .populate("items.bag.item")
-            .populate("items.equipped.item") as UserModel;
+    let ret: Us.Items.ApiResult.equip = { success: false, items: null };
 
-    // The bagItem to equip
-    const item = user.items.bag.id(req.body.bagItem_id)
+    try {
+        const user = await
+            User.findById(req.user.id)
+                .populate("items.bag.item")
+                .populate("items.equipped.item") as UserModel;
 
-    user.items.equipped.push(item)
+        // The bagItem to equip
+        const item = user.items.bag.id(req.body.bagItem_id)
 
-    user.items.bag.remove(item);
+        user.items.equipped.push(item)
 
-    await user.save();
+        user.items.bag.remove(item);
 
-    res.send({ success: true, items: user.items });
+        await user.save();
+
+        ret.success = true;
+        ret.items = user.items;
+        res.send(ret);
+
+    } catch (err) {
+        ret.fatal = err.message;
+        res.send(ret);
+    }
 })
 
 /**

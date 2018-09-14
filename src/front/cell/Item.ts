@@ -1,15 +1,19 @@
 
 import { ItemModel } from "../../back/item/model";
 import dispatcher from "../dispatcher";
+import { CellItemModel } from "../../back/cell/model";
 
 export default class Item extends PIXI.Sprite {
 
-    private item: ItemModel;
+    private item: CellItemModel;
 
     private __texture: PIXI.Texture;
 
-    constructor(item: ItemModel) {
+    constructor(item: CellItemModel) {
         super()
+
+        //console.log("item");
+        //console.log(item);
 
         this.item = item;
 
@@ -24,7 +28,7 @@ export default class Item extends PIXI.Sprite {
     }
 
     private draw() {
-        this.texture.frame = new PIXI.Rectangle(this.item.x * 16, this.item.y * 16, 16, 16)
+        this.texture.frame = new PIXI.Rectangle(this.item.item.x * 16, this.item.item.y * 16, 16, 16)
 
         this.anchor.set(.5, .5)
 

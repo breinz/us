@@ -19,7 +19,7 @@ declare namespace Us {
 
             type Open = Us.ApiResult["default"] & {
                 now?: number,
-                item?: CellItemModel,
+                cellItem?: CellItemModel,
                 direction?: number,
                 /** The user who opened the safe */
                 by: string
@@ -72,6 +72,44 @@ declare namespace Us {
             type Neighbor = {
                 _id: string,
                 ground: string
+            }
+        }
+    }
+
+    namespace Items {
+        namespace ApiResult {
+            type equip = Us.ApiResult["default"] & {
+                items: {
+                    bag?: UserItemModel[],
+                    equipped?: UserItemModel[]
+                }
+            }
+        }
+    }
+
+    namespace Bottle {
+        namespace ApiResult {
+            type drink = Us.ApiResult["default"] & {
+                bag?: UserItemModel[],
+                pa?: number,
+                dead?: boolean
+            }
+        }
+    }
+
+    namespace Pistol {
+        namespace ApiResult {
+            type reload = Us.ApiResult["default"] & {
+                bag?: UserItemModel[],
+                ammo?: number
+            }
+        }
+    }
+
+    namespace String {
+        namespace ApiResult {
+            type assemble = Us.ApiResult["default"] & {
+                bag?: UserItemModel[]
             }
         }
     }

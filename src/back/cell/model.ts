@@ -64,7 +64,15 @@ export const cellBuildingSchema = new Schema({
         by: mongoose.Schema.Types.ObjectId,
         at: Date
     }]
-})
+});
+
+const cellItemSchema = new Schema({
+    item: { type: mongoose.Schema.Types.ObjectId, ref: "Item" },
+    ammo: Number,
+    poisoned: Boolean,
+    x: Number,
+    y: Number
+});
 
 export const cellSchema = new Schema({
     gameId: { type: mongoose.Schema.Types.ObjectId, ref: "Game" },
@@ -79,7 +87,8 @@ export const cellSchema = new Schema({
         bottom: mongoose.Schema.Types.ObjectId,
     },
     homeForTeam: Number,
-    buildings: [cellBuildingSchema]
+    buildings: [cellBuildingSchema],
+    items: [cellItemSchema]
 })
 
 // --------------------------------------------------

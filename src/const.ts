@@ -6,6 +6,8 @@ export const GROUND = {
 
 export const ITEMS = {
     SAFE: {
-        REFILL_DELAY: 1000 * 5// 60// * 60 * 6
+        REFILL_DELAY: 1000 * 5,// 60// * 60 * 6
+        /** The distance at this item will be thrown once the safe opened */
+        THROW_AT: 50
     }
 }

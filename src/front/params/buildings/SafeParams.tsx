@@ -154,6 +154,9 @@ class SafeParams extends ABuildingParams {
             safeId: this.props.building.data._id
         });
 
+        //console.log("api");
+        //console.log(data.cellItem);
+
         if (this.handleError(data)) {
             return;
         }
@@ -175,12 +178,12 @@ class SafeParams extends ABuildingParams {
         container.x = this.props.building.data.x + this.props.building.container.width / 2
         container.y = this.props.building.data.y;
 
-        let item: Item = new Item(data.item);
+        let item: Item = new Item(data.cellItem);
         container.addChild(item);
 
         TweenLite.to(container, 1.3, {
-            x: container.x + Math.cos(data.direction) * 70,// (Math.random() > .5 ? 70 : -70),
-            y: container.y + Math.sin(data.direction) * 70,//20,
+            x: container.x + Math.cos(data.direction) * ITEMS.SAFE.THROW_AT,// (Math.random() > .5 ? 70 : -70),
+            y: container.y + Math.sin(data.direction) * ITEMS.SAFE.THROW_AT,//20,
             ease: Linear.easeOut
         });
         TweenLite.to(item, .3, {

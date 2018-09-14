@@ -10,6 +10,7 @@ import { ItemModel } from "../../back/item/model";
 import ItemParams from "./ItemParams"
 import { UserItemModel } from "../../back/user/model";
 import IElement from "./IElement";
+import { CellItemModel } from "../../back/cell/model";
 
 class GameParams extends React.Component {
 
@@ -35,7 +36,7 @@ class GameParams extends React.Component {
         dispatcher.on(dispatcher.SHOW_MAP, this.onShowMap.bind(this))
         dispatcher.on(dispatcher.HIDE_MAP, this.onHideMap.bind(this))
         dispatcher.on(dispatcher.SELECT_ITEM,
-            (item: UserItemModel, origin: string) => this.onSelectItem(item, origin)
+            (item: UserItemModel | CellItemModel, origin: string) => this.onSelectItem(item, origin)
         )
     }
 
@@ -109,11 +110,11 @@ class GameParams extends React.Component {
      * @param item The item selected
      * @param origin Where is the item from (bag, equipped)
      */
-    private onSelectItem(item: UserItemModel, origin: string): void {
+    private onSelectItem(item: UserItemModel | CellItemModel, origin: string): void {
 
         this.setState({
             title: i18n.__(`items.${item.item.name}`),
-            component: <ItemParams item={item} origin={origin} />
+            component: <ItemParams item={item} origin={origin} key={item._id} />
         })
     }
 

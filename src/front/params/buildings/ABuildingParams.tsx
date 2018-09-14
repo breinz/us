@@ -54,6 +54,8 @@ class ABuildingParams extends React.Component {
     }
 
     /**
+     * @deprecated
+     * @see front/api
      * Performs a post api call 
      * @param url Url
      * @param params Params
