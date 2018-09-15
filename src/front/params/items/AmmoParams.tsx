@@ -7,14 +7,14 @@ export class AmmoParams extends AItemParams {
     /**
      * @inheritdoc
      */
-    /*public getInfos(state: StateType): React.ReactElement<"div"> {
+    /*protected getUserItemInfos(state: StateType): React.ReactElement<"div"> {
         return null;
     }*/
 
     /**
      * @inheritDoc
      */
-    /*public getButtons(state: StateType): React.ReactElement<"div"> {
+    /*protected getUserItemButtons(state: StateType): React.ReactElement<"div"> {
         return super.getButtons(state);
     }*/
 }

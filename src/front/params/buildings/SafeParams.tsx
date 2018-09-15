@@ -3,11 +3,9 @@ import i18n from "../../i18n"
 import { cell } from "../../main";
 import ABuildingParams, { PropsType } from "./ABuildingParams";
 import { ITEMS } from "../../../const";
-import { timer_toString, D2R, R2D } from "../../../helper";
+import { timer_toString } from "../../../helper";
 import { Us } from "../../../us";
 import messages from "../../../SocketMessages";
-import Item from "../../cell/Item";
-import { TweenLite, Bounce, Quint, Linear } from "gsap";
 
 class SafeParams extends ABuildingParams {
 
@@ -150,12 +148,15 @@ class SafeParams extends ABuildingParams {
             return;
         }
 
-        const data: Us.Safe.ApiResult.Open = await this.post("/api/actions/buildings/safe/open", {
-            safeId: this.props.building.data._id
-        });
+        const params: Us.Safe.ApiParams.Open = {
+            safeId: this.props.building.data._id,
+            pos: {
+                x: this.props.building.data.x + this.props.building.container.width / 2,
+                y: this.props.building.data.y + this.props.building.container.height / 2,
+            }
+        }
 
-        //console.log("api");
-        //console.log(data.cellItem);
+        const data: Us.Safe.ApiResult.Open = await this.post("/api/actions/buildings/safe/open", params);
 
         if (this.handleError(data)) {
             return;
@@ -166,35 +167,11 @@ class SafeParams extends ABuildingParams {
 
     /**
      * This safe has been opened
-     * @param data Data
+     * @param apiResult Data
      */
-    private opened(data: Us.Safe.ApiResult.Open) {
+    private opened(apiResult: Us.Safe.ApiResult.Open) {
         this.setState({
-            last_open_at: data.now
-        })
-
-        const container = new PIXI.Container();
-        cell.app.stage.addChild(container);
-        container.x = this.props.building.data.x + this.props.building.container.width / 2
-        container.y = this.props.building.data.y;
-
-        let item: Item = new Item(data.cellItem);
-        container.addChild(item);
-
-        TweenLite.to(container, 1.3, {
-            x: container.x + Math.cos(data.direction) * ITEMS.SAFE.THROW_AT,// (Math.random() > .5 ? 70 : -70),
-            y: container.y + Math.sin(data.direction) * ITEMS.SAFE.THROW_AT,//20,
-            ease: Linear.easeOut
-        });
-        TweenLite.to(item, .3, {
-            y: item.x - 30,
-            ease: Quint.easeOut,
-            onComplete: () => {
-                TweenLite.to(item, 1, {
-                    y: item.x,
-                    ease: Bounce.easeOut
-                })
-            }
+            last_open_at: apiResult.now
         })
 
         this.startTimer()

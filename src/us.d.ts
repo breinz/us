@@ -10,7 +10,7 @@ declare namespace Us {
             success: boolean,
             error?: string,
             fatal?: string
-        },
+        }
     }
 
     namespace Safe {
@@ -29,6 +29,19 @@ declare namespace Us {
                 poison: number
             }
 
+        }
+
+        namespace ApiParams {
+            /** Params sent to the api */
+            type Open = {
+                /** The CellBuilding id */
+                safeId: string,
+                /** The position from which the item will originate */
+                pos: {
+                    x: number,
+                    y: number
+                }
+            }
         }
     }
 
@@ -83,6 +96,9 @@ declare namespace Us {
                     bag?: UserItemModel[],
                     equipped?: UserItemModel[]
                 }
+            }
+            type grab = Us.ApiResult["default"] & {
+                bag?: UserItemModel[]
             }
         }
     }

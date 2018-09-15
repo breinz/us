@@ -277,7 +277,7 @@ class UserParams extends React.Component {
      * Click on an item
      */
     private onClickItem(item: UserItemModel, origin: string) {
-        dispatcher.dispatch(dispatcher.SELECT_ITEM, item, origin);
+        dispatcher.dispatch(dispatcher.ITEM_SELECTED, item, origin);
     }
 
     private onGrabItem(item: ItemModel) {

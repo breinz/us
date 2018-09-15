@@ -7,13 +7,14 @@ import Axios from "axios";
 import dispatcher from "../../dispatcher";
 import post from "../../api";
 import { Us } from "../../../us";
+import { StepTimingFunction } from "csstype";
 
 export class PistolParams extends AItemParams {
 
     /**
      * @inheritdoc
      */
-    public getInfos(state: StateType): React.ReactElement<"div"> {
+    protected bagInfos(state: StateType): React.ReactElement<"div"> {
         return (
             <div className="bignum">
                 <div className="num">{state.ammo}</div>
@@ -25,34 +26,20 @@ export class PistolParams extends AItemParams {
     /**
      * @inheritdoc
      */
-    public getButtons(state: StateType): React.ReactElement<"div"> {
-        // --------------------------------------------------
-        // Grab
-        if (this.isCellItem()) {
-            return (<button className="button success small" onClick={() => this.grab()}>
-                {i18n.__("actions.items.grab")}
-            </button>);
-        }
-
+    protected bagButtons(state: StateType): React.ReactElement<"div"> {
         this.hidden_actions = 0;
 
         // --------------------------------------------------
-        // (un)Equip
+        // Equip
         let equip =
             <button className="button success small" onClick={() => this.equip()}>
                 {i18n.__("actions.items.equip")}
             </button>;
 
-        if (state.origin === "equipped") {
-            equip = <button className="button warning small" onClick={() => this.unequip()}>
-                {i18n.__("actions.items.unequip")}
-            </button>;
-        }
-
         // --------------------------------------------------
         // Reload
         let reload;
-        if (true || this.component.state.ammo < 6 && cell.user_controller.hasItem("ammo")) {
+        if (this.component.state.ammo < 6 && cell.user_controller.hasItem("ammo")) {
             reload =
                 <button
                     className="button secondary hollow small"
@@ -74,28 +61,38 @@ export class PistolParams extends AItemParams {
         )
     }
 
-    private grab() {
+    protected equippedButtons(state: StateType): React.ReactElement<"div"> {
+        this.hidden_actions = 0;
 
-    }
+        // --------------------------------------------------
+        // unequip
+        let unequip = <button className="button warning small" onClick={() => this.unequip()}>
+            {i18n.__("actions.items.unequip")}
+        </button>;
 
-    /**
-     * Equip
-     */
-    private async equip() {
-        this.clearError();
-
-        const data: Us.Items.ApiResult.equip = await post("/api/actions/items/equip", {
-            bagItem_id: this.component.props.item._id
-        })
-
-        if (this.handleError(data)) {
-            return;
+        // --------------------------------------------------
+        // Reload
+        let reload;
+        if (this.component.state.ammo < 6 && cell.user_controller.hasItem("ammo")) {
+            reload =
+                <button
+                    className="button secondary hollow small"
+                    onClick={() => this.reload()}
+                    dangerouslySetInnerHTML={{ __html: i18n.__("actions.items.reload") }}>
+                </button>;
+        } else {
+            this.hidden_actions++;
         }
 
-        this.component.setState({ origin: "equipped" })
-
-        dispatcher.dispatch(dispatcher.UPDATE_BAG, data.items.bag)
-        dispatcher.dispatch(dispatcher.UPDATE_EQUIPPED, data.items.equipped);
+        return (
+            <div>
+                <div>
+                    {unequip}
+                    {reload}
+                </div>
+                {this.getHiddenActions()}
+            </div>
+        )
     }
 
     private async unequip() {

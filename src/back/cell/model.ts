@@ -8,7 +8,7 @@ import { UserItemModel } from "../user/model";
 // --------------------------------------------------
 // Type
 
-export type CellItemModel = UserItemModel & {
+export type CellItemModel = Document & UserItemModel & {
     x: number,
     y: number
 };
@@ -96,7 +96,6 @@ export const cellSchema = new Schema({
 
 cellBuildingSchema.methods.isOpen = function (delay: number = 1000 * 60 * 60 * 6): boolean {
     const cellBuilding = this as CellBuildingModel;
-    console.log("isOpen", cellBuilding.visited.length);
 
     if (!cellBuilding.visited) {
         return false;
@@ -221,6 +220,8 @@ cellSchema.statics.findToJoin = async function (gameId: mongoose.Types.ObjectId)
 // --------------------------------------------------
 // Model
 
-export const Cell = model("Cell", cellSchema) as Model<Document> & CellModel
-export const CellBuilding = model("CellBuilding", cellBuildingSchema) as Model<Document> & CellBuildingModel
+
+export const Cell = model("Cell", cellSchema) as Model<Document> & CellModel;
+export const CellBuilding = model("CellBuilding", cellBuildingSchema) as Model<Document> & CellBuildingModel;
+export const CellItem = model("CellItem", cellItemSchema) as (Model<Document> & CellItemModel);
 export default Cell

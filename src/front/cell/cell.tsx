@@ -19,7 +19,8 @@ import GameParams from "../params/game_params";
 import Dev from "../dev/Dev"
 import Church1 from "../buildings/rooms/Church1";
 import * as io from "socket.io-client"
-import { CellBuildingModel } from "../../back/cell/model";
+import { CellBuildingModel, CellModel, CellItemModel } from "../../back/cell/model";
+import Item from "./Item";
 
 export default class Cell {
 
@@ -41,7 +42,7 @@ export default class Cell {
     /**
      * Cell's data
      */
-    private data: any
+    private data: CellModel
 
     /**
      * Items available to dig
@@ -61,7 +62,7 @@ export default class Cell {
     public user_controller: UserParams;
 
     /** The layer that owns the buildings and the user */
-    private buildings_layer: PIXI.Container;
+    public game: PIXI.Container;
 
     /**
      * The grid for pathfinding
@@ -149,6 +150,9 @@ export default class Cell {
         this.container = new PIXI.Container();
         this.app.stage.addChild(this.container);
 
+        this.game = new PIXI.Container();
+        this.container.addChild(this.game);
+
         this.dev_container = new PIXI.Container();
         this.app.stage.addChild(this.dev_container);
 
@@ -160,14 +164,11 @@ export default class Cell {
 
         // --------------------------------------------------
         // Buildings
-
-        this.buildings_layer = new PIXI.Container();
         this.arBuildings = [];
 
-        this.container.addChild(this.buildings_layer);
 
         this.data.buildings.forEach((building: CellBuildingModel/* BuildingData*/) => {
-            BuildingFactory.create(building, this.buildings_layer)
+            BuildingFactory.create(building, this.game)
         });
 
 
@@ -176,9 +177,19 @@ export default class Cell {
 
         this.user = new User();
         this.user.init()
-        this.buildings_layer.addChild(this.user)
+        this.game.addChild(this.user)
         //this.container.addChild(this.user)
 
+
+        // --------------------------------------------------
+        // Items
+
+        this.data.items.forEach((model: CellItemModel) => {
+            let item: Item = new Item(model);
+            item.x = model.x;
+            item.y = model.y;
+            this.game.addChild(item);
+        })
 
         // --------------------------------------------------
         // Dig
@@ -239,7 +250,7 @@ export default class Cell {
         switch (building.data.building.name) {
             case "church":
                 const room = new Church1();
-                this.buildings_layer.addChild(room, this.user);
+                this.game.addChild(room, this.user);
                 break;
         }
     }

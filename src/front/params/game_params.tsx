@@ -11,6 +11,7 @@ import ItemParams from "./ItemParams"
 import { UserItemModel } from "../../back/user/model";
 import IElement from "./IElement";
 import { CellItemModel } from "../../back/cell/model";
+import messages from "../../SocketMessages";
 
 class GameParams extends React.Component {
 
@@ -29,15 +30,18 @@ class GameParams extends React.Component {
     }
 
     public componentDidMount() {
-        dispatcher.on(dispatcher.SELECT_ELEMENT, this.onSelectElement.bind(this))
-        dispatcher.on(dispatcher.SELECT_BACKGROUND, this.onSelectBackground.bind(this))
-        dispatcher.on(dispatcher.DIG, this.onDig.bind(this))
-        dispatcher.on(dispatcher.DIG_END, this.onQuitDig.bind(this))
-        dispatcher.on(dispatcher.SHOW_MAP, this.onShowMap.bind(this))
-        dispatcher.on(dispatcher.HIDE_MAP, this.onHideMap.bind(this))
-        dispatcher.on(dispatcher.SELECT_ITEM,
+        dispatcher.on(dispatcher.SELECT_ELEMENT,
+            (kind: string, title: string, element: IElement) => this.onSelectElement(kind, title, element)
+        )
+        dispatcher.on(dispatcher.SELECT_BACKGROUND, () => this.onSelectBackground())
+        dispatcher.on(dispatcher.DIG, () => this.onDig())
+        dispatcher.on(dispatcher.DIG_END, () => this.onQuitDig())
+        dispatcher.on(dispatcher.SHOW_MAP, () => this.onShowMap())
+        dispatcher.on(dispatcher.HIDE_MAP, () => this.onHideMap())
+        dispatcher.on(dispatcher.ITEM_SELECTED,
             (item: UserItemModel | CellItemModel, origin: string) => this.onSelectItem(item, origin)
         )
+        dispatcher.on(dispatcher.ITEM_GRABBED, (item: CellItemModel) => this.onGrabbed(item))
     }
 
     public render() {
@@ -116,6 +120,16 @@ class GameParams extends React.Component {
             title: i18n.__(`items.${item.item.name}`),
             component: <ItemParams item={item} origin={origin} key={item._id} />
         })
+    }
+
+    /**
+     * Grabbed an item from the cell
+     * @param cellItem The item grabbeb
+     */
+    private onGrabbed(cellItem: CellItemModel) {
+        dispatcher.dispatch(dispatcher.ITEM_SELECTED,
+            cell.user_data.items.bag.find(item => { return item.item.name === cellItem.item.name })
+        )
     }
 
 }

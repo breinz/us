@@ -3,11 +3,52 @@ import string from "./items/string"
 import safe from "./buildings/safe"
 import { User, UserModel } from "../back/user/model";
 import { Us } from "../us";
+import { Cell, CellModel, CellItemModel } from "../back/cell/model";
 
 let router = express.Router()
 
 router.use("/string", string)
 router.use("/safe", safe)
+
+/**
+ * Grab a cellItem
+ */
+router.post("/grab", async (req, res) => {
+    let ret: Us.Items.ApiResult.grab = { success: false };
+
+    try {
+        let user = await User.findById(req.user.id).populate("items.bag.item") as UserModel;
+
+        const cell = await Cell.findById(user.currentCell) as CellModel;
+
+        // The bagItem to equip
+        const cellItem = cell.items.id(req.body.cellItem_id) as CellItemModel
+
+        /** @todo Check if the bag is full */
+
+        /** @todo Check if the bag is full of heavy items */
+
+        // add The item to the bag
+        user.items.bag.push(cellItem);
+
+        // Remove the item from the cell
+        cell.items.remove(cellItem);
+
+        await cell.save()
+        await user.save()
+
+        // Have to refetch the user to populate the last inserted item
+        user = await User.findById(req.user.id).populate("items.bag.item") as UserModel;
+
+        ret.success = true;
+        ret.bag = user.items.bag;
+        res.send(ret);
+
+    } catch (error) {
+        ret.fatal = error.message;
+        res.send(ret);
+    }
+});
 
 /**
  * Equip an item

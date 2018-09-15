@@ -4,6 +4,11 @@ import i18n from "../../i18n";
 import ItemParams, { StateType } from "../ItemParams";
 import { CellItemModel } from "../../../back/cell/model";
 import { UserItemModel } from "../../../back/user/model";
+import dispatcher from "../../dispatcher";
+import post from "../../api";
+import { Us } from "../../../us";
+import { cell } from "../../main";
+import messages from "../../../SocketMessages";
 
 export default class AItemParams implements IItemParams {
 
@@ -12,6 +17,9 @@ export default class AItemParams implements IItemParams {
      */
     protected component: ItemParams;
 
+    /**
+     * The item
+     */
     protected item: UserItemModel | CellItemModel;
 
     /**
@@ -28,13 +36,47 @@ export default class AItemParams implements IItemParams {
      * @inheritdoc
      */
     public getInfos(state: StateType): React.ReactElement<"div"> {
-        return null;
+        if (this.isCellItem()) {
+            return this.cellInfos(state);
+        }
+        return this.bagInfos(state);
     }
 
     /**
      * @inheritdoc
      */
     public getButtons(state: StateType): React.ReactElement<"div"> {
+        if (this.isCellItem()) {
+            return this.cellButtons(state);
+        }
+        if (this.component.state.origin === "equipped") {
+            return this.equippedButtons(state);
+        }
+        return this.bagButtons(state);
+    }
+
+    protected cellInfos(state: StateType): React.ReactElement<"div"> {
+        return null;
+    }
+
+    protected bagInfos(state: StateType): React.ReactElement<"div"> {
+        return null;
+    }
+
+    protected cellButtons(state: StateType): React.ReactElement<"div"> {
+        return (
+            <button className="button success small" onClick={() => this.grab()}>
+                {i18n.__("actions.items.grab")}
+            </button>
+        );
+    }
+
+    protected bagButtons(state: StateType): React.ReactElement<"div"> {
+        return <small>{i18n.__("actions.items.useless")}</small>
+        //return null;
+    }
+
+    protected equippedButtons(state: StateType): React.ReactElement<"div"> {
         return <small>{i18n.__("actions.items.useless")}</small>
         //return null;
     }
@@ -95,5 +137,48 @@ export default class AItemParams implements IItemParams {
         this.component.setState({
             error: <div className="error-box">{i18n.__(`errors.${message}`)}</div>
         })
+    }
+
+    /**
+     * Grab
+     */
+    private async grab(moveTo: boolean = true) {
+        this.clearError();
+
+        if (moveTo) {
+            const cellItem = this.component.props.item as CellItemModel;
+            cell.user.moveTo({ x: cellItem.x, y: cellItem.y }, () => this.grab(false));
+            return;
+        }
+
+        const data: Us.Items.ApiResult.grab = await post("/api/actions/items/grab", {
+            cellItem_id: this.component.props.item._id
+        })
+
+        if (this.handleError(data)) return;
+
+        dispatcher.dispatch(dispatcher.UPDATE_BAG, data.bag);
+        dispatcher.dispatch(dispatcher.ITEM_GRABBED, this.component.props.item)
+        cell.cell_socket.emit(messages.Item.GRAB, this.component.props.item)
+    }
+
+    /**
+     * Equip
+     */
+    protected async equip() {
+        this.clearError();
+
+        const data: Us.Items.ApiResult.equip = await post("/api/actions/items/equip", {
+            bagItem_id: this.component.props.item._id
+        })
+
+        if (this.handleError(data)) {
+            return;
+        }
+
+        this.component.setState({ origin: "equipped" })
+
+        dispatcher.dispatch(dispatcher.UPDATE_BAG, data.items.bag)
+        dispatcher.dispatch(dispatcher.UPDATE_EQUIPPED, data.items.equipped);
     }
 }

@@ -6,6 +6,8 @@ import messages from "../../SocketMessages";
 import { cell } from "../main";
 import { ITEMS } from "../../const";
 import { Us } from "../../us";
+import Item from "../cell/Item";
+import { TweenLite, Linear, Quint, Bounce } from "gsap";
 
 
 export default class Safe extends ABuilding {
@@ -26,8 +28,6 @@ export default class Safe extends ABuilding {
 
         this.params = <SafeParams building={this} />
 
-        cell.cell_socket.on(messages.Safe.OPENED/* "Us.Safe.Socket.OPEN"*/, (data: Us.Safe.ApiResult.Open) => { this.opened(data) })
-        cell.cell_socket.on(messages.Safe.REFILLED, () => { this.refilled() })
 
         this.offset = {
             x: 0,
@@ -35,6 +35,9 @@ export default class Safe extends ABuilding {
         };
 
         this.horizon = 5;
+
+        cell.cell_socket.on(messages.Safe.OPENED, (data: Us.Safe.ApiResult.Open) => { this.opened(data) })
+        cell.cell_socket.on(messages.Safe.REFILLED, () => { this.refilled() })
     }
 
     /*public get entry(): { x: number, y: number } {
@@ -75,19 +78,48 @@ export default class Safe extends ABuilding {
     }
 
     protected opened(data: Us.Safe.ApiResult.Open) {
+        // Draw the open safe
         this.tmp.clear().beginFill(0xFF6600).drawRect(0, 0, 32, 22)
 
+        // Save data
         this.data.visited.push({ at: data.now });
+
+        // Restart the timer
+        clearTimeout(this.refill_timer);
 
         const at = new Date(data.now);
 
-        Date.now() - at.getTime()
+        //Date.now() - at.getTime()
 
-        clearTimeout(this.refill_timer);
 
         this.refill_timer = setTimeout(() => {
             this.refill()
         }, at.getTime() + ITEMS.SAFE.REFILL_DELAY - Date.now());
+
+        // Add the item
+        const container = new PIXI.Container();
+        cell.game.addChild(container);
+        container.x = this.data.x + this.container.width / 2
+        container.y = this.data.y;
+
+        let item: Item = new Item(data.cellItem);
+        container.addChild(item);
+
+        TweenLite.to(container, 1.3, {
+            x: data.cellItem.x,
+            y: data.cellItem.y,
+            ease: Linear.easeOut
+        });
+        TweenLite.to(item, .3, {
+            y: item.x - 30,
+            ease: Quint.easeOut,
+            onComplete: () => {
+                TweenLite.to(item, 1, {
+                    y: item.x,
+                    ease: Bounce.easeOut
+                })
+            }
+        })
     }
 
     // --------------------------------------------------

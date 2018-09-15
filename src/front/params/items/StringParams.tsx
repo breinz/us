@@ -13,7 +13,7 @@ export class StringParams extends AItemParams {
     /**
      * @inheritDoc
      */
-    public getButtons(state: StateType): React.ReactElement<"div"> {
+    protected bagButtons(state: StateType): React.ReactElement<"div"> {
         this.hidden_actions = 0;
         let assemble;
         if (cell.user_controller.hasItem("string", 5)) {
@@ -53,7 +53,7 @@ export class StringParams extends AItemParams {
         dispatcher.dispatch(dispatcher.UPDATE_BAG, data.bag)
 
         // Select empty bottle
-        dispatcher.dispatch(dispatcher.SELECT_ITEM,
+        dispatcher.dispatch(dispatcher.ITEM_SELECTED,
             cell.user_data.items.bag.find(item => { return item.item.name === "rope" })
         )
     }

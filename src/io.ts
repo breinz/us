@@ -73,6 +73,10 @@ class Io {
             cellSocket.on(message.Safe.REFILL, (params) => {
                 socket.emit(message.Safe.REFILLED, params)
             })
+
+            cellSocket.on(message.Item.GRAB, (params) => {
+                socket.emit(message.Item.GRABBED, params)
+            })
         })
 
         this.cells.push(cellId)

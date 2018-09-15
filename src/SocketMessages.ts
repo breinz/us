@@ -12,6 +12,9 @@ const messages = {
         OPEN: "safe.open", OPENED: "safe.opened",
         REFILL: "safe.refill", REFILLED: "safe.refilled"
         //REFILL: { UP: "safe.refill", DOWN: "safe.refill.down" }
+    },
+    Item: {
+        GRAB: "item.grab", GRABBED: "item.grabbed"
     }
 }
 

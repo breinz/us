@@ -12,7 +12,7 @@ export class BottleFullParams extends AItemParams {
     /**
      * @inheritDoc
      */
-    public getButtons(state: StateType): React.ReactElement<"div"> {
+    protected bagButtons(state: StateType): React.ReactElement<"div"> {
         return (
             <button
                 className="button success small"
@@ -40,7 +40,7 @@ export class BottleFullParams extends AItemParams {
         dispatcher.dispatch(dispatcher.UPDATE_PA, data.pa)
 
         // Select empty bottle
-        dispatcher.dispatch(dispatcher.SELECT_ITEM,
+        dispatcher.dispatch(dispatcher.ITEM_SELECTED,
             cell.user_data.items.bag.find(item => { return item.item.name === "bottle" })
         )
     }

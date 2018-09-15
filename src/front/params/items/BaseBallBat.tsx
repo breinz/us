@@ -8,15 +8,11 @@ export class BaseBallBatParams extends AItemParams {
     /**
      * @inheritDoc
      */
-    public getButtons(state: StateType): React.ReactElement<"div"> {
+    protected bagButtons(state: StateType): React.ReactElement<"div"> {
         return (
-            <button className="button success small" onClick={this.equip.bind(this)}>
+            <button className="button success small" onClick={() => this.equip()}>
                 {i18n.__("actions.items.equip")}
             </button>
         );
-    }
-
-    private equip() {
-
     }
 }

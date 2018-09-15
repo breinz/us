@@ -8,6 +8,7 @@ import { Game } from "../back/game/model";
 import { Cell } from "../back/cell/model";
 import * as i18n from "i18n"
 import { Item } from "../back/item/model";
+import { Us } from "../us";
 
 const router = express.Router()
 
@@ -77,11 +78,12 @@ router.get("/cell", async (req, res) => {
     if (!user.inGame()) res.send({ error: 'notInGame' })
 
     let cell = await Cell.findById(user.currentCell)
-        .populate("buildings.building").populate("items")
+        .populate("buildings.building")
         .populate("neighbors.left", "ground")
         .populate("neighbors.right", "ground")
         .populate("neighbors.top", "ground")
         .populate("neighbors.bottom", "ground")
+        .populate("items.item")
 
     res.send(cell)
 })

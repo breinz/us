@@ -8,7 +8,6 @@ import { StringParams } from "./StringParams";
 export class FItemParams {
 
     static get(ref: ItemParams): IItemParams {
-        console.log(ref);
         switch (ref.props.item.item.name) {
             case "pistol":
                 return new PistolParams(ref)

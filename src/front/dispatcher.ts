@@ -19,7 +19,8 @@ class Dispatcher {
     public SHOW_MAP = "show_map"
     public HIDE_MAP = "hide_map"
 
-    public SELECT_ITEM = "item_select"
+    public ITEM_SELECTED = "item_select"
+    public ITEM_GRABBED = "item_grabbed";
 
     public REST = "rest";
     public SLEEP = "sleep";
